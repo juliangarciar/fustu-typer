@@ -1,0 +1,1 @@
+# fustu-typer
