@@ -2,48 +2,68 @@ import { Box, Input, VStack } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from "react";
 import { FRECUENCY } from './typer-config';
 import TyperScore from './typer-score';
+import { Word } from './typer-service';
 import TyperWord, { TypeWordProps } from "./typerword";
 
 interface TyperProps {
-    allWords: Array<string>;
-    mode: string;
+    words: Array<Word>;
+    endGame: () => void;
+    gameState: boolean;
 };
 
 const generateUUID = (index: number) => {
     return "word_" + new Date().getTime() + "_" + index;
 };
 
-const Typer = ({allWords, mode}: TyperProps) => {
+const Typer = ({words, endGame, gameState}: TyperProps) => {
     const inputEl: React.RefObject<HTMLInputElement> = React.useRef<HTMLInputElement>(null);
     const [currentWords, setCurrentWords] = React.useState<Array<TypeWordProps>>([]);
-    const copyWords: Array<TypeWordProps> = allWords.map<TypeWordProps>((wordString, index) => ({
-        id: generateUUID(index), 
-        currentWord: wordString, 
-        mode: mode,
-        right: Math.random() < 0.5,
+    const copyWords: Array<TypeWordProps> = words.map<TypeWordProps>((word, index) => ({
+        uuid: generateUUID(index), 
+        currentWord: word.text, 
+        mode: word.difficulty,
+        column: word.column,
     }));
     const [failedWords, setFailedWords] = React.useState(0);
     const [correctWords, setCorrectWords] = React.useState(0);
-    let currentIndex: number = -1;
+    let currentIndex: number = 0;
+    let [gameEnded, setGameEnded] = React.useState(false);
 
     useEffect(() => {
-        let timerId = setInterval(() => {
-            currentIndex++;
-            if (currentIndex < copyWords.length) {
-                setCurrentWords(existingWords => {
-                    return [copyWords.at(currentIndex) as TypeWordProps, ...existingWords];
-                });
-            } else {
-                clearInterval(timerId);
-            }
-        }, FRECUENCY[mode as keyof typeof FRECUENCY]);
-    }, []);
+        if (gameState) {
+            gameEnded = false;
+            setFailedWords(0);
+            setCorrectWords(0);
+            update();
+        }
+    }, [gameState]);
+
+    const update = () => {
+        if (gameState) {
+            let timerId = setInterval(() => {
+                if (currentIndex < copyWords.length) {
+                    setCurrentWords(existingWords => {
+                        return [copyWords.at(currentIndex) as TypeWordProps, ...existingWords];
+                    });
+                } else {
+                    setGameEnded((gameEnded) => gameEnded = true);
+                    clearInterval(timerId);
+                }
+                currentIndex++;
+            }, FRECUENCY[copyWords.at(currentIndex)?.mode as keyof typeof FRECUENCY]);
+        }
+    };
 
     const deleteWord = (index: number) => {
         if (index > -1) {
             let copyWords = currentWords.slice();
             copyWords.splice(index, 1);
             setCurrentWords(copyWords);
+
+            if (gameEnded && copyWords.length === 0) {
+                console.log("FIN: " + copyWords.length);
+                endGame();
+            }
         }
     };
 
@@ -61,8 +81,8 @@ const Typer = ({allWords, mode}: TyperProps) => {
         }
     };
     
-    const handleExitWord = (id: string) => {
-        let index = currentWords.findIndex(word => word.id === id);
+    const handleExitWord = (uuid: string) => {
+        let index = currentWords.findIndex(word => word.uuid === uuid);
         deleteWord(index);
         setFailedWords(currentFailedWords => currentFailedWords + 1);
     };
@@ -76,11 +96,11 @@ const Typer = ({allWords, mode}: TyperProps) => {
                 <Box borderRadius="lg" shadow="md" width="100%" height="80%" bg="blue.300" paddingX="10px" paddingTop="10px" m={0} position="relative">
                     {currentWords.map(word => 
                         <TyperWord 
-                            key={word.id}
-                            id={word.id} 
+                            key={word.uuid}
+                            uuid={word.uuid} 
                             currentWord={word.currentWord} 
                             mode={word.mode}
-                            right={word.right}
+                            column={word.column}
                             onExit={(id: string) => handleExitWord(id)}
                         />
                     )}

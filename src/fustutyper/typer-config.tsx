@@ -1,26 +1,38 @@
 
 export const MODE = {
-    EASY: "easy",
+    EASY:   "easy",
     MEDIUM: "medium",
-    HARD: "hard",
+    HARD:   "hard",
+};
+
+export const COLUMN = {
+    LEFT:   "left",
+    MID:    "mid",
+    RIGHT:  "right",
 };
 
 export const durationStyles = {
-    hard: { transition: "top 4s" },
-    medium: { transition: "top 5s" },
-    easy: { transition: "top 6s" },
+    hard:   { transition: "top 3000ms linear" },
+    medium: { transition: "top 2500ms linear" },
+    easy:   { transition: "top 2000ms linear" },
+};
+
+export const columnStyles = {
+    left:   { left: "5%" },
+    mid:    { left: "50%", transform: "translateX(-50%)" },
+    right:  { right: "5%"},
 };
 
 export const durationTime = {
-    hard: 4000,
-    medium: 5000,
-    easy: 6000,
+    hard:   3000,
+    medium: 2500,
+    easy:   2000,
 };
 
 export const FRECUENCY = {
-    hard: 1000,
-    medium: 2000,
-    easy: 3000,
+    hard:   2000,
+    medium: 1500,
+    easy:   1000,
 };
 
 export const transitionStyles = {

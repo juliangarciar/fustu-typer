@@ -1,29 +1,26 @@
+import { useFocusEffect } from "@chakra-ui/react";
+import React from "react";
 import Typer from "./fustutyper/typer";
 import { MODE } from "./fustutyper/typer-config";
+import TyperMenu from "./fustutyper/typer-menu";
+import { getWords } from "./fustutyper/typer-service";
 
-const Game: React.FunctionComponent<{}> = () => {
-    const loadedWords: Array<string> = [
-        "robot",
-        "welcome",
-        "untracked",
-        "revolver",
-        "universe",
-        "televisor",
-        "astronaut",
-        "mountain",
-        "rigoberta",
-        "device",
-        "underwhelming",
-        "discovery",
-        "ancient",
-        "dessert",
-        "airplane",
-        "rocket",
-        "tracking",
-    ];
+const Game: React.FunctionComponent = () => {
+    const [currentState, setCurrentState] = React.useState(false);
 
+    const startGame = () => {
+        setCurrentState(true);
+    };
+
+    const endGame = () => {
+        setCurrentState(false);
+    };
+    
     return (
-        <Typer allWords={loadedWords} mode={MODE.MEDIUM} />
+        <>
+            <TyperMenu onStart={() => startGame()} gameState={currentState} />
+            <Typer words={getWords()} endGame={() => endGame()} gameState={currentState} />
+        </>
     );
 }
 
