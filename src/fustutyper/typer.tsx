@@ -58,10 +58,9 @@ const Typer = ({words, endGame, gameState}: TyperProps) => {
         if (index > -1) {
             let copyWords = currentWords.slice();
             copyWords.splice(index, 1);
-            setCurrentWords(copyWords);
+            setCurrentWords((currentWords) => currentWords = copyWords);
 
             if (gameEnded && copyWords.length === 0) {
-                console.log("FIN: " + copyWords.length);
                 endGame();
             }
         }
