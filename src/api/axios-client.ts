@@ -1665,7 +1665,7 @@ export class GameDto implements IGameDto {
     hasFinished!: boolean;
     hasStarted!: boolean;
     winner!: string;
-    lead!: string;
+    lead!: UserDto;
     participants!: UserDto[];
 
     [key: string]: any;
@@ -1678,6 +1678,7 @@ export class GameDto implements IGameDto {
             }
         }
         if (!data) {
+            this.lead = new UserDto();
             this.participants = [];
         }
     }
@@ -1693,7 +1694,7 @@ export class GameDto implements IGameDto {
             this.hasFinished = _data["hasFinished"];
             this.hasStarted = _data["hasStarted"];
             this.winner = _data["winner"];
-            this.lead = _data["lead"];
+            this.lead = _data["lead"] ? UserDto.fromJS(_data["lead"]) : new UserDto();
             if (Array.isArray(_data["participants"])) {
                 this.participants = [] as any;
                 for (let item of _data["participants"])
@@ -1720,7 +1721,7 @@ export class GameDto implements IGameDto {
         data["hasFinished"] = this.hasFinished;
         data["hasStarted"] = this.hasStarted;
         data["winner"] = this.winner;
-        data["lead"] = this.lead;
+        data["lead"] = this.lead ? this.lead.toJSON() : <any>undefined;
         if (Array.isArray(this.participants)) {
             data["participants"] = [];
             for (let item of this.participants)
@@ -1736,7 +1737,7 @@ export interface IGameDto {
     hasFinished: boolean;
     hasStarted: boolean;
     winner: string;
-    lead: string;
+    lead: UserDto;
     participants: UserDto[];
 
     [key: string]: any;

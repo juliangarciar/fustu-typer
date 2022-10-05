@@ -34,6 +34,13 @@ setAxiosFactory(() => {
         return config
     });
 
+    axios.interceptors.response.use((config) => {
+        // WHY is this hack necessary!?
+        if (config.status < 300)
+            config.status = 201;
+        return config;
+    });
+
     return axios;
 })
 

@@ -1,7 +1,9 @@
 import { AlertDialog, AlertDialogBody, AlertDialogCloseButton, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, FormControl, FormHelperText, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react"
 import React, { useState } from "react"
-import { useQueryClient, useQueryErrorResetBoundary } from "react-query";
-import { AuthControllerClient, AuthControllerQuery, GameControllerClient, GameControllerQuery, LoginDto, RegisterDto, setBaseUrl, UsersControllerQuery } from "../api/axios-client";
+import { useQueryClient } from "react-query";
+import { AuthControllerClient, AuthControllerQuery, CreateGameDto, GameControllerClient, GameControllerQuery, LoginDto, RegisterDto, setBaseUrl, UsersControllerQuery } from "../api/axios-client";
+import GameList from "../lobby/gameList";
+import PreGame from "../lobby/preGame";
 
 interface TyperMenuProps {
     onStart: () => void;
@@ -10,6 +12,7 @@ interface TyperMenuProps {
 
 const TyperMenu: React.FunctionComponent<TyperMenuProps> = ({ onStart, gameState }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const queryClient = useQueryClient();
 
     React.useEffect(() => {
         gameState ? onClose() : onOpen();
@@ -22,7 +25,6 @@ const TyperMenu: React.FunctionComponent<TyperMenuProps> = ({ onStart, gameState
     const [formData, setFormData] = useState({ email: "", password: "" });
 
     const { data, refetch } = UsersControllerQuery.useMeQuery();
-    const queryClient = useQueryClient();
 
     if (!data?.email) {
         return <Modal closeOnOverlayClick={false}
@@ -86,9 +88,16 @@ const TyperMenu: React.FunctionComponent<TyperMenuProps> = ({ onStart, gameState
                 <ModalHeader>Hello {data.name}, welcome to FuSTU Typer</ModalHeader>
                 <ModalBody pb={6}>
                     Welcome to the best game in earth, the FuSTU Typer!
+                    <PreGame />
                 </ModalBody>
 
                 <ModalFooter>
+                    <Button m={6} onClick={async () => {
+                        await GameControllerQuery.Client.createGame(new CreateGameDto({ title: "New Game" }));
+                        queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+                    }}>
+                        Create Game
+                    </Button>
                     <Button m={6} onClick={() => {
                         localStorage.removeItem("accessToken");
                         refetch();
