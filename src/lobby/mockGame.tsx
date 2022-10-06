@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { GameControllerQuery, SubmitWordDto } from "../api/axios-client";
 import { io } from "socket.io-client";
+import ActiveGameDataDto from "../api/activeGameData.dto";
 
 
 const MockGame: FC<{ gameId: string }> = ({ gameId }) => {
@@ -10,7 +11,6 @@ const MockGame: FC<{ gameId: string }> = ({ gameId }) => {
     const { data } = GameControllerQuery.useGetGameStateQuery(gameId);
     const [currentWord, setCurrentWord] = useState("");
     const queryClient = useQueryClient();
-
     useEffect(() => {
 
         const socket = io('http://localhost:3333/', {
@@ -22,7 +22,11 @@ const MockGame: FC<{ gameId: string }> = ({ gameId }) => {
             }
         });
 
-        socket.on("message", (d) => {
+        socket.on("message", (d: ActiveGameDataDto) => {
+            console.log(JSON.stringify(d));
+            if (d.status.gameFinished || d.status.gameStarted) {
+                queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+            }
             console.log(d);
         });
 
@@ -34,6 +38,9 @@ const MockGame: FC<{ gameId: string }> = ({ gameId }) => {
     if (!data) {
         return <CircularProgress isIndeterminate />
     }
+
+   // console.log(data.game.startedTimestamp);
+  //  console.log(new Date().valueOf());
 
     return <Container>
         <Box>
