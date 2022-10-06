@@ -38,7 +38,7 @@ const MockGame: FC<{ gameId: string }> = ({ gameId }) => {
     return <Container>
         <Box>
             {data.wordsToBeSubmitted.map((w, idx) =>
-                <p key={idx}>{w}</p>
+                <p key={idx}>{JSON.stringify(w)}</p>
             )}
         </Box>
         <Input value={currentWord} onChange={(e) => { setCurrentWord(e.target.value) }}

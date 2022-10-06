@@ -1664,7 +1664,8 @@ export class GameDto implements IGameDto {
     title!: string;
     hasFinished!: boolean;
     hasStarted!: boolean;
-    winner!: string;
+    startedTimestamp!: number;
+    winner!: UserDto;
     lead!: UserDto;
     participants!: UserDto[];
 
@@ -1678,6 +1679,7 @@ export class GameDto implements IGameDto {
             }
         }
         if (!data) {
+            this.winner = new UserDto();
             this.lead = new UserDto();
             this.participants = [];
         }
@@ -1693,7 +1695,8 @@ export class GameDto implements IGameDto {
             this.title = _data["title"];
             this.hasFinished = _data["hasFinished"];
             this.hasStarted = _data["hasStarted"];
-            this.winner = _data["winner"];
+            this.startedTimestamp = _data["startedTimestamp"];
+            this.winner = _data["winner"] ? UserDto.fromJS(_data["winner"]) : new UserDto();
             this.lead = _data["lead"] ? UserDto.fromJS(_data["lead"]) : new UserDto();
             if (Array.isArray(_data["participants"])) {
                 this.participants = [] as any;
@@ -1720,7 +1723,8 @@ export class GameDto implements IGameDto {
         data["title"] = this.title;
         data["hasFinished"] = this.hasFinished;
         data["hasStarted"] = this.hasStarted;
-        data["winner"] = this.winner;
+        data["startedTimestamp"] = this.startedTimestamp;
+        data["winner"] = this.winner ? this.winner.toJSON() : <any>undefined;
         data["lead"] = this.lead ? this.lead.toJSON() : <any>undefined;
         if (Array.isArray(this.participants)) {
             data["participants"] = [];
@@ -1736,7 +1740,8 @@ export interface IGameDto {
     title: string;
     hasFinished: boolean;
     hasStarted: boolean;
-    winner: string;
+    startedTimestamp: number;
+    winner: UserDto;
     lead: UserDto;
     participants: UserDto[];
 
@@ -1935,9 +1940,72 @@ export interface IStartGameDto {
     [key: string]: any;
 }
 
+export class WordDto implements IWordDto {
+    word!: string;
+    /** The amount of ms that need to pass from the starting timestamp until the word can be submitted. */
+    validFrom!: number;
+    /** The amount of ms that need to pass from the starting timestamp until the word can not be submitted anymore. */
+    validUntil!: number;
+    column!: number;
+
+    [key: string]: any;
+
+    constructor(data?: IWordDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.word = _data["word"];
+            this.validFrom = _data["validFrom"];
+            this.validUntil = _data["validUntil"];
+            this.column = _data["column"];
+        }
+    }
+
+    static fromJS(data: any): WordDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WordDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["word"] = this.word;
+        data["validFrom"] = this.validFrom;
+        data["validUntil"] = this.validUntil;
+        data["column"] = this.column;
+        return data;
+    }
+}
+
+export interface IWordDto {
+    word: string;
+    /** The amount of ms that need to pass from the starting timestamp until the word can be submitted. */
+    validFrom: number;
+    /** The amount of ms that need to pass from the starting timestamp until the word can not be submitted anymore. */
+    validUntil: number;
+    column: number;
+
+    [key: string]: any;
+}
+
 export class GameStateDto implements IGameStateDto {
-    wordlist!: string[];
-    wordsToBeSubmitted!: string[];
+    wordsToBeSubmitted!: WordDto[];
     game!: GameDto;
 
     [key: string]: any;
@@ -1950,7 +2018,6 @@ export class GameStateDto implements IGameStateDto {
             }
         }
         if (!data) {
-            this.wordlist = [];
             this.wordsToBeSubmitted = [];
             this.game = new GameDto();
         }
@@ -1962,15 +2029,10 @@ export class GameStateDto implements IGameStateDto {
                 if (_data.hasOwnProperty(property))
                     this[property] = _data[property];
             }
-            if (Array.isArray(_data["wordlist"])) {
-                this.wordlist = [] as any;
-                for (let item of _data["wordlist"])
-                    this.wordlist!.push(item);
-            }
             if (Array.isArray(_data["wordsToBeSubmitted"])) {
                 this.wordsToBeSubmitted = [] as any;
                 for (let item of _data["wordsToBeSubmitted"])
-                    this.wordsToBeSubmitted!.push(item);
+                    this.wordsToBeSubmitted!.push(WordDto.fromJS(item));
             }
             this.game = _data["game"] ? GameDto.fromJS(_data["game"]) : new GameDto();
         }
@@ -1989,15 +2051,10 @@ export class GameStateDto implements IGameStateDto {
             if (this.hasOwnProperty(property))
                 data[property] = this[property];
         }
-        if (Array.isArray(this.wordlist)) {
-            data["wordlist"] = [];
-            for (let item of this.wordlist)
-                data["wordlist"].push(item);
-        }
         if (Array.isArray(this.wordsToBeSubmitted)) {
             data["wordsToBeSubmitted"] = [];
             for (let item of this.wordsToBeSubmitted)
-                data["wordsToBeSubmitted"].push(item);
+                data["wordsToBeSubmitted"].push(item.toJSON());
         }
         data["game"] = this.game ? this.game.toJSON() : <any>undefined;
         return data;
@@ -2005,8 +2062,7 @@ export class GameStateDto implements IGameStateDto {
 }
 
 export interface IGameStateDto {
-    wordlist: string[];
-    wordsToBeSubmitted: string[];
+    wordsToBeSubmitted: WordDto[];
     game: GameDto;
 
     [key: string]: any;
