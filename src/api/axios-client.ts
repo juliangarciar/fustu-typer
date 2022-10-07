@@ -1941,6 +1941,7 @@ export interface IStartGameDto {
 }
 
 export class WordDto implements IWordDto {
+    id!: number;
     word!: string;
     /** The amount of ms that need to pass from the starting timestamp until the word can be submitted. */
     validFrom!: number;
@@ -1965,6 +1966,7 @@ export class WordDto implements IWordDto {
                 if (_data.hasOwnProperty(property))
                     this[property] = _data[property];
             }
+            this.id = _data["id"];
             this.word = _data["word"];
             this.validFrom = _data["validFrom"];
             this.validUntil = _data["validUntil"];
@@ -1985,6 +1987,7 @@ export class WordDto implements IWordDto {
             if (this.hasOwnProperty(property))
                 data[property] = this[property];
         }
+        data["id"] = this.id;
         data["word"] = this.word;
         data["validFrom"] = this.validFrom;
         data["validUntil"] = this.validUntil;
@@ -1994,6 +1997,7 @@ export class WordDto implements IWordDto {
 }
 
 export interface IWordDto {
+    id: number;
     word: string;
     /** The amount of ms that need to pass from the starting timestamp until the word can be submitted. */
     validFrom: number;
