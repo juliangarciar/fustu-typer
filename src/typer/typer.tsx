@@ -1,5 +1,6 @@
-import { Box, Input, VStack } from '@chakra-ui/react';
+import { Box, Button, Input, VStack } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from "react";
+import { UsersControllerQuery } from '../api/axios-client';
 import { FRECUENCY } from './typer-config';
 import TyperScore from './typer-score';
 import { Word } from './typer-service';
@@ -8,7 +9,7 @@ import TyperWord, { TypeWordProps } from "./typerword";
 interface TyperProps {
     words: Array<Word>;
     endGame: () => void;
-    gameState: boolean;
+    gameState: string;
 };
 
 const generateUUID = (index: number) => {
@@ -28,6 +29,7 @@ const Typer = ({words, endGame, gameState}: TyperProps) => {
     const [correctWords, setCorrectWords] = React.useState(0);
     let currentIndex: number = 0;
     let [gameEnded, setGameEnded] = React.useState(false);
+    const { data: meData, refetch } = UsersControllerQuery.useMeQuery();
 
     useEffect(() => {
         if (gameState) {
@@ -92,7 +94,7 @@ const Typer = ({words, endGame, gameState}: TyperProps) => {
                 <Box height="10%" width="100%" position="relative" >
                     <TyperScore correctWords={correctWords} incorrectWords={failedWords}></TyperScore>
                 </Box>
-                <Box borderRadius="lg" shadow="md" width="100%" height="80%" bg="blue.300" paddingX="10px" paddingTop="10px" m={0} position="relative">
+                <Box borderRadius="lg" shadow="md" width="100%" height="75%" bg="blue.300" paddingX="10px" paddingTop="10px" m={0} position="relative">
                     {currentWords.map(word => 
                         <TyperWord 
                             key={word.uuid}
@@ -107,6 +109,10 @@ const Typer = ({words, endGame, gameState}: TyperProps) => {
                 <Box width="100%" height="10%" bg="white" borderRadius="xl" position="relative">
                     <Input height="100%" ref={inputEl} type="text" placeholder="Input word..." size="lg" onKeyPress={handleKeyPress} shadow="md" autoFocus />
                 </Box>
+                <Button m={6} onClick={() => {
+                    localStorage.removeItem("accessToken");
+                    refetch();
+                }}>Logout</Button>
             </VStack>
         </Box>
     );

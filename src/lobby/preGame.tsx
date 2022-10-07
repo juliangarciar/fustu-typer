@@ -7,7 +7,6 @@ import MockGame from "./mockGame";
 
 
 const PreGame: FC = () => {
-
     const currentGame = GameControllerQuery.useGetCurrentGameQuery();
     const currentUser = UsersControllerQuery.useMeQuery();
     const queryClient = useQueryClient();
