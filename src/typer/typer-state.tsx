@@ -10,7 +10,7 @@ const useTransitionState = (duration: number) => {
     const [state, setState] = useState(STATE.ENTERING);
 
     useEffect(() => {
-        let timerId: number;
+        let timerId: any;
         if (state === STATE.ENTERING) {
             timerId = setTimeout(() => setState(STATE.ENTERED), 100);
         }

@@ -23,7 +23,10 @@ const theme = extendTheme({
 
 const queryClient = new QueryClient();
 
-setBaseUrl('http://localhost:3333');
+if (process.env.NODE_ENV == 'development') {
+    setBaseUrl("http://localhost:3333");
+}
+
 setAxiosFactory(() => {
 
     axios.interceptors.request.use((config: any) => {
