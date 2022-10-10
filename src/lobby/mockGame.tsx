@@ -14,7 +14,6 @@ const MockGame: FC<{ gameId: string }> = ({ gameId }) => {
     const forceUpdate = useForceUpdate();
 
     useEffect(() => {
-        
         const socket = io('http://localhost:3333/', {
             auth: {
                 token: localStorage.getItem("accessToken")

@@ -1,5 +1,5 @@
 import { COLUMN, MODE } from "./typer-config";
-
+/*
 export interface Word {
     text: string;
     difficulty: string;
@@ -67,3 +67,5 @@ export const getWords = (): Array<Word> => {
 
     return generatedWords;
 }
+
+*/

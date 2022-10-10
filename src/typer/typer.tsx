@@ -1,121 +1,98 @@
-import { Box, Button, Input, VStack } from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from "react";
-import { UsersControllerQuery } from '../api/axios-client';
-import { FRECUENCY } from './typer-config';
+import { Box, CircularProgress, Input, VStack } from '@chakra-ui/react';
+import { FC, RefObject, useEffect, useRef, useState } from "react";
+import { useQueryClient } from 'react-query';
+import { io } from "socket.io-client";
+import ActiveGameDataDto from "../api/activeGameData.dto";
+import { GameControllerQuery, SubmitWordDto } from '../api/axios-client';
 import TyperScore from './typer-score';
-import { Word } from './typer-service';
-import TyperWord, { TypeWordProps } from "./typerword";
+import TyperWord from "./typerword";
 
-interface TyperProps {
-    words: Array<Word>;
-    endGame: () => void;
-    gameState: string;
-};
 
-const generateUUID = (index: number) => {
-    return "word_" + new Date().getTime() + "_" + index;
-};
-
-const Typer = ({words, endGame, gameState}: TyperProps) => {
-    const inputEl: React.RefObject<HTMLInputElement> = React.useRef<HTMLInputElement>(null);
-    const [currentWords, setCurrentWords] = React.useState<Array<TypeWordProps>>([]);
-    const copyWords: Array<TypeWordProps> = words.map<TypeWordProps>((word, index) => ({
-        uuid: generateUUID(index), 
-        currentWord: word.text, 
-        mode: word.difficulty,
-        column: word.column,
-    }));
-    const [failedWords, setFailedWords] = React.useState(0);
-    const [correctWords, setCorrectWords] = React.useState(0);
-    let currentIndex: number = 0;
-    let [gameEnded, setGameEnded] = React.useState(false);
-    const { data: meData, refetch } = UsersControllerQuery.useMeQuery();
-
-    useEffect(() => {
-        if (gameState) {
-            gameEnded = false;
-            setFailedWords(0);
-            setCorrectWords(0);
-            update();
-        }
-    }, [gameState]);
-
-    const update = () => {
-        if (gameState) {
-            let timerId = setInterval(() => {
-                if (currentIndex < copyWords.length) {
-                    setCurrentWords(existingWords => {
-                        return [copyWords.at(currentIndex) as TypeWordProps, ...existingWords];
-                    });
-                } else {
-                    setGameEnded((gameEnded) => gameEnded = true);
-                    clearInterval(timerId);
-                }
-                currentIndex++;
-            }, FRECUENCY[copyWords.at(currentIndex)?.mode as keyof typeof FRECUENCY]);
-        }
-    };
-
-    const deleteWord = (index: number) => {
-        if (index > -1) {
-            let copyWords = currentWords.slice();
-            copyWords.splice(index, 1);
-            setCurrentWords((currentWords) => currentWords = copyWords);
-
-            if (gameEnded && copyWords.length === 0) {
-                endGame();
-            }
-        }
-    };
-
-    const handleKeyPress = (event: React.KeyboardEvent) => {
-        if (event.key === 'Enter' || event.key === 'Space') {
-            if (inputEl && inputEl.current && inputEl.current.value) {
-                let index = currentWords.findIndex(word => word.currentWord === inputEl.current?.value);
-                if (index > -1) {
-                    deleteWord(index);
-                    setCorrectWords(currentCorrectWords => currentCorrectWords + 1);
-                }
-                
-                inputEl.current.value = '';
-            }
-        }
-    };
+const Typer: FC<{gameState: string, gameId: string}> = ({gameState, gameId}) => {
+    const inputEl: RefObject<HTMLInputElement> = useRef<HTMLInputElement>(null);
     
-    const handleExitWord = (uuid: string) => {
-        let index = currentWords.findIndex(word => word.uuid === uuid);
-        deleteWord(index);
-        setFailedWords(currentFailedWords => currentFailedWords + 1);
-    };
+    const { data } = GameControllerQuery.useGetGameStateQuery(gameId);
+    const [currentWord, setCurrentWord] = useState("");
+    const queryClient = useQueryClient();
+    const forceUpdate = useForceUpdate();
+    
+    useEffect(() => {
+        const socket = io('http://localhost:3333/', {
+            auth: {
+                token: localStorage.getItem("accessToken")
+            },
+            query: {
+                "gameId": gameId
+            }
+        });
+
+        socket.on("message", (d: ActiveGameDataDto) => {
+            if (d.status.gameStarted) {
+                queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+                queryClient.invalidateQueries(GameControllerQuery.getGameStateQueryKey(gameId));
+            }
+        });
+
+        const updateInterval = setInterval(forceUpdate, 100);
+        return () => {
+            clearInterval(updateInterval);
+            socket.disconnect();
+        }
+    }, []);
+
+    if (!data) {
+        return <CircularProgress isIndeterminate />
+    }
+
+    const currentTs = new Date().valueOf() - data.game.startedTimestamp;
 
     return (
         <Box width="100vw" height="100vh" bg="blue.100" display="flex">
             <VStack w="60%" h="90%" minWidth="800px" minHeight="600px" m="auto" spacing={2} overflow="hidden">
                 <Box height="10%" width="100%" position="relative" >
-                    <TyperScore correctWords={correctWords} incorrectWords={failedWords}></TyperScore>
+                    <TyperScore correctWords={0} incorrectWords={0}></TyperScore>
                 </Box>
                 <Box borderRadius="lg" shadow="md" width="100%" height="75%" bg="blue.300" paddingX="10px" paddingTop="10px" m={0} position="relative">
-                    {currentWords.map(word => 
-                        <TyperWord 
-                            key={word.uuid}
-                            uuid={word.uuid} 
-                            currentWord={word.currentWord} 
-                            mode={word.mode}
-                            column={word.column}
-                            onExit={(id: string) => handleExitWord(id)}
-                        />
-                    )}
+                {data.wordsToBeSubmitted.filter(
+                    w => w.validFrom < currentTs && w.validUntil > currentTs
+                ).map((w, idx) =>
+                    <TyperWord 
+                        key={w.id}
+                        currentWord={w.word} 
+                        column={w.column}
+                        duration={w.validUntil - w.validFrom}
+                    />
+                )}
                 </Box>
                 <Box width="100%" height="10%" bg="white" borderRadius="xl" position="relative">
-                    <Input height="100%" ref={inputEl} type="text" placeholder="Input word..." size="lg" onKeyPress={handleKeyPress} shadow="md" autoFocus />
+                <Input height="100%" 
+                    type="text" 
+                    placeholder="Input word..." 
+                    size="lg" 
+                    shadow="md" 
+                    autoFocus 
+                    value={currentWord} 
+                    onChange={(e) => { setCurrentWord(e.target.value) }}
+                    onKeyDown={async (e) => {
+                        if (e.key == "Enter") {
+                            const result = await GameControllerQuery.Client.submitWord(new SubmitWordDto({ gameId, word: currentWord }));
+                            queryClient.invalidateQueries(GameControllerQuery.getGameStateQueryKey(gameId));
+                            setCurrentWord("");
+                            if (result.gameFinished) {
+                                queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+                            }
+                        }
+                    }} 
+                />
                 </Box>
-                <Button m={6} onClick={() => {
-                    localStorage.removeItem("accessToken");
-                    refetch();
-                }}>Logout</Button>
             </VStack>
         </Box>
     );
+}
+
+const useForceUpdate = () => {
+    const [value, setValue] = useState(0);
+    return () => setValue(value => value + 1);
 }
 
 export default Typer;

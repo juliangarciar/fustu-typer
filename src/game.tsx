@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { GameControllerQuery, UsersControllerQuery } from "./api/axios-client";
 import TyperLogin from "./menu/typer-login";
 import TyperMenu from "./menu/typer-menu";
 import Typer from "./typer/typer";
-import { getWords } from "./typer/typer-service";
 
 export const GAME_STATE = {
     LOGIN: "LOGIN",
@@ -13,8 +12,8 @@ export const GAME_STATE = {
     INIT: "INIT",
 };
 
-const Game: React.FunctionComponent = () => {
-    const [currentState, setCurrentState] = React.useState(GAME_STATE.INIT);
+const Game: FC = () => {
+    const [currentState, setCurrentState] = useState(GAME_STATE.INIT);
     const { data, refetch } = UsersControllerQuery.useMeQuery();
     const currentGame = GameControllerQuery.useGetCurrentGameQuery();
 
@@ -33,21 +32,13 @@ const Game: React.FunctionComponent = () => {
         console.log(currentState);
     }, [currentGame, data]);
 
-    const startGame = () => {
-        // setCurrentState(true);
-    };
-
-    const endGame = () => {
-        // setCurrentState(false);
-    };
-
     if (currentState === GAME_STATE.LOGIN || currentState === GAME_STATE.INIT) {
         return (
             <TyperLogin gameState={currentState} />
         );
-    } else if (currentState === GAME_STATE.GAME) {
+    } else if (currentState === GAME_STATE.GAME && currentGame.data) {
         return (
-            <Typer words={getWords()} endGame={() => endGame()} gameState={currentState} />
+            <Typer gameState={currentState} gameId={currentGame.data.id} />
         );
     } else {
         return (

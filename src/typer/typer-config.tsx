@@ -18,9 +18,9 @@ export const durationStyles = {
 };
 
 export const columnStyles = {
-    left:   { left: "5%" },
-    mid:    { left: "50%", transform: "translateX(-50%)" },
-    right:  { right: "5%"},
+    0:   { left: "5%" },
+    1:    { left: "50%", transform: "translateX(-50%)" },
+    2:  { right: "5%"},
 };
 
 export const durationTime = {
