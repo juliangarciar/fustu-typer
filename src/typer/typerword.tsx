@@ -1,8 +1,7 @@
 import { Center, Text } from "@chakra-ui/react";
-import CSS from 'csstype';
-import React from "react";
-import useTransitionControl, { STATE } from "./typer-state";
+import { useEffect } from "react";
 import { columnStyles, durationStyles, durationTime, transitionStyles } from "./typer-config";
+import { STATE, useTransitionControl } from "./typer-state";
 
 export interface TypeWordProps {
     uuid: string;
@@ -21,7 +20,7 @@ const TyperWord = ({uuid, currentWord, mode, onExit = undefined, column}: TypeWo
         ...columnStyles[column as keyof typeof columnStyles] ?? {},
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (state === STATE.EXITING) {
             onExit && onExit(uuid);
         }

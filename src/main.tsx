@@ -44,7 +44,6 @@ setAxiosFactory(() => {
     return axios;
 })
 
-
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
         <ChakraProvider theme={theme}>

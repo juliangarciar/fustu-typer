@@ -11,8 +11,10 @@ const MockGame: FC<{ gameId: string }> = ({ gameId }) => {
     const { data } = GameControllerQuery.useGetGameStateQuery(gameId);
     const [currentWord, setCurrentWord] = useState("");
     const queryClient = useQueryClient();
-    const forceUpdate = useForceUpdate()
+    const forceUpdate = useForceUpdate();
+
     useEffect(() => {
+        
         const socket = io('http://localhost:3333/', {
             auth: {
                 token: localStorage.getItem("accessToken")
@@ -29,7 +31,7 @@ const MockGame: FC<{ gameId: string }> = ({ gameId }) => {
             }
         });
 
-        const updateInterval = setInterval(forceUpdate, 100)
+        const updateInterval = setInterval(forceUpdate, 100);
         return () => {
             clearInterval(updateInterval)
             socket.disconnect();

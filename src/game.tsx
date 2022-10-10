@@ -19,6 +19,7 @@ const Game: React.FunctionComponent = () => {
     const currentGame = GameControllerQuery.useGetCurrentGameQuery();
 
     useEffect(() => {
+        // TODO: Extract login from game logic
         if (!data?.email) {
             setCurrentState((currentState) => currentState = GAME_STATE.LOGIN);
         } else if (!currentGame.data?.id) {
@@ -50,7 +51,7 @@ const Game: React.FunctionComponent = () => {
         );
     } else {
         return (
-            <TyperMenu gameState={currentState} onStart={startGame}/>
+            <TyperMenu gameState={currentState} />
         );
     }
 }

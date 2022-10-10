@@ -1,40 +1,30 @@
-import { Modal, ModalOverlay, useDisclosure } from "@chakra-ui/react";
-import React, { FC } from "react";
+import { Modal, ModalOverlay, useDisclosure, UseModalProps } from "@chakra-ui/react";
+import { FC, useEffect } from "react";
 import { GAME_STATE } from "../game";
 import TyperGameList from "./typer-game-list";
 import TyperLobby from "./typer-lobby";
 
-interface TyperMenuProps {
-    gameState: string;
-    onStart: () => void;
-};
-
-const TyperMenu: FC<TyperMenuProps> = (props) => {
+const TyperMenu: FC<{gameState: string}> = ({gameState}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    React.useEffect(() => {
-        if (props.gameState === GAME_STATE.GAME_LIST 
-                || props.gameState === GAME_STATE.GAME_LOBBY  
+    useEffect(() => {
+        if (gameState === GAME_STATE.GAME_LIST 
+                || gameState === GAME_STATE.GAME_LOBBY  
                 && !isOpen) {
             onOpen();
-        } else if (props.gameState === GAME_STATE.GAME && isOpen) {
+        } else if (gameState === GAME_STATE.GAME && isOpen) {
             onClose();
         }
-    }, [props]);
+    }, [gameState]);
 
     return (
-        <Modal closeOnOverlayClick={false}
-            closeOnEsc={false}
-            isOpen={isOpen}
-            onClose={onClose}
-            isCentered={true}
-        >
+        <Modal  closeOnOverlayClick={false} 
+                closeOnEsc={false} 
+                isOpen={isOpen} 
+                onClose={onClose} 
+                isCentered={true}>
             <ModalOverlay />
-            {
-                props.gameState === GAME_STATE.GAME_LIST 
-                    ? <TyperGameList />
-                    : <TyperLobby />
-            }
+            {gameState === GAME_STATE.GAME_LIST ? <TyperGameList /> : <TyperLobby />}
         </Modal>
     );
 }
