@@ -1,12 +1,10 @@
-import React from 'react'
+import { ChakraProvider, extendTheme } from '@chakra-ui/react'
+import axios from 'axios'
 import ReactDOM from 'react-dom/client'
-import './index.css'
-import { ChakraProvider } from '@chakra-ui/react'
-import { extendTheme } from "@chakra-ui/react"
-import Game from './game'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { setAxiosFactory, setBaseUrl } from './api/axios-client'
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
-import axios, { AxiosError } from 'axios'
+import Game from './game'
+import './index.css'
 
 const theme = extendTheme({
     colors: {
