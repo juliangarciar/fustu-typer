@@ -50,7 +50,7 @@ const Typer: FC<{gameState: string, gameId: string}> = ({gameState, gameId}) => 
         <Box width="100vw" height="100vh" bg="blue.100" display="flex">
             <VStack w="60%" h="90%" minWidth="800px" minHeight="600px" m="auto" spacing={2} overflow="hidden">
                 <Box height="10%" width="100%" position="relative" >
-                    <TyperScore correctWords={0} incorrectWords={0}></TyperScore>
+                    <TyperScore correctWords={data.correctSubmissions} incorrectWords={data.wrongSubmissions}></TyperScore>
                 </Box>
                 <Box borderRadius="lg" shadow="md" width="100%" height="75%" bg="blue.300" paddingX="10px" paddingTop="10px" m={0} position="relative">
                 {data.wordsToBeSubmitted.filter(

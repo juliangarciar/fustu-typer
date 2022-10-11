@@ -623,7 +623,7 @@ export class GameControllerClient {
         return Promise.resolve<GameStateDto>(null as any);
     }
 
-    submitWord(body: SubmitWordDto , cancelToken?: CancelToken | undefined): Promise<SubmitResponseDto> {
+    submitWord(body: SubmitWordDto , cancelToken?: CancelToken | undefined): Promise<SubmitWordResponseDto> {
         let url_ = this.baseUrl + "/game/submit";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -651,7 +651,7 @@ export class GameControllerClient {
         });
     }
 
-    protected processSubmitWord(response: AxiosResponse): Promise<SubmitResponseDto> {
+    protected processSubmitWord(response: AxiosResponse): Promise<SubmitWordResponseDto> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -665,14 +665,14 @@ export class GameControllerClient {
             const _responseText = response.data;
             let result201: any = null;
             let resultData201  = _responseText;
-            result201 = SubmitResponseDto.fromJS(resultData201);
-            return Promise.resolve<SubmitResponseDto>(result201);
+            result201 = SubmitWordResponseDto.fromJS(resultData201);
+            return Promise.resolve<SubmitWordResponseDto>(result201);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<SubmitResponseDto>(null as any);
+        return Promise.resolve<SubmitWordResponseDto>(null as any);
     }
 
     getGame(id: string , cancelToken?: CancelToken | undefined): Promise<GameDto> {
@@ -2010,6 +2010,8 @@ export interface IWordDto {
 
 export class GameStateDto implements IGameStateDto {
     wordsToBeSubmitted!: WordDto[];
+    correctSubmissions!: number;
+    wrongSubmissions!: number;
     game!: GameDto;
 
     [key: string]: any;
@@ -2038,6 +2040,8 @@ export class GameStateDto implements IGameStateDto {
                 for (let item of _data["wordsToBeSubmitted"])
                     this.wordsToBeSubmitted!.push(WordDto.fromJS(item));
             }
+            this.correctSubmissions = _data["correctSubmissions"];
+            this.wrongSubmissions = _data["wrongSubmissions"];
             this.game = _data["game"] ? GameDto.fromJS(_data["game"]) : new GameDto();
         }
     }
@@ -2060,6 +2064,8 @@ export class GameStateDto implements IGameStateDto {
             for (let item of this.wordsToBeSubmitted)
                 data["wordsToBeSubmitted"].push(item.toJSON());
         }
+        data["correctSubmissions"] = this.correctSubmissions;
+        data["wrongSubmissions"] = this.wrongSubmissions;
         data["game"] = this.game ? this.game.toJSON() : <any>undefined;
         return data;
     }
@@ -2067,6 +2073,8 @@ export class GameStateDto implements IGameStateDto {
 
 export interface IGameStateDto {
     wordsToBeSubmitted: WordDto[];
+    correctSubmissions: number;
+    wrongSubmissions: number;
     game: GameDto;
 
     [key: string]: any;
@@ -2124,14 +2132,14 @@ export interface ISubmitWordDto {
     [key: string]: any;
 }
 
-export class SubmitResponseDto implements ISubmitResponseDto {
+export class SubmitWordResponseDto implements ISubmitWordResponseDto {
     success!: boolean;
     remainingWords!: number;
     gameFinished!: boolean;
 
     [key: string]: any;
 
-    constructor(data?: ISubmitResponseDto) {
+    constructor(data?: ISubmitWordResponseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2152,9 +2160,9 @@ export class SubmitResponseDto implements ISubmitResponseDto {
         }
     }
 
-    static fromJS(data: any): SubmitResponseDto {
+    static fromJS(data: any): SubmitWordResponseDto {
         data = typeof data === 'object' ? data : {};
-        let result = new SubmitResponseDto();
+        let result = new SubmitWordResponseDto();
         result.init(data);
         return result;
     }
@@ -2172,7 +2180,7 @@ export class SubmitResponseDto implements ISubmitResponseDto {
     }
 }
 
-export interface ISubmitResponseDto {
+export interface ISubmitWordResponseDto {
     success: boolean;
     remainingWords: number;
     gameFinished: boolean;
