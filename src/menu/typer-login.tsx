@@ -1,19 +1,23 @@
 import { Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
 import React, { FC } from "react";
 import { useQueryClient } from "react-query";
-import { AuthControllerQuery, GameControllerQuery, LoginDto, RegisterDto, UsersControllerQuery } from "../api/axios-client";
+import { AuthControllerQuery, GameControllerQuery, GoogleTokenDto, LoginDto, RegisterDto, UsersControllerQuery } from "../api/axios-client";
 import { GAME_STATE } from "../game";
 
 interface TyperLoginProps {
     gameState: string;
 };
 
+declare global {
+    const google: typeof import('google-one-tap');
+}
+
 const TyperLogin: FC<TyperLoginProps> = (props) => {
     const [formData, setFormData] = React.useState({ email: "", password: "" });
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data, refetch } = UsersControllerQuery.useMeQuery();
     const queryClient = useQueryClient();
-    
+
     React.useEffect(() => {
         if (props.gameState === GAME_STATE.LOGIN && !isOpen) {
             onOpen();
@@ -22,12 +26,20 @@ const TyperLogin: FC<TyperLoginProps> = (props) => {
         }
     }, [props.gameState]);
 
+    React.useEffect(() => {
+        google.accounts.id.initialize({
+            client_id: "1001740339512-uq8ofj3bap5qlu79hnkoci149ep7lq1b.apps.googleusercontent.com",
+            callback: (response) => { console.log(response); }
+        });
+        google.accounts.id.prompt();
+    }, []);
+
     const login = async () => {
         const result = await AuthControllerQuery.Client.login(new LoginDto({ ...formData }));
         localStorage.setItem("accessToken", result.accessToken);
         setFormData({ email: "", password: "" });
         refetch();
-        
+
         queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
     };
 
