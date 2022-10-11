@@ -1,16 +1,13 @@
 import { Box, CircularProgress, Input, VStack } from '@chakra-ui/react';
-import { FC, RefObject, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useQueryClient } from 'react-query';
 import { io } from "socket.io-client";
 import ActiveGameDataDto from "../api/activeGameData.dto";
 import { GameControllerQuery, SubmitWordDto } from '../api/axios-client';
 import TyperScore from './typer-score';
-import TyperWord from "./typerword";
+import TyperWord from "./typer-word";
 
-
-const Typer: FC<{gameState: string, gameId: string}> = ({gameState, gameId}) => {
-    const inputEl: RefObject<HTMLInputElement> = useRef<HTMLInputElement>(null);
-    
+export const Typer: FC<{ gameId: string }> = ({ gameId }) => {
     const { data } = GameControllerQuery.useGetGameStateQuery(gameId);
     const [currentWord, setCurrentWord] = useState("");
     const queryClient = useQueryClient();
@@ -40,6 +37,17 @@ const Typer: FC<{gameState: string, gameId: string}> = ({gameState, gameId}) => 
         }
     }, []);
 
+    const handleKeyInput = async (e: React.KeyboardEvent) => {
+        if (e.key == "Enter") {
+            const result = await GameControllerQuery.Client.submitWord(new SubmitWordDto({ gameId, word: currentWord }));
+            queryClient.invalidateQueries(GameControllerQuery.getGameStateQueryKey(gameId));
+            setCurrentWord("");
+            if (result.gameFinished) {
+                queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+            }
+        }
+    };
+
     if (!data) {
         return <CircularProgress isIndeterminate />
     }
@@ -48,21 +56,23 @@ const Typer: FC<{gameState: string, gameId: string}> = ({gameState, gameId}) => 
 
     return (
         <Box width="100vw" height="100vh" bg="blue.100" display="flex">
-            <VStack w="60%" h="90%" minWidth="800px" minHeight="600px" m="auto" spacing={2} overflow="hidden">
+            <VStack w="60%" h="90%" minWidth="800px" minHeight="600px" m="auto" spacing={2} overflowY="hidden">
                 <Box height="10%" width="100%" position="relative" >
                     <TyperScore correctWords={0} incorrectWords={0}></TyperScore>
                 </Box>
                 <Box borderRadius="lg" shadow="md" width="100%" height="75%" bg="blue.300" paddingX="10px" paddingTop="10px" m={0} position="relative">
-                {data.wordsToBeSubmitted.filter(
-                    w => w.validFrom < currentTs && w.validUntil > currentTs
-                ).map((w, idx) =>
-                    <TyperWord 
-                        key={w.id}
-                        currentWord={w.word} 
-                        column={w.column}
-                        duration={w.validUntil - w.validFrom}
-                    />
-                )}
+                    {
+                        data.wordsToBeSubmitted.filter(
+                            w => w.validFrom < currentTs && w.validUntil > currentTs
+                        ).map((w, idx) =>
+                            <TyperWord 
+                                key={w.id}
+                                currentWord={w.word} 
+                                column={w.column}
+                                duration={w.validUntil - w.validFrom}
+                            />
+                        )
+                    }
                 </Box>
                 <Box width="100%" height="10%" bg="white" borderRadius="xl" position="relative">
                 <Input height="100%" 
@@ -73,16 +83,7 @@ const Typer: FC<{gameState: string, gameId: string}> = ({gameState, gameId}) => 
                     autoFocus 
                     value={currentWord} 
                     onChange={(e) => { setCurrentWord(e.target.value) }}
-                    onKeyDown={async (e) => {
-                        if (e.key == "Enter") {
-                            const result = await GameControllerQuery.Client.submitWord(new SubmitWordDto({ gameId, word: currentWord }));
-                            queryClient.invalidateQueries(GameControllerQuery.getGameStateQueryKey(gameId));
-                            setCurrentWord("");
-                            if (result.gameFinished) {
-                                queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
-                            }
-                        }
-                    }} 
+                    onKeyDown={(e) => { handleKeyInput(e) }} 
                 />
                 </Box>
             </VStack>
@@ -93,6 +94,4 @@ const Typer: FC<{gameState: string, gameId: string}> = ({gameState, gameId}) => 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0);
     return () => setValue(value => value + 1);
-}
-
-export default Typer;
+};

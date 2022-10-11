@@ -8,6 +8,11 @@ const TyperLobby: FC = () => {
     const currentUser = UsersControllerQuery.useMeQuery();
     const { data: meData, refetch } = UsersControllerQuery.useMeQuery();
     const queryClient = useQueryClient();
+
+    const handleStartGame = async (gameId: string) => {
+        await GameControllerQuery.Client.startGame(new StartGameDto({ gameId: gameId }));
+        queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+    }
     
     if (!currentGame.data) {
         return (
@@ -36,16 +41,12 @@ const TyperLobby: FC = () => {
                     </Tbody>
                 </Table>
             </ModalBody>
-            <ModalFooter>    
+            <ModalFooter>
                 {
-                    currentGame.data?.lead.id === currentUser.data?.id && !currentGame.data?.hasStarted ?
-                        <Button onClick={async () => {
-                            await GameControllerQuery.Client.startGame(new StartGameDto({ gameId: currentGame.data?.id }));
-                            queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
-                        }}>Start</Button>
+                    currentGame.data?.lead.id === currentUser.data?.id && !currentGame.data?.hasStarted && currentUser.data
+                        ? <Button onClick={async () => handleStartGame(currentUser.data.id)}>Start</Button>
                         : <></>
                 }
-            
                 <Button m={6} onClick={() => {
                     localStorage.removeItem("accessToken");
                     refetch();

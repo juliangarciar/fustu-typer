@@ -1,10 +1,10 @@
 import { Modal, ModalOverlay, useDisclosure, UseModalProps } from "@chakra-ui/react";
 import { FC, useEffect } from "react";
-import { GAME_STATE } from "../game";
+import { GAME_STATE } from "../typer/typer-game";
 import TyperGameList from "./typer-game-list";
 import TyperLobby from "./typer-lobby";
 
-const TyperMenu: FC<{gameState: string}> = ({gameState}) => {
+export const TyperMenu: FC<{gameState: string}> = ({gameState}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
@@ -28,5 +28,3 @@ const TyperMenu: FC<{gameState: string}> = ({gameState}) => {
         </Modal>
     );
 }
-
-export default TyperMenu;
