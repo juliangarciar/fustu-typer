@@ -6,11 +6,11 @@ export const STATE = {
     EXITING: "exiting",
 };
 
-function useTransitionState(duration: number) {
+const useTransitionState = (duration: number) => {
     const [state, setState] = useState(STATE.ENTERING);
 
     useEffect(() => {
-        let timerId: number;
+        let timerId: any;
         if (state === STATE.ENTERING) {
             timerId = setTimeout(() => setState(STATE.ENTERED), 100);
         }
@@ -23,7 +23,7 @@ function useTransitionState(duration: number) {
     return [state, setState] as const;
 }
 
-export default function useTransitionControl(duration: number) {
+export const useTransitionControl = (duration: number) => {
     const [state, setState] = useTransitionState(duration);
 
     const enter = () => {

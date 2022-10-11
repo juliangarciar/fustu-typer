@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "api": "react-query-swagger /input:http://localhost:3333/api-json /output:src/api/axios-client.ts /template:Axios"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.10",
@@ -16,11 +17,17 @@
     "@fontsource/inter": "^4.5.12",
     "@headlessui/react": "^1.7.2",
     "@heroicons/react": "^2.0.11",
+    "axios": "^1.0.0",
+    "dotenv": "^16.0.3",
     "framer-motion": "^6.5.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-query": "^3.39.2",
+    "react-query-swagger": "^14.4.3",
+    "socket.io-client": "^4.5.2"
   },
   "devDependencies": {
+    "@types/node": "^18.8.3",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.1.0",
