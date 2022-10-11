@@ -1,32 +1,27 @@
 import { Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
-import React, { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
-import { AuthControllerQuery, GameControllerQuery, GoogleTokenDto, LoginDto, RegisterDto, UsersControllerQuery } from "../api/axios-client";
-import { GAME_STATE } from "../game";
-
-interface TyperLoginProps {
-    gameState: string;
-};
+import { AuthControllerQuery, GameControllerQuery, LoginDto, RegisterDto, UsersControllerQuery } from "../api/axios-client";
 
 declare global {
     const google: typeof import('google-one-tap');
 }
 
-const TyperLogin: FC<TyperLoginProps> = (props) => {
-    const [formData, setFormData] = React.useState({ email: "", password: "" });
+export const TyperLogin: FC = () => {
+    const [formData, setFormData] = useState({ email: "", password: "" });
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data, refetch } = UsersControllerQuery.useMeQuery();
     const queryClient = useQueryClient();
-
-    React.useEffect(() => {
-        if (props.gameState === GAME_STATE.LOGIN && !isOpen) {
+    
+    useEffect(() => {
+        if (!data?.email) {
             onOpen();
-        } else if (props.gameState !== GAME_STATE.LOGIN && isOpen) {
+        } else {
             onClose();
         }
-    }, [props.gameState]);
+    }, [data]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         google.accounts.id.initialize({
             client_id: "1001740339512-uq8ofj3bap5qlu79hnkoci149ep7lq1b.apps.googleusercontent.com",
             callback: (response) => { console.log(response); }
@@ -57,26 +52,28 @@ const TyperLogin: FC<TyperLoginProps> = (props) => {
             isOpen={isOpen}
             onClose={onClose}
             isCentered={true}
+            size="sm"
         >
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>
                     Welcome to FuSTU Typer
                 </ModalHeader>
-                <ModalBody pb={6}>
+                <ModalBody pb={4}>
                     <FormControl>
-                        <FormLabel>E-Mail</FormLabel>
-                        <Input type="email" value={formData.email} onChange={
+                        <FormLabel hidden={true}>E-Mail</FormLabel>
+                        <Input type="email" value={formData.email} placeholder="E-Mail" onChange={
                             (e) => { setFormData((f) => { return { ...f, email: e.target.value } }) }} />
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>Password</FormLabel>
-                        <Input type="password" value={formData.password} onChange={
+                    <FormControl mt={4}>
+                        <FormLabel hidden={true}>Password</FormLabel>
+                        <Input type="password" value={formData.password} placeholder="Password" onChange={
                             (e) => { setFormData((f) => { return { ...f, password: e.target.value } }) }} />
                     </FormControl>
                     <Button
                         mt={4}
                         colorScheme='teal'
+                        float="right"
                         onClick={async () => {
                             try {
                                 await login();
@@ -92,5 +89,3 @@ const TyperLogin: FC<TyperLoginProps> = (props) => {
         </Modal>
     );
 }
-
-export default TyperLogin;

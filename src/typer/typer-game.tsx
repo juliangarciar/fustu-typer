@@ -1,27 +1,21 @@
 import { FC, useEffect, useState } from "react";
-import { GameControllerQuery, UsersControllerQuery } from "./api/axios-client";
-import TyperLogin from "./menu/typer-login";
-import TyperMenu from "./menu/typer-menu";
-import Typer from "./typer/typer";
+import { GameControllerQuery } from "../api/axios-client";
+import { TyperMenu } from "../menu/typer-menu";
+import { Typer } from "./typer";
 
 export const GAME_STATE = {
-    LOGIN: "LOGIN",
     GAME_LIST: "GAME_LIST",
     GAME_LOBBY: "GAME_LOBBY",
     GAME: "GAME",
     INIT: "INIT",
 };
 
-const Game: FC = () => {
+export const TyperGame: FC = () => {
     const [currentState, setCurrentState] = useState(GAME_STATE.INIT);
-    const { data, refetch } = UsersControllerQuery.useMeQuery();
     const currentGame = GameControllerQuery.useGetCurrentGameQuery();
 
     useEffect(() => {
-        // TODO: Extract login from game logic
-        if (!data?.email) {
-            setCurrentState((currentState) => currentState = GAME_STATE.LOGIN);
-        } else if (!currentGame.data?.id) {
+        if (!currentGame.data?.id) {
             setCurrentState((currentState) => currentState = GAME_STATE.GAME_LIST);
         } else if (currentGame.data?.id && !currentGame.data?.hasStarted) {
             setCurrentState((currentState) => currentState = GAME_STATE.GAME_LOBBY);
@@ -30,15 +24,11 @@ const Game: FC = () => {
         }
 
         console.log(currentState);
-    }, [currentGame, data]);
-
-    if (currentState === GAME_STATE.LOGIN || currentState === GAME_STATE.INIT) {
+    }, [currentGame]);
+    
+    if (currentState === GAME_STATE.GAME && currentGame.data) {
         return (
-            <TyperLogin gameState={currentState} />
-        );
-    } else if (currentState === GAME_STATE.GAME && currentGame.data) {
-        return (
-            <Typer gameState={currentState} gameId={currentGame.data.id} />
+            <Typer gameId={currentGame.data.id} />
         );
     } else {
         return (
@@ -46,5 +36,3 @@ const Game: FC = () => {
         );
     }
 }
-
-export default Game;
