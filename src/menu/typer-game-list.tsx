@@ -3,7 +3,7 @@ import { FC } from "react";
 import { useQueryClient } from "react-query";
 import { CreateGameDto, GameControllerQuery, JoinGameDto, UsersControllerQuery } from "../api/axios-client";
 
-const TyperGameList: FC = () => {
+export const TyperGameList: FC = () => {
     const { data: openGamesData, status } = GameControllerQuery.useGetOpenGamesQuery();
     const { data: meData, refetch } = UsersControllerQuery.useMeQuery();
     const queryClient = useQueryClient();
@@ -50,5 +50,3 @@ const TyperGameList: FC = () => {
         </ModalContent>
     );
 }
-
-export default TyperGameList;

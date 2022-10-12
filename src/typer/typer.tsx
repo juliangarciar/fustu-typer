@@ -3,9 +3,9 @@ import { FC, useEffect, useState } from "react";
 import { useQueryClient } from 'react-query';
 import { io } from "socket.io-client";
 import ActiveGameDataDto from "../api/activeGameData.dto";
-import { GameControllerQuery, SubmitWordDto } from '../api/axios-client';
-import TyperScore from './typer-score';
-import TyperWord from "./typer-word";
+import { GameControllerQuery, getBaseUrl, SubmitWordDto } from '../api/axios-client';
+import { TyperScore } from './typer-score';
+import { TyperWord } from "./typer-word";
 
 export const Typer: FC<{ gameId: string }> = ({ gameId }) => {
     const { data } = GameControllerQuery.useGetGameStateQuery(gameId);
@@ -14,7 +14,7 @@ export const Typer: FC<{ gameId: string }> = ({ gameId }) => {
     const forceUpdate = useForceUpdate();
     
     useEffect(() => {
-        const socket = io('http://localhost:3333/', {
+        const socket = io(getBaseUrl(), {
             auth: {
                 token: localStorage.getItem("accessToken")
             },
@@ -66,7 +66,7 @@ export const Typer: FC<{ gameId: string }> = ({ gameId }) => {
                             w => w.validFrom < currentTs && w.validUntil > currentTs
                         ).map((w, idx) =>
                             <TyperWord 
-                                key={w.id}
+                                key={w.id.toString()}
                                 currentWord={w.word} 
                                 column={w.column}
                                 duration={w.validUntil - w.validFrom}
@@ -82,8 +82,8 @@ export const Typer: FC<{ gameId: string }> = ({ gameId }) => {
                     shadow="md" 
                     autoFocus 
                     value={currentWord} 
-                    onChange={(e) => { setCurrentWord(e.target.value) }}
-                    onKeyDown={(e) => { handleKeyInput(e) }} 
+                    onChange={(e: React.FormEvent<HTMLInputElement>) => { setCurrentWord(e.currentTarget.value)}}
+                    onKeyDown={(e: React.KeyboardEvent) => { handleKeyInput(e) }} 
                 />
                 </Box>
             </VStack>

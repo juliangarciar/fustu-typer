@@ -1,18 +1,17 @@
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
-import { Box, BoxProps, Center, ChakraComponent, HStack, Stack, Text } from "@chakra-ui/react";
-import React from "react";
+import { Center, Text } from "@chakra-ui/react";
+import { FC, useEffect, useState } from "react";
 
 interface TyperScoreProps {
     correctWords: number;
     incorrectWords: number;
-    props?: BoxProps;
 };
 
-const TyperScore = ({correctWords, incorrectWords}: TyperScoreProps, ) => {
-    const [cWords, setCorrectWords] = React.useState(correctWords);
-    const [iWords, setIncorrectWords] = React.useState(incorrectWords);
+export const TyperScore: FC<TyperScoreProps> = ({correctWords, incorrectWords}) => {
+    const [cWords, setCorrectWords] = useState(correctWords);
+    const [iWords, setIncorrectWords] = useState(incorrectWords);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setCorrectWords(correctWords);
         setIncorrectWords(incorrectWords);
     });
@@ -29,6 +28,4 @@ const TyperScore = ({correctWords, incorrectWords}: TyperScoreProps, ) => {
             </Center>
         </Center>
     );
-};
-
-export default TyperScore;
+}

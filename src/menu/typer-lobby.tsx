@@ -3,7 +3,7 @@ import { FC } from "react";
 import { useQueryClient } from "react-query";
 import { GameControllerQuery, StartGameDto, UsersControllerQuery } from "../api/axios-client";
 
-const TyperLobby: FC = () => {
+export const TyperLobby: FC = () => {
     const currentGame = GameControllerQuery.useGetCurrentGameQuery();
     const currentUser = UsersControllerQuery.useMeQuery();
     const { data: meData, refetch } = UsersControllerQuery.useMeQuery();
@@ -44,7 +44,7 @@ const TyperLobby: FC = () => {
             <ModalFooter>
                 {
                     currentGame.data?.lead.id === currentUser.data?.id && !currentGame.data?.hasStarted && currentUser.data
-                        ? <Button onClick={async () => handleStartGame(currentUser.data.id)}>Start</Button>
+                        ? <Button onClick={async () => handleStartGame(currentGame.data.id)}>Start</Button>
                         : <></>
                 }
                 <Button m={6} onClick={() => {
@@ -55,5 +55,3 @@ const TyperLobby: FC = () => {
         </ModalContent>
     );
 }
-
-export default TyperLobby;

@@ -1,21 +1,21 @@
-import { Center, Text, useFocusEffect } from "@chakra-ui/react";
-import { FC, useEffect } from "react";
+import { Center, Text } from "@chakra-ui/react";
 import { columnStyles, transitionStyles } from "./typer-config";
 import { useTransitionControl } from "./typer-state";
 
 export interface TypeWordProps {
+    key: React.Key;
     currentWord: string;
     column: number;
     duration: number;
 };
 
-const TyperWord: FC<TypeWordProps> = (props) => {
-    const [state, enter, exit] = useTransitionControl(props.duration);
+export const TyperWord: React.FC<TypeWordProps> = ({key, currentWord, column, duration}) => {
+    const [state, enter, exit] = useTransitionControl(duration);
 
     const style = {
-        transition: "top " + props.duration + "ms linear",
+        transition: "top " + duration + "ms linear",
         ...transitionStyles[state as keyof typeof transitionStyles] ?? {},
-        ...columnStyles[props.column as keyof typeof columnStyles] ?? {},
+        ...columnStyles[column as keyof typeof columnStyles] ?? {},
     };
 
     return (
@@ -29,9 +29,7 @@ const TyperWord: FC<TypeWordProps> = (props) => {
                 maxWidth="50%"
                 height="5%"
                 bgColor="yellow.100">
-            <Text fontSize="22px">{props.currentWord}</Text>
+            <Text fontSize="22px">{currentWord}</Text>
         </Center>
     );
 }
-
-export default TyperWord;

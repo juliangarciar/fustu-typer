@@ -39,21 +39,17 @@ export const TyperLogin: FC = () => {
     };
 
     const register = async () => {
-        AuthControllerQuery.Client.register(new RegisterDto({ ...formData, name: "Noname" }));
-        const loginResult = await AuthControllerQuery.Client.login(new LoginDto({ ...formData }));
-        localStorage.setItem("accessToken", loginResult.accessToken);
-        setFormData({ email: "", password: "" });
-        refetch();
+        await AuthControllerQuery.Client.register(new RegisterDto({ ...formData, name: "Noname" }));
+        await login();
     };
 
     return (
-        <Modal closeOnOverlayClick={false}
-            closeOnEsc={false}
-            isOpen={isOpen}
-            onClose={onClose}
-            isCentered={true}
-            size="sm"
-        >
+        <Modal  closeOnOverlayClick={false}
+                closeOnEsc={false}
+                isOpen={isOpen}
+                onClose={onClose}
+                isCentered={true}
+                size="sm">
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>
@@ -63,12 +59,12 @@ export const TyperLogin: FC = () => {
                     <FormControl>
                         <FormLabel hidden={true}>E-Mail</FormLabel>
                         <Input type="email" value={formData.email} placeholder="E-Mail" onChange={
-                            (e) => { setFormData((f) => { return { ...f, email: e.target.value } }) }} />
+                            (e: HTMLInputElement) => { setFormData((f) => { return { ...f, email: e.value } }) }} />
                     </FormControl>
                     <FormControl mt={4}>
                         <FormLabel hidden={true}>Password</FormLabel>
                         <Input type="password" value={formData.password} placeholder="Password" onChange={
-                            (e) => { setFormData((f) => { return { ...f, password: e.target.value } }) }} />
+                            (e: HTMLInputElement) => { setFormData((f) => { return { ...f, password: e.value } }) }} />
                     </FormControl>
                     <Button
                         mt={4}
