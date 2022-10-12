@@ -66,7 +66,7 @@ export const Typer: FC<{ gameId: string }> = ({ gameId }) => {
                             w => w.validFrom < currentTs && w.validUntil > currentTs
                         ).map((w, idx) =>
                             <TyperWord 
-                                key={w.id.toString()}
+                                key={w.id}
                                 currentWord={w.word} 
                                 column={w.column}
                                 duration={w.validUntil - w.validFrom}
