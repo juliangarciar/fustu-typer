@@ -520,6 +520,54 @@ export class GameControllerClient {
         return Promise.resolve<GameDto>(null as any);
     }
 
+    getLastGame(  cancelToken?: CancelToken | undefined): Promise<GameDto> {
+        let url_ = this.baseUrl + "/game/last";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetLastGame(_response);
+        });
+    }
+
+    protected processGetLastGame(response: AxiosResponse): Promise<GameDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = GameDto.fromJS(resultData201);
+            return Promise.resolve<GameDto>(result201);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<GameDto>(null as any);
+    }
+
     startGame(body: StartGameDto , cancelToken?: CancelToken | undefined): Promise<GameDto> {
         let url_ = this.baseUrl + "/game/start";
         url_ = url_.replace(/[?&]$/, "");
@@ -996,6 +1044,56 @@ export class GameControllerQuery{
     }
 
     static setGetCurrentGameDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: GameDto | undefined) => GameDto) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    
+
+    getLastGameUrl(): string {
+      let url_ = this.baseUrl + "/game/last";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
+
+    static getLastGameDefaultOptions?: UseQueryOptions<GameDto, unknown, GameDto> = {};
+    public static getLastGameQueryKey(): QueryKey;
+    public static getLastGameQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getLastGame',
+            ]);
+    }
+
+    private static getLastGame() {
+        return GameControllerQuery.Client.getLastGame(
+            );
+    }
+
+    static useGetLastGameQuery<TSelectData = GameDto, TError = unknown>(options?: UseQueryOptions<GameDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetLastGameQuery<TSelectData = GameDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+
+        let options: UseQueryOptions<GameDto, TError, TSelectData> | undefined = undefined;
+        
+
+        options = params[0] as any;
+    
+
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
+
+        return useQuery<GameDto, TError, TSelectData>({
+            queryFn: GameControllerQuery.getLastGame,
+            queryKey: GameControllerQuery.getLastGameQueryKey(),
+            ...GameControllerQuery.getLastGameDefaultOptions as unknown as UseQueryOptions<GameDto, TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetLastGameData(queryClient: QueryClient, updater: (data: GameDto | undefined) => GameDto, ) {
+        queryClient.setQueryData(GameControllerQuery.getLastGameQueryKey(),
+            updater
+        );
+    }
+
+    static setGetLastGameDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: GameDto | undefined) => GameDto) {
         queryClient.setQueryData(queryKey, updater);
     }
       
