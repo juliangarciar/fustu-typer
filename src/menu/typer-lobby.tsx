@@ -7,7 +7,7 @@ import { GameStateContext, GAME_STATE } from "../common/typer-gamestate-context"
 export const TyperLobby: FC = () => {
     const { data: currentGame } = GameControllerQuery.useGetCurrentGameQuery();
     const { data: currentUser } = UsersControllerQuery.useMeQuery();
-    const { setGameState } = useContext(GameStateContext);
+    const { logout } = useContext(GameStateContext);
     const queryClient = useQueryClient();
 
     const handleStartGame = async (gameId: string) => {
@@ -48,9 +48,7 @@ export const TyperLobby: FC = () => {
                         ? <Button onClick={async () => handleStartGame(currentGame.id)}>Start</Button>
                         : <></>
                 }
-                <Button m={6} onClick={() => {
-                    setGameState(GAME_STATE.INIT);
-                }}>Logout</Button>
+                <Button m={6} onClick={logout}>Logout</Button>
             </Box>
         </Box>
     );

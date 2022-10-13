@@ -11,23 +11,25 @@ export const GAME_STATE = {
 export const GameStateContext = createContext({
     gameState: GAME_STATE.INIT,
     setGameState: (gs: string) => {},
+    logout: () => {}
 });
 
 export const TyperGameStateProvider: FC<React.PropsWithChildren> = ({ children }) => {
     const [gameState, setGameState] = useState(GAME_STATE.INIT);
     const { refetch } = UsersControllerQuery.useMeQuery();
     
-    const updateGameState = (newGameState: string) => {
-        if (newGameState === GAME_STATE.INIT) {
-            localStorage.removeItem("accessToken");
-            refetch();
-        }
-
+    const _setGameState = (newGameState: string) => {
         setGameState(newGameState);
     };
 
+    const _logout = () => {
+        localStorage.removeItem("accessToken");
+        refetch();
+        setGameState(GAME_STATE.INIT);
+    };
+
     return (
-        <GameStateContext.Provider value={{gameState: gameState, setGameState: updateGameState}}>
+        <GameStateContext.Provider value={{gameState: gameState, setGameState: _setGameState, logout: _logout}}>
             {children}
         </GameStateContext.Provider>
     );

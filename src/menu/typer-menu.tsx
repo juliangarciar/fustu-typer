@@ -6,7 +6,7 @@ import { GameStateContext, GAME_STATE } from "../common/typer-gamestate-context"
 
 export const TyperMenu: FC = () => {
     const { data: openGamesData, status } = GameControllerQuery.useGetOpenGamesQuery();
-    const { setGameState } = useContext(GameStateContext);
+    const { logout } = useContext(GameStateContext);
     const queryClient = useQueryClient();
 
     if (status != "success") {
@@ -49,9 +49,7 @@ export const TyperMenu: FC = () => {
                     queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
                 }}>Create Game</Button>
 
-                <Button m={6} onClick={() => {
-                    setGameState(GAME_STATE.INIT);
-                }}>Logout</Button>
+                <Button m={6} onClick={logout}>Logout</Button>
             </Box>
         </Box>
     );
