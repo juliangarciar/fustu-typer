@@ -1,12 +1,13 @@
-import { Box, Button, CircularProgress, Container, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, Tbody, Td, Tr } from "@chakra-ui/react";
-import { FC } from "react";
+import { Box, Button, Center, CircularProgress, Container, Table, Tbody, Td, Tr } from "@chakra-ui/react";
+import { FC, useContext } from "react";
 import { useQueryClient } from "react-query";
 import { GameControllerQuery, StartGameDto, UsersControllerQuery } from "../api/axios-client";
+import { GameStateContext, GAME_STATE } from "../common/typer-gamestate-context";
 
 export const TyperLobby: FC = () => {
-    const currentGame = GameControllerQuery.useGetCurrentGameQuery();
-    const currentUser = UsersControllerQuery.useMeQuery();
-    const { data: meData, refetch } = UsersControllerQuery.useMeQuery();
+    const { data: currentGame } = GameControllerQuery.useGetCurrentGameQuery();
+    const { data: currentUser } = UsersControllerQuery.useMeQuery();
+    const { setGameState } = useContext(GameStateContext);
     const queryClient = useQueryClient();
 
     const handleStartGame = async (gameId: string) => {
@@ -14,22 +15,22 @@ export const TyperLobby: FC = () => {
         queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
     }
     
-    if (!currentGame.data) {
+    if (!currentGame) {
         return (
-            <Container centerContent={true}>
+            <Center h="100vh">
                 <CircularProgress isIndeterminate />
-            </Container>
+            </Center>
         );
     }
 
     return (
-        <ModalContent>
-            <ModalHeader>{currentGame.data.title}</ModalHeader>
-            <ModalBody pb={6}>
+        <Box>
+            <h2>{currentGame.title}</h2>
+            <Box pb={6}>
                 <Table>
                     <Tbody>
                         {
-                            currentGame.data.participants.map((participant) => {
+                            currentGame.participants.map((participant) => {
                                 return ( 
                                     <Tr key={participant.id}>
                                         <Td>{participant.name}</Td>
@@ -40,18 +41,17 @@ export const TyperLobby: FC = () => {
                         }
                     </Tbody>
                 </Table>
-            </ModalBody>
-            <ModalFooter>
+            </Box>
+            <Box>
                 {
-                    currentGame.data?.lead.id === currentUser.data?.id && !currentGame.data?.hasStarted && currentUser.data
-                        ? <Button onClick={async () => handleStartGame(currentGame.data.id)}>Start</Button>
+                    currentGame?.lead.id === currentUser?.id && !currentGame?.hasStarted && currentUser
+                        ? <Button onClick={async () => handleStartGame(currentGame.id)}>Start</Button>
                         : <></>
                 }
                 <Button m={6} onClick={() => {
-                    localStorage.removeItem("accessToken");
-                    refetch();
+                    setGameState(GAME_STATE.INIT);
                 }}>Logout</Button>
-            </ModalFooter>
-        </ModalContent>
+            </Box>
+        </Box>
     );
 }

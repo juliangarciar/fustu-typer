@@ -1,21 +1,32 @@
 import { Center, Text } from "@chakra-ui/react";
-import { columnStyles, transitionStyles } from "./typer-config";
-import { useTransitionControl } from "./typer-state";
+import { FC } from "react";
+import { useAutoTransitionState } from "../common/typer-transition-state";
 
-export interface TypeWordProps {
+const COLUMN_STYLES = {
+    0: { left: "5%" },
+    1: { left: "50%", transform: "translateX(-50%)" },
+    2: { right: "5%"},
+};
+
+const STATE_STYLES = {
+    ENTERING: { top: "0%", opacity: 0 },
+    ENTERED: { top: "95%", opacity: 1 },
+    EXITING: { top: "95%", opacity: 0 },
+};
+
+interface TypeWordProps {
     key: React.Key;
     currentWord: string;
     column: number;
     duration: number;
 };
 
-export const TyperWord: React.FC<TypeWordProps> = ({key, currentWord, column, duration}) => {
-    const [state, enter, exit] = useTransitionControl(duration);
-
+export const TyperWord: FC<TypeWordProps> = ({currentWord, column, duration}) => {
+    const [transitionState] = useAutoTransitionState(duration);
+    const transitionAnimation = "top " + duration + "ms linear, opacity 400ms";
     const style = {
-        transition: "top " + duration + "ms linear",
-        ...transitionStyles[state as keyof typeof transitionStyles] ?? {},
-        ...columnStyles[column as keyof typeof columnStyles] ?? {},
+        ...STATE_STYLES[transitionState as keyof typeof STATE_STYLES] ?? {},
+        ...COLUMN_STYLES[column as keyof typeof COLUMN_STYLES] ?? {},
     };
 
     return (
@@ -23,13 +34,12 @@ export const TyperWord: React.FC<TypeWordProps> = ({key, currentWord, column, du
                 style={style} 
                 shadow="md" 
                 borderRadius="md"
-                top="1%"
                 position="absolute"
-                padding="1%"
                 maxWidth="50%"
                 height="5%"
+                transition={transitionAnimation}
                 bgColor="yellow.100">
-            <Text fontSize="22px">{currentWord}</Text>
+            <Text fontSize="1.5em">{currentWord}</Text>
         </Center>
     );
 }

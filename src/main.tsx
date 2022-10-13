@@ -3,6 +3,7 @@ import axios from 'axios'
 import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { setAxiosFactory, setBaseUrl } from './api/axios-client'
+import { TyperGameStateProvider } from './common/typer-gamestate-context'
 import './index.css'
 import { TyperMain } from './typer-main'
 
@@ -93,7 +94,9 @@ setAxiosFactory(() => {
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
         <ChakraProvider theme={theme}>
-            <TyperMain />
+            <TyperGameStateProvider>
+                <TyperMain />
+            </TyperGameStateProvider>
         </ChakraProvider>
     </QueryClientProvider>
 )

@@ -14,9 +14,9 @@ export const TyperLogin: FC = () => {
     const queryClient = useQueryClient();
 
     useEffect(() => {
-        if (!data?.email) {
-            onOpen();
-        } else {
+        if (data?.email == null || data?.email == undefined) {
+            if (!isOpen) onOpen();
+        } else if (isOpen) {
             onClose();
         }
     }, [data]);
@@ -28,6 +28,13 @@ export const TyperLogin: FC = () => {
         });
         google.accounts.id.prompt();
     }, []);
+
+    const handleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
+        const value = event.currentTarget.value;
+        const name = event.currentTarget.name;
+
+        setFormData((formData) => ({...formData, [name]: value}));
+    };
 
     const login = async () => {
         const result = await AuthControllerQuery.Client.login(new LoginDto({ ...formData }));
@@ -44,12 +51,13 @@ export const TyperLogin: FC = () => {
     };
 
     return (
-        <Modal closeOnOverlayClick={false}
-            closeOnEsc={false}
-            isOpen={isOpen}
-            onClose={onClose}
-            isCentered={true}
-            size="sm">
+        <Modal  closeOnOverlayClick={false}
+                closeOnEsc={false}
+                isOpen={isOpen}
+                onClose={onClose}
+                isCentered={true}
+                size="sm"
+            >
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>
@@ -58,17 +66,11 @@ export const TyperLogin: FC = () => {
                 <ModalBody pb={4}>
                     <FormControl>
                         <FormLabel hidden={true}>E-Mail</FormLabel>
-                        <Input type="email" value={formData.email} placeholder="E-Mail" onChange={
-                            (e) => {
-                                setFormData((f) => { return { ...f, email: e.target.value } })
-                            }} />
+                        <Input name="email" type="email" value={formData.email} placeholder="E-Mail" onChange={handleInputChange}/>
                     </FormControl>
                     <FormControl mt={4}>
                         <FormLabel hidden={true}>Password</FormLabel>
-                        <Input type="password" value={formData.password} placeholder="Password" onChange={
-                            (e) => {
-                                setFormData((f) => { return { ...f, password: e.target.value } })
-                            }} />
+                        <Input name="password" type="password" value={formData.password} placeholder="Password" onChange={handleInputChange}/>
                     </FormControl>
                     <Button
                         mt={4}

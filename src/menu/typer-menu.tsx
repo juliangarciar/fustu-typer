@@ -1,34 +1,58 @@
-import { Modal, ModalOverlay, useDisclosure } from "@chakra-ui/react";
-import { FC, useEffect } from "react";
-import { GAME_STATE } from "../typer/typer-game";
-import { TyperGameList } from "./typer-game-list";
-import { TyperLobby } from "./typer-lobby";
+import { Box, Button, Center, CircularProgress, Table, Tbody, Td, Tr } from "@chakra-ui/react";
+import { FC, useContext } from "react";
+import { useQueryClient } from "react-query";
+import { CreateGameDto, GameControllerQuery, JoinGameDto, UsersControllerQuery } from "../api/axios-client";
+import { GameStateContext, GAME_STATE } from "../common/typer-gamestate-context";
 
-export const TyperMenu: FC<{gameState: string}> = ({gameState}) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+export const TyperMenu: FC = () => {
+    const { data: openGamesData, status } = GameControllerQuery.useGetOpenGamesQuery();
+    const { setGameState } = useContext(GameStateContext);
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        if (gameState === GAME_STATE.GAME_LIST 
-                || gameState === GAME_STATE.GAME_LOBBY  
-                && !isOpen) {
-            onOpen();
-        } else if (gameState === GAME_STATE.GAME && isOpen) {
-            onClose();
-        }
-    }, [gameState]);
-
+    if (status != "success") {
+        return (
+            <Center h="100vh">
+                <CircularProgress isIndeterminate />
+            </Center>
+        );
+    }
+    
     return (
-        <Modal  closeOnOverlayClick={false} 
-                closeOnEsc={false} 
-                isOpen={isOpen} 
-                onClose={onClose} 
-                isCentered={true}>
-            <ModalOverlay />
-            {
-                gameState === GAME_STATE.GAME_LIST 
-                    ? <TyperGameList /> 
-                    : <TyperLobby />
-            }
-        </Modal>
+        <Box>
+            <h2>Game list</h2>
+            <Box pb={6}>
+                <Table>
+                    <Tbody>
+                        {
+                            openGamesData.map(openGame => {
+                                return ( 
+                                    <Tr key={openGame.id}>
+                                        <Td>{openGame.title}</Td>
+                                        <Td>{openGame.lead.name}</Td>
+                                        <Td>{openGame.participants.length}/2</Td>
+                                        <Td>
+                                            <Button onClick={async () => {
+                                                await GameControllerQuery.Client.joinGame(new JoinGameDto({ gameId: openGame.id }));
+                                                queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+                                            }}>Join</Button>
+                                        </Td>
+                                    </Tr>
+                                )
+                            })
+                        }
+                    </Tbody>
+                </Table>
+            </Box>
+            <Box>
+                <Button m={6} onClick={async () => {
+                    await GameControllerQuery.Client.createGame(new CreateGameDto({ title: "New Game" }));
+                    queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+                }}>Create Game</Button>
+
+                <Button m={6} onClick={() => {
+                    setGameState(GAME_STATE.INIT);
+                }}>Logout</Button>
+            </Box>
+        </Box>
     );
 }
