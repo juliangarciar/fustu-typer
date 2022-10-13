@@ -12,7 +12,7 @@ export const TyperLogin: FC = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data, refetch } = UsersControllerQuery.useMeQuery();
     const queryClient = useQueryClient();
-    
+
     useEffect(() => {
         if (!data?.email) {
             onOpen();
@@ -44,12 +44,12 @@ export const TyperLogin: FC = () => {
     };
 
     return (
-        <Modal  closeOnOverlayClick={false}
-                closeOnEsc={false}
-                isOpen={isOpen}
-                onClose={onClose}
-                isCentered={true}
-                size="sm">
+        <Modal closeOnOverlayClick={false}
+            closeOnEsc={false}
+            isOpen={isOpen}
+            onClose={onClose}
+            isCentered={true}
+            size="sm">
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>
@@ -59,12 +59,16 @@ export const TyperLogin: FC = () => {
                     <FormControl>
                         <FormLabel hidden={true}>E-Mail</FormLabel>
                         <Input type="email" value={formData.email} placeholder="E-Mail" onChange={
-                            (e: HTMLInputElement) => { setFormData((f) => { return { ...f, email: e.value } }) }} />
+                            (e) => {
+                                setFormData((f) => { return { ...f, email: e.target.value } })
+                            }} />
                     </FormControl>
                     <FormControl mt={4}>
                         <FormLabel hidden={true}>Password</FormLabel>
                         <Input type="password" value={formData.password} placeholder="Password" onChange={
-                            (e: HTMLInputElement) => { setFormData((f) => { return { ...f, password: e.value } }) }} />
+                            (e) => {
+                                setFormData((f) => { return { ...f, password: e.target.value } })
+                            }} />
                     </FormControl>
                     <Button
                         mt={4}
