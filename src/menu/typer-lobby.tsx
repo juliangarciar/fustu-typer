@@ -10,7 +10,7 @@ export const TyperLobby: FC = () => {
     const { logout } = useContext(GameStateContext);
     const queryClient = useQueryClient();
 
-    const handleStartGame = async (gameId: string) => {
+    const handleStartGame = async (gameId: number) => {
         await GameControllerQuery.Client.startGame(new StartGameDto({ gameId: gameId }));
         queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
     }
