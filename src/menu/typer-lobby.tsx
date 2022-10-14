@@ -9,13 +9,13 @@ export const TyperLobby: FC = () => {
     const { data: currentUser } = UsersControllerQuery.useMeQuery();
     const queryClient = useQueryClient();
     const { openModal } = useContext(ModalContext);
-    
-    const handleStartGame = async (gameId: string) => {
+
+    const handleStartGame = async (gameId: number) => {
         await GameControllerQuery.Client.startGame(new StartGameDto({ gameId: gameId }));
         queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
     }
 
-    const handleBackToMenu = async (gameId: string) => {
+    const handleBackToMenu = async (gameId: number) => {
         let isLeader = currentGame?.lead.id === currentUser?.id;
         await GameControllerQuery.Client.leaveGame(new LeaveGameDto({ gameId: gameId }));
         queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());

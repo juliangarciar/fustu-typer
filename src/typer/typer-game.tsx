@@ -5,7 +5,7 @@ import { GameControllerQuery, SubmitWordDto } from '../api/axios-client';
 import { TyperScore } from './typer-score';
 import { TyperWord } from "./typer-word";
 
-export const TyperGame: FC<{ gameId: string }> = ({ gameId }) => {
+export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
     const { data } = GameControllerQuery.useGetGameStateQuery(gameId);
     const [currentWord, setCurrentWord] = useState("");
     const queryClient = useQueryClient();

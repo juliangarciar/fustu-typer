@@ -203,6 +203,58 @@ export class GameControllerClient {
         return Promise.resolve<GameDto[]>(null as any);
     }
 
+    updateGame(body: UpdateGameDto , cancelToken?: CancelToken | undefined): Promise<GameDto> {
+        let url_ = this.baseUrl + "/game";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateGame(_response);
+        });
+    }
+
+    protected processUpdateGame(response: AxiosResponse): Promise<GameDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = GameDto.fromJS(resultData201);
+            return Promise.resolve<GameDto>(result201);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<GameDto>(null as any);
+    }
+
     getMyGames(  cancelToken?: CancelToken | undefined): Promise<GameDto[]> {
         let url_ = this.baseUrl + "/game/my";
         url_ = url_.replace(/[?&]$/, "");
@@ -620,7 +672,7 @@ export class GameControllerClient {
         return Promise.resolve<GameDto>(null as any);
     }
 
-    getGameState(id: string , cancelToken?: CancelToken | undefined): Promise<GameStateDto> {
+    getGameState(id: number , cancelToken?: CancelToken | undefined): Promise<GameStateDto> {
         let url_ = this.baseUrl + "/game/state/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -723,7 +775,117 @@ export class GameControllerClient {
         return Promise.resolve<SubmitWordResponseDto>(null as any);
     }
 
-    getGame(id: string , cancelToken?: CancelToken | undefined): Promise<GameDto> {
+    getDifficulties(  cancelToken?: CancelToken | undefined): Promise<string[]> {
+        let url_ = this.baseUrl + "/game/difficulties";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetDifficulties(_response);
+        });
+    }
+
+    protected processGetDifficulties(response: AxiosResponse): Promise<string[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            if (Array.isArray(resultData201)) {
+                result201 = [] as any;
+                for (let item of resultData201)
+                    result201!.push(item);
+            }
+            else {
+                result201 = <any>null;
+            }
+            return Promise.resolve<string[]>(result201);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<string[]>(null as any);
+    }
+
+    getGameLengths(  cancelToken?: CancelToken | undefined): Promise<string[]> {
+        let url_ = this.baseUrl + "/game/gameLengths";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetGameLengths(_response);
+        });
+    }
+
+    protected processGetGameLengths(response: AxiosResponse): Promise<string[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            if (Array.isArray(resultData201)) {
+                result201 = [] as any;
+                for (let item of resultData201)
+                    result201!.push(item);
+            }
+            else {
+                result201 = <any>null;
+            }
+            return Promise.resolve<string[]>(result201);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<string[]>(null as any);
+    }
+
+    getGame(id: number , cancelToken?: CancelToken | undefined): Promise<GameDto> {
         let url_ = this.baseUrl + "/game/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -775,11 +937,11 @@ export class GameControllerClient {
     }
 }
 type GetGameStateGameControllerQueryParameters = {
-      id: string;
+      id: number;
 };
 
 type GetGameGameControllerQueryParameters = {
-      id: string;
+      id: number;
 };
 
 export class GameControllerQuery{
@@ -846,7 +1008,7 @@ export class GameControllerQuery{
     static setGetAllGamesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: GameDto[] | undefined) => GameDto[]) {
         queryClient.setQueryData(queryKey, updater);
     }
-    
+      
 
     getMyGamesUrl(): string {
       let url_ = this.baseUrl + "/game/my";
@@ -1098,7 +1260,7 @@ export class GameControllerQuery{
     }
       
 
-    getGameStateUrl(id: string): string {
+    getGameStateUrl(id: number): string {
       let url_ = this.baseUrl + "/game/state/{id}";
     if (id === undefined || id === null)
         throw new Error("The parameter 'id' must be defined.");
@@ -1108,7 +1270,7 @@ export class GameControllerQuery{
     }
 
     static getGameStateDefaultOptions?: UseQueryOptions<GameStateDto, unknown, GameStateDto> = {};
-    public static getGameStateQueryKey(id: string): QueryKey;
+    public static getGameStateQueryKey(id: number): QueryKey;
     public static getGameStateQueryKey(...params: any[]): QueryKey {
         if (params.length === 1 && isParameterObject(params[0])) {
             const { id,  } = params[0] as GetGameStateGameControllerQueryParameters;
@@ -1130,12 +1292,12 @@ export class GameControllerQuery{
 
     private static getGameState(context: QueryFunctionContext) {
         return GameControllerQuery.Client.getGameState(
-                context.queryKey[2] as string
+                context.queryKey[2] as number
             );
     }
 
     static useGetGameStateQuery<TSelectData = GameStateDto, TError = unknown>(dto: GetGameStateGameControllerQueryParameters, options?: UseQueryOptions<GameStateDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
-    static useGetGameStateQuery<TSelectData = GameStateDto, TError = unknown>(id: string, options?: UseQueryOptions<GameStateDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetGameStateQuery<TSelectData = GameStateDto, TError = unknown>(id: number, options?: UseQueryOptions<GameStateDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
     static useGetGameStateQuery<TSelectData = GameStateDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
         let options: UseQueryOptions<GameStateDto, TError, TSelectData> | undefined = undefined;
@@ -1161,7 +1323,7 @@ export class GameControllerQuery{
             ...options,
         });
     }
-    static setGetGameStateData(queryClient: QueryClient, updater: (data: GameStateDto | undefined) => GameStateDto, id: string) {
+    static setGetGameStateData(queryClient: QueryClient, updater: (data: GameStateDto | undefined) => GameStateDto, id: number) {
         queryClient.setQueryData(GameControllerQuery.getGameStateQueryKey(id),
             updater
         );
@@ -1172,7 +1334,107 @@ export class GameControllerQuery{
     }
       
 
-    getGameUrl(id: string): string {
+    getDifficultiesUrl(): string {
+      let url_ = this.baseUrl + "/game/difficulties";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
+
+    static getDifficultiesDefaultOptions?: UseQueryOptions<string[], unknown, string[]> = {};
+    public static getDifficultiesQueryKey(): QueryKey;
+    public static getDifficultiesQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getDifficulties',
+            ]);
+    }
+
+    private static getDifficulties() {
+        return GameControllerQuery.Client.getDifficulties(
+            );
+    }
+
+    static useGetDifficultiesQuery<TSelectData = string[], TError = unknown>(options?: UseQueryOptions<string[], TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetDifficultiesQuery<TSelectData = string[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+
+        let options: UseQueryOptions<string[], TError, TSelectData> | undefined = undefined;
+        
+
+        options = params[0] as any;
+    
+
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
+
+        return useQuery<string[], TError, TSelectData>({
+            queryFn: GameControllerQuery.getDifficulties,
+            queryKey: GameControllerQuery.getDifficultiesQueryKey(),
+            ...GameControllerQuery.getDifficultiesDefaultOptions as unknown as UseQueryOptions<string[], TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetDifficultiesData(queryClient: QueryClient, updater: (data: string[] | undefined) => string[], ) {
+        queryClient.setQueryData(GameControllerQuery.getDifficultiesQueryKey(),
+            updater
+        );
+    }
+
+    static setGetDifficultiesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: string[] | undefined) => string[]) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    
+
+    getGameLengthsUrl(): string {
+      let url_ = this.baseUrl + "/game/gameLengths";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
+
+    static getGameLengthsDefaultOptions?: UseQueryOptions<string[], unknown, string[]> = {};
+    public static getGameLengthsQueryKey(): QueryKey;
+    public static getGameLengthsQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getGameLengths',
+            ]);
+    }
+
+    private static getGameLengths() {
+        return GameControllerQuery.Client.getGameLengths(
+            );
+    }
+
+    static useGetGameLengthsQuery<TSelectData = string[], TError = unknown>(options?: UseQueryOptions<string[], TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetGameLengthsQuery<TSelectData = string[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+
+        let options: UseQueryOptions<string[], TError, TSelectData> | undefined = undefined;
+        
+
+        options = params[0] as any;
+    
+
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
+
+        return useQuery<string[], TError, TSelectData>({
+            queryFn: GameControllerQuery.getGameLengths,
+            queryKey: GameControllerQuery.getGameLengthsQueryKey(),
+            ...GameControllerQuery.getGameLengthsDefaultOptions as unknown as UseQueryOptions<string[], TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetGameLengthsData(queryClient: QueryClient, updater: (data: string[] | undefined) => string[], ) {
+        queryClient.setQueryData(GameControllerQuery.getGameLengthsQueryKey(),
+            updater
+        );
+    }
+
+    static setGetGameLengthsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: string[] | undefined) => string[]) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    
+
+    getGameUrl(id: number): string {
       let url_ = this.baseUrl + "/game/{id}";
     if (id === undefined || id === null)
         throw new Error("The parameter 'id' must be defined.");
@@ -1182,7 +1444,7 @@ export class GameControllerQuery{
     }
 
     static getGameDefaultOptions?: UseQueryOptions<GameDto, unknown, GameDto> = {};
-    public static getGameQueryKey(id: string): QueryKey;
+    public static getGameQueryKey(id: number): QueryKey;
     public static getGameQueryKey(...params: any[]): QueryKey {
         if (params.length === 1 && isParameterObject(params[0])) {
             const { id,  } = params[0] as GetGameGameControllerQueryParameters;
@@ -1204,12 +1466,12 @@ export class GameControllerQuery{
 
     private static getGame(context: QueryFunctionContext) {
         return GameControllerQuery.Client.getGame(
-                context.queryKey[2] as string
+                context.queryKey[2] as number
             );
     }
 
     static useGetGameQuery<TSelectData = GameDto, TError = unknown>(dto: GetGameGameControllerQueryParameters, options?: UseQueryOptions<GameDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
-    static useGetGameQuery<TSelectData = GameDto, TError = unknown>(id: string, options?: UseQueryOptions<GameDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetGameQuery<TSelectData = GameDto, TError = unknown>(id: number, options?: UseQueryOptions<GameDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
     static useGetGameQuery<TSelectData = GameDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
         let options: UseQueryOptions<GameDto, TError, TSelectData> | undefined = undefined;
@@ -1235,7 +1497,7 @@ export class GameControllerQuery{
             ...options,
         });
     }
-    static setGetGameData(queryClient: QueryClient, updater: (data: GameDto | undefined) => GameDto, id: string) {
+    static setGetGameData(queryClient: QueryClient, updater: (data: GameDto | undefined) => GameDto, id: number) {
         queryClient.setQueryData(GameControllerQuery.getGameQueryKey(id),
             updater
         );
@@ -1655,6 +1917,8 @@ export class AuthControllerQuery{
 
 export class CreateGameDto implements ICreateGameDto {
     title!: string;
+    difficutly!: CreateGameDtoDifficutly;
+    gameLength!: CreateGameDtoGameLength;
 
     [key: string]: any;
 
@@ -1674,6 +1938,8 @@ export class CreateGameDto implements ICreateGameDto {
                     this[property] = _data[property];
             }
             this.title = _data["title"];
+            this.difficutly = _data["difficutly"];
+            this.gameLength = _data["gameLength"];
         }
     }
 
@@ -1691,18 +1957,22 @@ export class CreateGameDto implements ICreateGameDto {
                 data[property] = this[property];
         }
         data["title"] = this.title;
+        data["difficutly"] = this.difficutly;
+        data["gameLength"] = this.gameLength;
         return data;
     }
 }
 
 export interface ICreateGameDto {
     title: string;
+    difficutly: CreateGameDtoDifficutly;
+    gameLength: CreateGameDtoGameLength;
 
     [key: string]: any;
 }
 
 export class UserDto implements IUserDto {
-    id!: string;
+    id!: number;
     name!: string;
     email!: string;
 
@@ -1750,7 +2020,7 @@ export class UserDto implements IUserDto {
 }
 
 export interface IUserDto {
-    id: string;
+    id: number;
     name: string;
     email: string;
 
@@ -1758,8 +2028,10 @@ export interface IUserDto {
 }
 
 export class GameDto implements IGameDto {
-    id!: string;
+    id!: number;
     title!: string;
+    difficulty!: GameDtoDifficulty;
+    gameLength!: GameDtoGameLength;
     hasFinished!: boolean;
     hasStarted!: boolean;
     startedTimestamp!: number;
@@ -1791,6 +2063,8 @@ export class GameDto implements IGameDto {
             }
             this.id = _data["id"];
             this.title = _data["title"];
+            this.difficulty = _data["difficulty"];
+            this.gameLength = _data["gameLength"];
             this.hasFinished = _data["hasFinished"];
             this.hasStarted = _data["hasStarted"];
             this.startedTimestamp = _data["startedTimestamp"];
@@ -1819,6 +2093,8 @@ export class GameDto implements IGameDto {
         }
         data["id"] = this.id;
         data["title"] = this.title;
+        data["difficulty"] = this.difficulty;
+        data["gameLength"] = this.gameLength;
         data["hasFinished"] = this.hasFinished;
         data["hasStarted"] = this.hasStarted;
         data["startedTimestamp"] = this.startedTimestamp;
@@ -1834,8 +2110,10 @@ export class GameDto implements IGameDto {
 }
 
 export interface IGameDto {
-    id: string;
+    id: number;
     title: string;
+    difficulty: GameDtoDifficulty;
+    gameLength: GameDtoGameLength;
     hasFinished: boolean;
     hasStarted: boolean;
     startedTimestamp: number;
@@ -1847,7 +2125,7 @@ export interface IGameDto {
 }
 
 export class JoinGameDto implements IJoinGameDto {
-    gameId!: string;
+    gameId!: number;
 
     [key: string]: any;
 
@@ -1889,13 +2167,13 @@ export class JoinGameDto implements IJoinGameDto {
 }
 
 export interface IJoinGameDto {
-    gameId: string;
+    gameId: number;
 
     [key: string]: any;
 }
 
 export class LeaveGameDto implements ILeaveGameDto {
-    gameId!: string;
+    gameId!: number;
 
     [key: string]: any;
 
@@ -1937,7 +2215,7 @@ export class LeaveGameDto implements ILeaveGameDto {
 }
 
 export interface ILeaveGameDto {
-    gameId: string;
+    gameId: number;
 
     [key: string]: any;
 }
@@ -1991,7 +2269,7 @@ export interface ILeaveGameResultDto {
 }
 
 export class StartGameDto implements IStartGameDto {
-    gameId!: string;
+    gameId!: number;
 
     [key: string]: any;
 
@@ -2033,7 +2311,7 @@ export class StartGameDto implements IStartGameDto {
 }
 
 export interface IStartGameDto {
-    gameId: string;
+    gameId: number;
 
     [key: string]: any;
 }
@@ -2179,7 +2457,7 @@ export interface IGameStateDto {
 }
 
 export class SubmitWordDto implements ISubmitWordDto {
-    gameId!: string;
+    gameId!: number;
     word!: string;
 
     [key: string]: any;
@@ -2224,7 +2502,7 @@ export class SubmitWordDto implements ISubmitWordDto {
 }
 
 export interface ISubmitWordDto {
-    gameId: string;
+    gameId: number;
     word: string;
 
     [key: string]: any;
@@ -2282,6 +2560,66 @@ export interface ISubmitWordResponseDto {
     success: boolean;
     remainingWords: number;
     gameFinished: boolean;
+
+    [key: string]: any;
+}
+
+export class UpdateGameDto implements IUpdateGameDto {
+    gameId!: number;
+    title!: string | undefined;
+    difficutly!: UpdateGameDtoDifficutly | undefined;
+    gameLength!: UpdateGameDtoGameLength | undefined;
+
+    [key: string]: any;
+
+    constructor(data?: IUpdateGameDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.gameId = _data["gameId"];
+            this.title = _data["title"];
+            this.difficutly = _data["difficutly"];
+            this.gameLength = _data["gameLength"];
+        }
+    }
+
+    static fromJS(data: any): UpdateGameDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateGameDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["gameId"] = this.gameId;
+        data["title"] = this.title;
+        data["difficutly"] = this.difficutly;
+        data["gameLength"] = this.gameLength;
+        return data;
+    }
+}
+
+export interface IUpdateGameDto {
+    gameId: number;
+    title: string | undefined;
+    difficutly: UpdateGameDtoDifficutly | undefined;
+    gameLength: UpdateGameDtoGameLength | undefined;
 
     [key: string]: any;
 }
@@ -2542,6 +2880,51 @@ export interface IRefreshTokenDto {
     refreshToken: string;
 
     [key: string]: any;
+}
+
+export enum CreateGameDtoDifficutly {
+    Easy = "easy",
+    Medium = "medium",
+    Hard = "hard",
+    Insane = "insane",
+}
+
+export enum CreateGameDtoGameLength {
+    Short = "short",
+    Normal = "normal",
+    Long = "long",
+    Very_long = "very_long",
+    Forever = "forever",
+}
+
+export enum GameDtoDifficulty {
+    Easy = "easy",
+    Medium = "medium",
+    Hard = "hard",
+    Insane = "insane",
+}
+
+export enum GameDtoGameLength {
+    Short = "short",
+    Normal = "normal",
+    Long = "long",
+    Very_long = "very_long",
+    Forever = "forever",
+}
+
+export enum UpdateGameDtoDifficutly {
+    Easy = "easy",
+    Medium = "medium",
+    Hard = "hard",
+    Insane = "insane",
+}
+
+export enum UpdateGameDtoGameLength {
+    Short = "short",
+    Normal = "normal",
+    Long = "long",
+    Very_long = "very_long",
+    Forever = "forever",
 }
 
 export class ApiException extends Error {

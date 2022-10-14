@@ -1,7 +1,7 @@
 import { Box, Button, Center, CircularProgress, Table, Tbody, Td, Tr } from "@chakra-ui/react";
 import { FC, useContext } from "react";
 import { useQueryClient } from "react-query";
-import { CreateGameDto, GameControllerQuery, JoinGameDto, UsersControllerQuery } from "../api/axios-client";
+import { CreateGameDto, CreateGameDtoDifficutly, CreateGameDtoGameLength, GameControllerQuery, JoinGameDto, UsersControllerQuery } from "../api/axios-client";
 import { GameStateContext, GAME_STATE } from "../common/typer-gamestate-context";
 
 export const TyperMenu: FC = () => {
@@ -16,7 +16,7 @@ export const TyperMenu: FC = () => {
             </Center>
         );
     }
-    
+
     return (
         <Box>
             <h2>Game list</h2>
@@ -25,7 +25,7 @@ export const TyperMenu: FC = () => {
                     <Tbody>
                         {
                             openGamesData.map(openGame => {
-                                return ( 
+                                return (
                                     <Tr key={openGame.id}>
                                         <Td>{openGame.title}</Td>
                                         <Td>{openGame.lead.name}</Td>
@@ -45,7 +45,7 @@ export const TyperMenu: FC = () => {
             </Box>
             <Box>
                 <Button m={6} onClick={async () => {
-                    await GameControllerQuery.Client.createGame(new CreateGameDto({ title: "New Game" }));
+                    await GameControllerQuery.Client.createGame(new CreateGameDto({ title: "New Game", difficutly: CreateGameDtoDifficutly.Insane, gameLength: CreateGameDtoGameLength.Short }));
                     queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
                 }}>Create Game</Button>
 
