@@ -1975,6 +1975,7 @@ export class UserDto implements IUserDto {
     id!: number;
     name!: string;
     email!: string;
+    rating!: number;
 
     [key: string]: any;
 
@@ -1996,6 +1997,7 @@ export class UserDto implements IUserDto {
             this.id = _data["id"];
             this.name = _data["name"];
             this.email = _data["email"];
+            this.rating = _data["rating"];
         }
     }
 
@@ -2015,6 +2017,7 @@ export class UserDto implements IUserDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["email"] = this.email;
+        data["rating"] = this.rating;
         return data;
     }
 }
@@ -2023,6 +2026,7 @@ export interface IUserDto {
     id: number;
     name: string;
     email: string;
+    rating: number;
 
     [key: string]: any;
 }
@@ -2032,6 +2036,7 @@ export class GameDto implements IGameDto {
     title!: string;
     difficulty!: GameDtoDifficulty;
     gameLength!: GameDtoGameLength;
+    averageRating!: number;
     hasFinished!: boolean;
     hasStarted!: boolean;
     startedTimestamp!: number;
@@ -2065,6 +2070,7 @@ export class GameDto implements IGameDto {
             this.title = _data["title"];
             this.difficulty = _data["difficulty"];
             this.gameLength = _data["gameLength"];
+            this.averageRating = _data["averageRating"];
             this.hasFinished = _data["hasFinished"];
             this.hasStarted = _data["hasStarted"];
             this.startedTimestamp = _data["startedTimestamp"];
@@ -2095,6 +2101,7 @@ export class GameDto implements IGameDto {
         data["title"] = this.title;
         data["difficulty"] = this.difficulty;
         data["gameLength"] = this.gameLength;
+        data["averageRating"] = this.averageRating;
         data["hasFinished"] = this.hasFinished;
         data["hasStarted"] = this.hasStarted;
         data["startedTimestamp"] = this.startedTimestamp;
@@ -2114,6 +2121,7 @@ export interface IGameDto {
     title: string;
     difficulty: GameDtoDifficulty;
     gameLength: GameDtoGameLength;
+    averageRating: number;
     hasFinished: boolean;
     hasStarted: boolean;
     startedTimestamp: number;
@@ -2387,7 +2395,9 @@ export interface IWordDto {
 export class GameStateDto implements IGameStateDto {
     wordsToBeSubmitted!: WordDto[];
     correctSubmissions!: number;
+    points!: number;
     wrongSubmissions!: number;
+    eloGain!: number | undefined;
     game!: GameDto;
 
     [key: string]: any;
@@ -2417,7 +2427,9 @@ export class GameStateDto implements IGameStateDto {
                     this.wordsToBeSubmitted!.push(WordDto.fromJS(item));
             }
             this.correctSubmissions = _data["correctSubmissions"];
+            this.points = _data["points"];
             this.wrongSubmissions = _data["wrongSubmissions"];
+            this.eloGain = _data["eloGain"];
             this.game = _data["game"] ? GameDto.fromJS(_data["game"]) : new GameDto();
         }
     }
@@ -2441,7 +2453,9 @@ export class GameStateDto implements IGameStateDto {
                 data["wordsToBeSubmitted"].push(item.toJSON());
         }
         data["correctSubmissions"] = this.correctSubmissions;
+        data["points"] = this.points;
         data["wrongSubmissions"] = this.wrongSubmissions;
+        data["eloGain"] = this.eloGain;
         data["game"] = this.game ? this.game.toJSON() : <any>undefined;
         return data;
     }
@@ -2450,7 +2464,9 @@ export class GameStateDto implements IGameStateDto {
 export interface IGameStateDto {
     wordsToBeSubmitted: WordDto[];
     correctSubmissions: number;
+    points: number;
     wrongSubmissions: number;
+    eloGain: number | undefined;
     game: GameDto;
 
     [key: string]: any;

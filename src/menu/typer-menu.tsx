@@ -45,7 +45,7 @@ export const TyperMenu: FC = () => {
             </Box>
             <Box>
                 <Button m={6} onClick={async () => {
-                    await GameControllerQuery.Client.createGame(new CreateGameDto({ title: "New Game", difficutly: CreateGameDtoDifficutly.Insane, gameLength: CreateGameDtoGameLength.Short }));
+                    await GameControllerQuery.Client.createGame(new CreateGameDto({ title: "New Game", difficutly: CreateGameDtoDifficutly.Easy, gameLength: CreateGameDtoGameLength.Short }));
                     queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
                 }}>Create Game</Button>
 
