@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { setAxiosFactory, setBaseUrl } from './api/axios-client'
 import { TyperGameStateProvider } from './common/typer-gamestate-context'
 import './index.css'
+import { ModalContextProvider } from './modal/typer-modal-context'
 import { TyperMain } from './typer-main'
 
 const theme = extendTheme({
@@ -94,9 +95,11 @@ setAxiosFactory(() => {
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
         <ChakraProvider theme={theme}>
-            <TyperGameStateProvider>
-                <TyperMain />
-            </TyperGameStateProvider>
+            <ModalContextProvider>
+                <TyperGameStateProvider>
+                    <TyperMain />
+                </TyperGameStateProvider>
+            </ModalContextProvider>
         </ChakraProvider>
     </QueryClientProvider>
 )

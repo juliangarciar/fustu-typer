@@ -1,9 +1,7 @@
-import { Box, CircularProgress, Input, VStack } from '@chakra-ui/react';
-import { FC, useEffect, useState } from "react";
+import { Box, Center, CircularProgress, Input, VStack } from '@chakra-ui/react';
+import { FC, useState } from "react";
 import { useQueryClient } from 'react-query';
-import { io } from "socket.io-client";
-import ActiveGameDataDto from "../api/activeGameData.dto";
-import { GameControllerQuery, getBaseUrl, SubmitWordDto } from '../api/axios-client';
+import { GameControllerQuery, SubmitWordDto } from '../api/axios-client';
 import { TyperScore } from './typer-score';
 import { TyperWord } from "./typer-word";
 
@@ -11,36 +9,7 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
     const { data } = GameControllerQuery.useGetGameStateQuery(gameId);
     const [currentWord, setCurrentWord] = useState("");
     const queryClient = useQueryClient();
-    const forceUpdate = useForceUpdate();
     
-    useEffect(() => {
-        const socket = io(getBaseUrl(), {
-            auth: {
-                token: localStorage.getItem("accessToken")
-            },
-            query: {
-                "gameId": gameId
-            }
-        });
-
-        socket.on("message", (d: ActiveGameDataDto) => {
-            if (d.status.gameStarted) {
-                queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
-                queryClient.invalidateQueries(GameControllerQuery.getGameStateQueryKey(gameId));
-            } 
-
-            if (d.status.gameFinished) {
-                console.log(d);
-            }
-        });
-
-        const updateInterval = setInterval(forceUpdate, 100);
-        return () => {
-            clearInterval(updateInterval);
-            socket.disconnect();
-        }
-    }, []);
-
     const handleKeyInput = async (e: React.KeyboardEvent) => {
         if (e.key == "Enter") {
             const result = await GameControllerQuery.Client.submitWord(new SubmitWordDto({ gameId, word: currentWord }));
@@ -53,7 +22,7 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
     };
 
     if (!data) {
-        return <CircularProgress isIndeterminate />
+        return <Center h="100vh"><CircularProgress isIndeterminate /></Center>;
     }
 
     const currentTs = new Date().valueOf() - data.game.startedTimestamp;
@@ -94,8 +63,3 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
         </Box>
     );
 }
-
-const useForceUpdate = () => {
-    const [value, setValue] = useState(0);
-    return () => setValue(value => value + 1);
-};
