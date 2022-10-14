@@ -1,18 +1,28 @@
-import { Box, Button, Center, CircularProgress, Container, Table, Tbody, Td, Tr } from "@chakra-ui/react";
+import { Box, Button, Center, CircularProgress, Table, Tbody, Td, Tr } from "@chakra-ui/react";
 import { FC, useContext } from "react";
 import { useQueryClient } from "react-query";
-import { GameControllerQuery, StartGameDto, UsersControllerQuery } from "../api/axios-client";
-import { GameStateContext, GAME_STATE } from "../common/typer-gamestate-context";
+import { GameControllerQuery, LeaveGameDto, StartGameDto, UsersControllerQuery } from "../api/axios-client";
+import { ModalContext, MODAL_TYPE } from "../modal/typer-modal-context";
 
 export const TyperLobby: FC = () => {
     const { data: currentGame } = GameControllerQuery.useGetCurrentGameQuery();
     const { data: currentUser } = UsersControllerQuery.useMeQuery();
-    const { logout } = useContext(GameStateContext);
     const queryClient = useQueryClient();
-
+    const { openModal } = useContext(ModalContext);
+    
     const handleStartGame = async (gameId: string) => {
         await GameControllerQuery.Client.startGame(new StartGameDto({ gameId: gameId }));
         queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+    }
+
+    const handleBackToMenu = async (gameId: string) => {
+        let isLeader = currentGame?.lead.id === currentUser?.id;
+        await GameControllerQuery.Client.leaveGame(new LeaveGameDto({ gameId: gameId }));
+        queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+        
+        if (!isLeader) {
+            openModal(MODAL_TYPE.LOBBY_LEADER_LEFT);
+        }
     }
     
     if (!currentGame) {
@@ -48,7 +58,7 @@ export const TyperLobby: FC = () => {
                         ? <Button onClick={async () => handleStartGame(currentGame.id)}>Start</Button>
                         : <></>
                 }
-                <Button m={6} onClick={logout}>Logout</Button>
+                <Button m={6} onClick={async () => handleBackToMenu(currentGame.id)}>Back to menu</Button>
             </Box>
         </Box>
     );

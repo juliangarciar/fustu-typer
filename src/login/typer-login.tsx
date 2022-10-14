@@ -1,4 +1,4 @@
-import { Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { AuthControllerQuery, GameControllerQuery, LoginDto, RegisterDto, UsersControllerQuery } from "../api/axios-client";
@@ -72,21 +72,19 @@ export const TyperLogin: FC = () => {
                         <FormLabel hidden={true}>Password</FormLabel>
                         <Input name="password" type="password" value={formData.password} placeholder="Password" onChange={handleInputChange}/>
                     </FormControl>
-                    <Button
-                        mt={4}
-                        colorScheme='teal'
-                        float="right"
-                        onClick={async () => {
-                            try {
-                                await login();
-                            } catch (e) {
-                                await register();
-                            }
-                        }}
-                    >
+                    
+                </ModalBody>
+                <ModalFooter>
+                    <Button colorScheme="teal" onClick={async () => {
+                        try {
+                            await login();
+                        } catch (e) {
+                            await register();
+                        }
+                    }}>
                         Login/Register
                     </Button>
-                </ModalBody>
+                </ModalFooter>
             </ModalContent>
         </Modal>
     );
