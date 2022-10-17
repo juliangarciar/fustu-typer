@@ -1,14 +1,23 @@
 import { Box, Button, Center, CircularProgress, Table, Tbody, Td, Tr } from "@chakra-ui/react";
-import { FC, useContext } from "react";
+import { FC, useContext, useEffect } from "react";
 import { useQueryClient } from "react-query";
 import { GameControllerQuery, LeaveGameDto, StartGameDto, UsersControllerQuery } from "../api/axios-client";
 import { ModalContext, MODAL_TYPE } from "../modal/typer-modal-context";
 
 export const TyperLobby: FC = () => {
-    const { data: currentGame } = GameControllerQuery.useGetCurrentGameQuery();
+    const { data: currentGame, refetch: refetchCurrentGame } = GameControllerQuery.useGetCurrentGameQuery();
     const { data: currentUser } = UsersControllerQuery.useMeQuery();
     const queryClient = useQueryClient();
     const { openModal } = useContext(ModalContext);
+
+    useEffect(() => {
+        const intervalId = window.setInterval(() => {
+            refetchCurrentGame();
+        }, 500);
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, []);
 
     const handleStartGame = async (gameId: number) => {
         await GameControllerQuery.Client.startGame(new StartGameDto({ gameId: gameId }));
@@ -19,12 +28,12 @@ export const TyperLobby: FC = () => {
         let isLeader = currentGame?.lead.id === currentUser?.id;
         await GameControllerQuery.Client.leaveGame(new LeaveGameDto({ gameId: gameId }));
         queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
-        
+
         if (!isLeader) {
             openModal(MODAL_TYPE.LOBBY_LEADER_LEFT);
         }
     }
-    
+
     if (!currentGame) {
         return (
             <Center h="100vh">
@@ -41,7 +50,7 @@ export const TyperLobby: FC = () => {
                     <Tbody>
                         {
                             currentGame.participants.map((participant) => {
-                                return ( 
+                                return (
                                     <Tr key={participant.id}>
                                         <Td>{participant.name}</Td>
                                         <Td>{participant.email}</Td>

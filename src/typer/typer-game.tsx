@@ -1,15 +1,30 @@
 import { Box, Center, CircularProgress, Input, VStack } from '@chakra-ui/react';
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useQueryClient } from 'react-query';
 import { GameControllerQuery, SubmitWordDto } from '../api/axios-client';
 import { TyperScore } from './typer-score';
 import { TyperWord } from "./typer-word";
 
 export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
-    const { data } = GameControllerQuery.useGetGameStateQuery(gameId);
+    const { data, refetch: refetchGameState } = GameControllerQuery.useGetGameStateQuery(gameId);
     const [currentWord, setCurrentWord] = useState("");
     const queryClient = useQueryClient();
-    
+
+    useEffect(() => {
+        const intervalId = window.setInterval(() => {
+            refetchGameState();
+        }, 500);
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (data?.game.hasFinished) {
+            queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+        }
+    }, [data?.game.hasFinished]);
+
     const handleKeyInput = async (e: React.KeyboardEvent) => {
         if (e.key == "Enter") {
             const result = await GameControllerQuery.Client.submitWord(new SubmitWordDto({ gameId, word: currentWord }));
@@ -38,9 +53,9 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
                         data.wordsToBeSubmitted.filter(
                             w => w.validFrom < currentTs && w.validUntil > currentTs
                         ).map((w, idx) =>
-                            <TyperWord 
+                            <TyperWord
                                 key={w.id}
-                                currentWord={w.word} 
+                                currentWord={w.word}
                                 column={w.column}
                                 duration={w.validUntil - w.validFrom}
                             />
@@ -48,16 +63,16 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
                     }
                 </Box>
                 <Box width="100%" height="10%" bg="white" borderRadius="xl" position="relative">
-                <Input height="100%" 
-                    type="text" 
-                    placeholder="Input word..." 
-                    size="lg" 
-                    shadow="md" 
-                    autoFocus 
-                    value={currentWord} 
-                    onChange={(e: React.FormEvent<HTMLInputElement>) => { setCurrentWord(e.currentTarget.value)}}
-                    onKeyDown={(e: React.KeyboardEvent) => { handleKeyInput(e) }} 
-                />
+                    <Input height="100%"
+                        type="text"
+                        placeholder="Input word..."
+                        size="lg"
+                        shadow="md"
+                        autoFocus
+                        value={currentWord}
+                        onChange={(e: React.FormEvent<HTMLInputElement>) => { setCurrentWord(e.currentTarget.value) }}
+                        onKeyDown={(e: React.KeyboardEvent) => { handleKeyInput(e) }}
+                    />
                 </Box>
             </VStack>
         </Box>
