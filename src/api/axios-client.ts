@@ -1974,6 +1974,7 @@ export interface ICreateGameDto {
 export class UserDto implements IUserDto {
     id!: number;
     name!: string;
+    avatar!: string | undefined;
     email!: string;
     rating!: number;
 
@@ -1996,6 +1997,7 @@ export class UserDto implements IUserDto {
             }
             this.id = _data["id"];
             this.name = _data["name"];
+            this.avatar = _data["avatar"];
             this.email = _data["email"];
             this.rating = _data["rating"];
         }
@@ -2016,6 +2018,7 @@ export class UserDto implements IUserDto {
         }
         data["id"] = this.id;
         data["name"] = this.name;
+        data["avatar"] = this.avatar;
         data["email"] = this.email;
         data["rating"] = this.rating;
         return data;
@@ -2025,6 +2028,7 @@ export class UserDto implements IUserDto {
 export interface IUserDto {
     id: number;
     name: string;
+    avatar: string | undefined;
     email: string;
     rating: number;
 
