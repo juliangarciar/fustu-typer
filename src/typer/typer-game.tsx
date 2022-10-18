@@ -27,6 +27,7 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
 
     const handleKeyInput = async (e: React.KeyboardEvent) => {
         if (e.key == "Enter") {
+            console.log(currentWord);
             const result = await GameControllerQuery.Client.submitWord(new SubmitWordDto({ gameId, word: currentWord }));
             queryClient.invalidateQueries(GameControllerQuery.getGameStateQueryKey(gameId));
             setCurrentWord("");
@@ -43,38 +44,36 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
     const currentTs = new Date().valueOf() - data.game.startedTimestamp;
 
     return (
-        <Box width="100vw" height="100vh" bg="blue.100" display="flex">
-            <VStack w="60%" h="90%" minWidth="800px" minHeight="600px" m="auto" spacing={2} overflowY="hidden">
-                <Box height="10%" width="100%" position="relative" >
-                    <TyperScore correctWords={data.correctSubmissions} incorrectWords={data.wrongSubmissions}></TyperScore>
-                </Box>
-                <Box borderRadius="lg" shadow="md" width="100%" height="75%" bg="blue.300" paddingX="10px" paddingTop="10px" m={0} position="relative">
-                    {
-                        data.wordsToBeSubmitted.filter(
-                            w => w.validFrom < currentTs && w.validUntil > currentTs
-                        ).map((w, idx) =>
-                            <TyperWord
-                                key={w.id}
-                                currentWord={w.word}
-                                column={w.column}
-                                duration={w.validUntil - w.validFrom}
-                            />
-                        )
-                    }
-                </Box>
-                <Box width="100%" height="10%" bg="white" borderRadius="xl" position="relative">
-                    <Input height="100%"
-                        type="text"
-                        placeholder="Input word..."
-                        size="lg"
-                        shadow="md"
-                        autoFocus
-                        value={currentWord}
-                        onChange={(e: React.FormEvent<HTMLInputElement>) => { setCurrentWord(e.currentTarget.value) }}
-                        onKeyDown={(e: React.KeyboardEvent) => { handleKeyInput(e) }}
-                    />
-                </Box>
-            </VStack>
-        </Box>
+        <VStack height="100%" width="100%" spacing={2} overflowY="hidden" bg="blue.100">
+            <Box position="relative" height="10%">
+                <TyperScore correctWords={data.correctSubmissions} incorrectWords={data.wrongSubmissions}></TyperScore>
+            </Box>
+            <Box borderRadius="lg" shadow="md" width="100%" height="80%" bg="blue.300" m={0} position="relative">
+                {
+                    data.wordsToBeSubmitted.filter(
+                        w => w.validFrom < currentTs && w.validUntil > currentTs
+                    ).map((w, idx) =>
+                        <TyperWord
+                            key={w.id}
+                            currentWord={w.word}
+                            column={w.column}
+                            duration={w.validUntil - w.validFrom}
+                        />
+                    )
+                }
+            </Box>
+            <Box width="100%" height="10%" bg="white" borderRadius="xl" position="relative">
+                <Input height="100%"
+                    type="text"
+                    placeholder="Input word..."
+                    size="lg"
+                    shadow="md"
+                    autoFocus
+                    value={currentWord}
+                    onChange={(e: React.FormEvent<HTMLInputElement>) => { setCurrentWord(e.currentTarget.value) }}
+                    onKeyDown={(e: React.KeyboardEvent) => { handleKeyInput(e) }}
+                />
+            </Box>
+        </VStack>
     );
 }

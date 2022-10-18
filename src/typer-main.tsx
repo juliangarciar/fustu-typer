@@ -1,4 +1,4 @@
-import { Center, CircularProgress } from "@chakra-ui/react";
+import { Box, Center, CircularProgress } from "@chakra-ui/react";
 import { FC, useContext, useEffect } from "react";
 import { GameControllerQuery } from "./api/axios-client";
 import { GameStateContext, GAME_STATE } from "./common/typer-gamestate-context";
@@ -35,7 +35,11 @@ export const TyperMain: FC = () => {
     return (
         <>
             <TyperLogin />
-            {renderElement}
+            <Center w="100vw" h="100vh" minWidth="800px" minHeight="600px" m="0" p="0" bg="gray.100" overflow="hidden">
+                <Box w="60%" minW="800px" h="80%" m="auto" bg="white" borderRadius="lg" shadow="lg">
+                    {renderElement}
+                </Box>
+            </Center>
         </>
     );
 }

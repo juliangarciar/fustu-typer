@@ -1,13 +1,30 @@
-import { Box, Button, Center, CircularProgress, Table, Tbody, Td, Tr } from "@chakra-ui/react";
+import { Box, Button, Center, CircularProgress, Heading, Table, Tbody, Td, Tr, VStack } from "@chakra-ui/react";
 import { FC, useContext } from "react";
 import { useQueryClient } from "react-query";
-import { CreateGameDto, CreateGameDtoDifficutly, CreateGameDtoGameLength, GameControllerQuery, JoinGameDto, UsersControllerQuery } from "../api/axios-client";
+import { CreateGameDto, CreateGameDtoDifficutly, CreateGameDtoGameLength, GameControllerQuery, GameDto, GameDtoDifficulty, GameDtoGameLength, JoinGameDto, UserDto, UsersControllerQuery } from "../api/axios-client";
 import { GameStateContext, GAME_STATE } from "../common/typer-gamestate-context";
+import { TyperMenuLayout } from "./typer-menu-layout";
 
 export const TyperMenu: FC = () => {
     const { data: openGamesData, status } = GameControllerQuery.useGetOpenGamesQuery();
     const { logout } = useContext(GameStateContext);
     const queryClient = useQueryClient();
+
+    const handleCreateGame = async () => {
+        await GameControllerQuery.Client.createGame(new CreateGameDto({ 
+            title: "New Game", 
+            difficutly: CreateGameDtoDifficutly.Easy, 
+            gameLength: CreateGameDtoGameLength.Short 
+        }));
+        queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+    }
+
+    const handleJoinGame = async (_gameId: number) => {
+        await GameControllerQuery.Client.joinGame(new JoinGameDto({ 
+            gameId: _gameId 
+        }));
+        queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+    }
 
     if (status != "success") {
         return (
@@ -18,9 +35,18 @@ export const TyperMenu: FC = () => {
     }
 
     return (
-        <Box>
-            <h2>Game list</h2>
-            <Box pb={6}>
+        <TyperMenuLayout 
+            heading={"Game list"} 
+            cancelButton={{
+                buttonName: "Logout", 
+                buttonAction: logout,
+            }}
+            acceptButton={{
+                buttonName: "Create game",
+                buttonAction: handleCreateGame,
+            }}
+        >
+            <Box maxH="100%" mx="2.5%" bg="blue.200" overflowY="auto">
                 <Table>
                     <Tbody>
                         {
@@ -31,10 +57,7 @@ export const TyperMenu: FC = () => {
                                         <Td>{openGame.lead.name}</Td>
                                         <Td>{openGame.participants.length}/2</Td>
                                         <Td>
-                                            <Button onClick={async () => {
-                                                await GameControllerQuery.Client.joinGame(new JoinGameDto({ gameId: openGame.id }));
-                                                queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
-                                            }}>Join</Button>
+                                            <Button onClick={() => handleJoinGame}>Join</Button>
                                         </Td>
                                     </Tr>
                                 )
@@ -43,14 +66,6 @@ export const TyperMenu: FC = () => {
                     </Tbody>
                 </Table>
             </Box>
-            <Box>
-                <Button m={6} onClick={async () => {
-                    await GameControllerQuery.Client.createGame(new CreateGameDto({ title: "New Game", difficutly: CreateGameDtoDifficutly.Easy, gameLength: CreateGameDtoGameLength.Short }));
-                    queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
-                }}>Create Game</Button>
-
-                <Button m={6} onClick={logout}>Logout</Button>
-            </Box>
-        </Box>
+        </TyperMenuLayout>
     );
 }

@@ -1,7 +1,7 @@
-import { Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
-import { FC, useEffect, useRef, useState } from "react";
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
+import { FC, useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
-import { AuthControllerQuery, GameControllerQuery, GoogleTokenDto, LoginDto, RegisterDto, UsersControllerQuery } from "../api/axios-client";
+import { AuthControllerQuery, GoogleTokenDto, UsersControllerQuery } from "../api/axios-client";
 
 declare global {
     const google: typeof import('google-one-tap');

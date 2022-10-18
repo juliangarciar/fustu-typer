@@ -1,8 +1,10 @@
-import { Box, Button, Center, CircularProgress, Table, Tbody, Td, Tr } from "@chakra-ui/react";
+import { Box, Button, Center, CircularProgress, Heading, HStack, Table, Tbody, Td, Tr, VStack } from "@chakra-ui/react";
 import { FC, useContext, useEffect } from "react";
 import { useQueryClient } from "react-query";
 import { GameControllerQuery, LeaveGameDto, StartGameDto, UsersControllerQuery } from "../api/axios-client";
 import { ModalContext, MODAL_TYPE } from "../modal/typer-modal-context";
+import { TyperMenuLayout } from "./typer-menu-layout";
+import { TyperPlayerCard } from "./typer-player-card";
 
 export const TyperLobby: FC = () => {
     const { data: currentGame, refetch: refetchCurrentGame } = GameControllerQuery.useGetCurrentGameQuery();
@@ -19,14 +21,14 @@ export const TyperLobby: FC = () => {
         };
     }, []);
 
-    const handleStartGame = async (gameId: number) => {
-        await GameControllerQuery.Client.startGame(new StartGameDto({ gameId: gameId }));
+    const handleStartGame = async (_gameId: number) => {
+        await GameControllerQuery.Client.startGame(new StartGameDto({ gameId: _gameId }));
         queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
     }
 
-    const handleBackToMenu = async (gameId: number) => {
+    const handleBackToMenu = async (_gameId: number) => {
         let isLeader = currentGame?.lead.id === currentUser?.id;
-        await GameControllerQuery.Client.leaveGame(new LeaveGameDto({ gameId: gameId }));
+        await GameControllerQuery.Client.leaveGame(new LeaveGameDto({ gameId: _gameId }));
         queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
 
         if (!isLeader) {
@@ -42,33 +44,36 @@ export const TyperLobby: FC = () => {
         );
     }
 
+    const buttonAccept = currentGame?.lead.id === currentUser?.id && !currentGame?.hasStarted && currentUser
+        ? { buttonName: "Start game", buttonAction: () => handleStartGame(currentGame.id) }
+        : undefined;
+
     return (
-        <Box>
-            <h2>{currentGame.title}</h2>
-            <Box pb={6}>
-                <Table>
-                    <Tbody>
-                        {
-                            currentGame.participants.map((participant) => {
-                                return (
-                                    <Tr key={participant.id}>
-                                        <Td>{participant.name}</Td>
-                                        <Td>{participant.email}</Td>
-                                    </Tr>
-                                );
-                            })
-                        }
-                    </Tbody>
-                </Table>
-            </Box>
-            <Box>
-                {
-                    currentGame?.lead.id === currentUser?.id && !currentGame?.hasStarted && currentUser
-                        ? <Button onClick={async () => handleStartGame(currentGame.id)}>Start</Button>
-                        : <></>
-                }
-                <Button m={6} onClick={async () => handleBackToMenu(currentGame.id)}>Back to menu</Button>
-            </Box>
-        </Box>
+        <TyperMenuLayout 
+            heading={"Game lobby"} 
+            cancelButton={{
+                buttonName: "Back to menu", 
+                buttonAction: () => handleBackToMenu(currentGame.id),
+            }}
+            acceptButton={buttonAccept}
+        >
+            <HStack h="100%" mx="2.5%" spacing="5%">
+            {
+                currentGame.participants.map((participant, index) => {
+                    return (
+                        <Box key={index} w="47.5%" h="80%">
+                            <TyperPlayerCard 
+                                playerName={participant.name}
+                                playerEmail={participant.email}
+                                playerImg={participant.avatar}
+                                playerElo={1200}
+                                playerGames={0}
+                            />
+                        </Box>
+                    );
+                })
+            }
+            </HStack>
+        </TyperMenuLayout>
     );
 }
