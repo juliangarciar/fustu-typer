@@ -1,27 +1,24 @@
-import { Box, Button, Center, CircularProgress, Heading, Table, Tbody, Td, Tr, VStack } from "@chakra-ui/react";
+import { Box, Button, Center, CircularProgress, Table, Tbody, Td, Tr } from "@chakra-ui/react";
 import { FC, useContext } from "react";
 import { useQueryClient } from "react-query";
-import { CreateGameDto, CreateGameDtoDifficutly, CreateGameDtoGameLength, GameControllerQuery, GameDto, GameDtoDifficulty, GameDtoGameLength, JoinGameDto, UserDto, UsersControllerQuery } from "../api/axios-client";
-import { GameStateContext, GAME_STATE } from "../common/typer-gamestate-context";
+import { GameControllerQuery, JoinGameDto } from "../api/axios-client";
+import { GameStateContext } from "../common/typer-gamestate-context";
+import { ModalContext, MODAL_TYPE } from "../modal/typer-modal-context";
 import { TyperMenuLayout } from "./typer-menu-layout";
 
 export const TyperMenu: FC = () => {
     const { data: openGamesData, status } = GameControllerQuery.useGetOpenGamesQuery();
     const { logout } = useContext(GameStateContext);
+    const { openModal } = useContext(ModalContext);
     const queryClient = useQueryClient();
 
     const handleCreateGame = async () => {
-        await GameControllerQuery.Client.createGame(new CreateGameDto({ 
-            title: "New Game", 
-            difficutly: CreateGameDtoDifficutly.Easy, 
-            gameLength: CreateGameDtoGameLength.Short 
-        }));
-        queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+        openModal(MODAL_TYPE.CREATE_GAME);
     }
 
     const handleJoinGame = async (_gameId: number) => {
-        await GameControllerQuery.Client.joinGame(new JoinGameDto({ 
-            gameId: _gameId 
+        await GameControllerQuery.Client.joinGame(new JoinGameDto({
+            gameId: _gameId
         }));
         queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
     }
@@ -35,10 +32,10 @@ export const TyperMenu: FC = () => {
     }
 
     return (
-        <TyperMenuLayout 
-            heading={"Game list"} 
+        <TyperMenuLayout
+            heading={"Game list"}
             cancelButton={{
-                buttonName: "Logout", 
+                buttonName: "Logout",
                 buttonAction: logout,
             }}
             acceptButton={{

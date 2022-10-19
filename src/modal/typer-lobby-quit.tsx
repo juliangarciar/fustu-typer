@@ -1,8 +1,8 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
 import { FC, useEffect } from "react";
-import { MODAL_TYPE } from "./typer-modal-context";
+import { MODAL_TYPE, RegisterModal } from "./typer-modal-context";
 
-export const TyperLobbyQuit: FC<{ registerModal: (MODAL_TYPE: string, onOpen: () => void) => void }> = ({ registerModal }) => {
+export const TyperLobbyQuitModal: FC<{ registerModal: RegisterModal }> = ({ registerModal }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
@@ -10,13 +10,13 @@ export const TyperLobbyQuit: FC<{ registerModal: (MODAL_TYPE: string, onOpen: ()
     }, []);
 
     return (
-        <Modal  closeOnOverlayClick={false}
-                closeOnEsc={false}
-                isOpen={isOpen}
-                onClose={onClose}
-                isCentered={true}
-                size="sm"
-            >
+        <Modal closeOnOverlayClick={false}
+            closeOnEsc={false}
+            isOpen={isOpen}
+            onClose={onClose}
+            isCentered={true}
+            size="sm"
+        >
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>

@@ -1,12 +1,14 @@
 import { createContext, FC, useState } from "react";
-import { TyperLobbyQuit } from "./typer-lobby-quit";
+import TyperCreateGameModal from "./typer-create-game-modal";
+import { TyperLobbyQuitModal } from "./typer-lobby-quit";
 
 export const MODAL_TYPE = {
     LOBBY_LEADER_LEFT: "LOBBY_LEADER_LEFT",
+    CREATE_GAME: "CREATE_GAME"
 };
 
 export const ModalContext = createContext({
-    openModal: (MODAL_TYPE: string) => {}
+    openModal: (MODAL_TYPE: string) => { }
 });
 
 export const ModalContextProvider: FC<React.PropsWithChildren> = ({ children }) => {
@@ -24,8 +26,11 @@ export const ModalContextProvider: FC<React.PropsWithChildren> = ({ children }) 
 
     return (
         <ModalContext.Provider value={{ openModal: _openModal }}>
-            <TyperLobbyQuit registerModal={_registerModal} />
-            { children }
+            <TyperLobbyQuitModal registerModal={_registerModal} />
+            <TyperCreateGameModal registerModal={_registerModal} />
+            {children}
         </ModalContext.Provider>
     );
 };
+
+export type RegisterModal = (MODAL_TYPE: string, onOpen: () => void) => void;
