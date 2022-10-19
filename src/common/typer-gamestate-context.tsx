@@ -1,36 +1,44 @@
-import { createContext, FC, useState } from "react";
-import { UsersControllerQuery } from "../api/axios-client";
+import { createContext, FC, useState } from 'react';
+import { UsersControllerQuery } from '../api/axios-client';
 
 export const GAME_STATE = {
-    GAME_MENU: "GAME_MENU",
-    GAME_LOBBY: "GAME_LOBBY",
-    GAME: "GAME",
-    INIT: "INIT",
+  GAME_MENU: 'GAME_MENU',
+  GAME_LOBBY: 'GAME_LOBBY',
+  GAME: 'GAME',
+  INIT: 'INIT',
 };
 
 export const GameStateContext = createContext({
-    gameState: GAME_STATE.INIT,
-    setGameState: (gs: string) => {},
-    logout: () => {}
+  gameState: GAME_STATE.INIT,
+  setGameState: (gs: string) => {},
+  logout: () => {},
 });
 
-export const TyperGameStateProvider: FC<React.PropsWithChildren> = ({ children }) => {
-    const [gameState, setGameState] = useState(GAME_STATE.INIT);
-    const { refetch } = UsersControllerQuery.useMeQuery();
-    
-    const _setGameState = (newGameState: string) => {
-        setGameState(newGameState);
-    };
+export const TyperGameStateProvider: FC<React.PropsWithChildren> = ({
+  children,
+}) => {
+  const [gameState, setGameState] = useState(GAME_STATE.INIT);
+  const { refetch } = UsersControllerQuery.useMeQuery();
 
-    const _logout = () => {
-        localStorage.removeItem("accessToken");
-        refetch();
-        setGameState(GAME_STATE.INIT);
-    };
+  const _setGameState = (newGameState: string) => {
+    setGameState(newGameState);
+  };
 
-    return (
-        <GameStateContext.Provider value={{gameState: gameState, setGameState: _setGameState, logout: _logout}}>
-            {children}
-        </GameStateContext.Provider>
-    );
+  const _logout = () => {
+    localStorage.removeItem('accessToken');
+    refetch();
+    setGameState(GAME_STATE.INIT);
+  };
+
+  return (
+    <GameStateContext.Provider
+      value={{
+        gameState: gameState,
+        setGameState: _setGameState,
+        logout: _logout,
+      }}
+    >
+      {children}
+    </GameStateContext.Provider>
+  );
 };

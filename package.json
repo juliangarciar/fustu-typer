@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "api": "react-query-swagger /input:http://localhost:3333/api-json /output:src/api/axios-client.ts /template:Axios"
+    "api": "react-query-swagger /input:http://localhost:3333/api-json /output:src/api/axios-client.ts /template:Axios",
+    "pretty": "prettier --write \"./src/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.10",
