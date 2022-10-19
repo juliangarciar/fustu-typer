@@ -7,11 +7,12 @@ export interface TyperPlayerCardProps {
     playerImg?: string;
     playerElo?: number;
     playerGames?: number;
+    playerRankedGames: number;
 };
 
 export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
     return (
-        <Box 
+        <Box
             boxShadow={'lg'}
             rounded={'md'}
             overflow={'hidden'}
@@ -24,12 +25,12 @@ export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
                 src={'https://images.unsplash.com/photo-1612865547334-09cb8cb455da?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80'}
                 objectFit={'cover'}
             />
-            
+
             <Flex justify={'center'} mt={-12}>
                 <Avatar
                     size={'xl'}
                     src={props.playerImg}
-                    css={{border: '2px solid white',}}
+                    css={{ border: '2px solid white', }}
                 />
             </Flex>
 
@@ -47,8 +48,13 @@ export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
                     <Text color={'gray.500'}>
                         Games played: {props.playerGames}
                     </Text>
+                    {props.playerRankedGames > 0 ?
+                        <Text color={'gray.500'}>
+                            Ranked Games played: {props.playerRankedGames}
+                        </Text>
+                        : null}
                 </Stack>
             </Box>
         </Box>
     );
-  }
+}

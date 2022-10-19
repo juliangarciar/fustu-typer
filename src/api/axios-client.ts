@@ -1564,6 +1564,57 @@ export class UsersControllerClient {
 
         }
     }
+
+    getAllUsers(  cancelToken?: CancelToken | undefined): Promise<UserDto[]> {
+        let url_ = this.baseUrl + "/users";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetAllUsers(_response);
+        });
+    }
+
+    protected processGetAllUsers(response: AxiosResponse): Promise<UserDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            if (Array.isArray(resultDatadefault)) {
+                resultdefault = [] as any;
+                for (let item of resultDatadefault)
+                    resultdefault!.push(UserDto.fromJS(item));
+            }
+            else {
+                resultdefault = <any>null;
+            }
+            return Promise.resolve<UserDto[]>(resultdefault);
+
+        }
+    }
 }
 export class UsersControllerQuery{
 
@@ -1626,6 +1677,56 @@ export class UsersControllerQuery{
     }
 
     static setMeDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: UserDto | undefined) => UserDto) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    
+
+    getAllUsersUrl(): string {
+      let url_ = this.baseUrl + "/users";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
+
+    static getAllUsersDefaultOptions?: UseQueryOptions<UserDto[], unknown, UserDto[]> = {};
+    public static getAllUsersQueryKey(): QueryKey;
+    public static getAllUsersQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'UsersControllerClient',
+            'getAllUsers',
+            ]);
+    }
+
+    private static getAllUsers() {
+        return UsersControllerQuery.Client.getAllUsers(
+            );
+    }
+
+    static useGetAllUsersQuery<TSelectData = UserDto[], TError = unknown>(options?: UseQueryOptions<UserDto[], TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetAllUsersQuery<TSelectData = UserDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+
+        let options: UseQueryOptions<UserDto[], TError, TSelectData> | undefined = undefined;
+        
+
+        options = params[0] as any;
+    
+
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
+
+        return useQuery<UserDto[], TError, TSelectData>({
+            queryFn: UsersControllerQuery.getAllUsers,
+            queryKey: UsersControllerQuery.getAllUsersQueryKey(),
+            ...UsersControllerQuery.getAllUsersDefaultOptions as unknown as UseQueryOptions<UserDto[], TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetAllUsersData(queryClient: QueryClient, updater: (data: UserDto[] | undefined) => UserDto[], ) {
+        queryClient.setQueryData(UsersControllerQuery.getAllUsersQueryKey(),
+            updater
+        );
+    }
+
+    static setGetAllUsersDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: UserDto[] | undefined) => UserDto[]) {
         queryClient.setQueryData(queryKey, updater);
     }
     }
@@ -1977,6 +2078,9 @@ export class UserDto implements IUserDto {
     avatar!: string | undefined;
     email!: string;
     rating!: number;
+    gamesPlayed!: number;
+    rankedGamesPlayed!: number;
+    rankedGamesWon!: number;
 
     [key: string]: any;
 
@@ -2000,6 +2104,9 @@ export class UserDto implements IUserDto {
             this.avatar = _data["avatar"];
             this.email = _data["email"];
             this.rating = _data["rating"];
+            this.gamesPlayed = _data["gamesPlayed"];
+            this.rankedGamesPlayed = _data["rankedGamesPlayed"];
+            this.rankedGamesWon = _data["rankedGamesWon"];
         }
     }
 
@@ -2021,6 +2128,9 @@ export class UserDto implements IUserDto {
         data["avatar"] = this.avatar;
         data["email"] = this.email;
         data["rating"] = this.rating;
+        data["gamesPlayed"] = this.gamesPlayed;
+        data["rankedGamesPlayed"] = this.rankedGamesPlayed;
+        data["rankedGamesWon"] = this.rankedGamesWon;
         return data;
     }
 }
@@ -2031,6 +2141,9 @@ export interface IUserDto {
     avatar: string | undefined;
     email: string;
     rating: number;
+    gamesPlayed: number;
+    rankedGamesPlayed: number;
+    rankedGamesWon: number;
 
     [key: string]: any;
 }
