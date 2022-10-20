@@ -7,6 +7,7 @@ import {
   StartGameDto,
   UsersControllerQuery,
 } from '../api/axios-client';
+import { TyperLoading } from '../common/components/typer-loading';
 import { ModalContext, MODAL_TYPE } from '../modal/typer-modal-context';
 import { TyperMenuLayout } from './typer-menu-layout';
 import { TyperPlayerCard } from './typer-player-card';
@@ -46,13 +47,7 @@ export const TyperLobby: FC = () => {
     }
   };
 
-  if (!currentGame) {
-    return (
-      <Center h="100vh">
-        <CircularProgress isIndeterminate />
-      </Center>
-    );
-  }
+  if (!currentGame) return <TyperLoading />;
 
   const buttonAccept =
     currentGame?.lead.id === currentUser?.id &&

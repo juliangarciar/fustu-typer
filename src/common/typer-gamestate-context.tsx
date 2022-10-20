@@ -2,10 +2,12 @@ import { createContext, FC, useState } from 'react';
 import { UsersControllerQuery } from '../api/axios-client';
 
 export const GAME_STATE = {
-  GAME_MENU: 'GAME_MENU',
-  GAME_LOBBY: 'GAME_LOBBY',
-  GAME: 'GAME',
-  INIT: 'INIT',
+  GAME_MENU: "GAME_MENU",
+  GAME_LOBBY: "GAME_LOBBY",
+  GAME_LOADING: "GAME_LOADING",
+  GAME_STARTED: "GAME_STARTED",
+  GAME_FINISHED: "GAME_FINISHED",
+  INIT: "INIT",
 };
 
 export const GameStateContext = createContext({
@@ -25,7 +27,7 @@ export const TyperGameStateProvider: FC<React.PropsWithChildren> = ({
   };
 
   const _logout = () => {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem("accessToken");
     refetch();
     setGameState(GAME_STATE.INIT);
   };
