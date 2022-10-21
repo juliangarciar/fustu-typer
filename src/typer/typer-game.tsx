@@ -1,45 +1,46 @@
 import { Box, Input, VStack } from '@chakra-ui/react';
 import { FC, useContext, useEffect, useState } from 'react';
-import { useQueryClient } from 'react-query';
 import { GameControllerQuery, SubmitWordDto } from '../api/axios-client';
-import { TyperLoading } from '../common/components/typer-loading';
-import { GameStateContext, GAME_STATE } from '../common/typer-gamestate-context';
+import { TyperLoading } from '../common-components/typer-loading';
+import { GameStateContext, GAME_STATE } from '../common-hooks/typer-gamestate-context';
 import { TyperScore } from './typer-score';
 import { TyperWord } from './typer-word';
 
 export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
-  const { data: gameState, refetch } = GameControllerQuery.useGetGameStateQuery(gameId);
-  const [currentWord, setCurrentWord] = useState('');
-  const queryClient = useQueryClient();
+  const { data: currentGame, refetch } = GameControllerQuery.useGetGameStateQuery(gameId);
   const { setGameState } = useContext(GameStateContext);
+  const [ currentWord, setCurrentWord ] = useState('');
 
   useEffect(() => {
-    if (gameState?.game.hasFinished) {
-      queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+    const intervalId = window.setInterval(() => {
+      refetch();
+    }, 500);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (currentGame && currentGame.game.hasFinished === true) {
       setGameState(GAME_STATE.GAME_FINISHED);
     }
-  }, [gameState?.game.hasFinished]);
+  }, [currentGame]);
 
   const handleKeyInput = async (e: React.KeyboardEvent) => {
     if (e.key == 'Enter') {
       const result = await GameControllerQuery.Client.submitWord(
-        new SubmitWordDto({ gameId, word: currentWord }),
-      );
-      queryClient.invalidateQueries(
-        GameControllerQuery.getGameStateQueryKey(gameId),
+        new SubmitWordDto({ 
+          gameId, 
+          word: currentWord 
+        })
       );
       setCurrentWord('');
-      if (result.gameFinished) {
-        queryClient.invalidateQueries(
-          GameControllerQuery.getCurrentGameQueryKey(),
-        );
-      }
     }
   };
 
-  if (!gameState) return <TyperLoading />;
+  if (!currentGame) return <TyperLoading />;
   
-  const currentTs = new Date().valueOf() - gameState.game.startedTimestamp;
+  const currentTs = new Date().valueOf() - currentGame.game.startedTimestamp;
 
   return (
     <VStack
@@ -51,8 +52,8 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
     >
       <Box position="relative" height="10%">
         <TyperScore
-          correctWords={gameState.correctSubmissions}
-          incorrectWords={gameState.wrongSubmissions}
+          correctWords={currentGame.correctSubmissions}
+          incorrectWords={currentGame.wrongSubmissions}
         ></TyperScore>
       </Box>
       <Box
@@ -64,7 +65,7 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
         m={0}
         position="relative"
       >
-        {gameState.wordsToBeSubmitted
+        {currentGame.wordsToBeSubmitted
           .filter((w) => w.validFrom < currentTs && w.validUntil > currentTs)
           .map((w, idx) => (
             <TyperWord

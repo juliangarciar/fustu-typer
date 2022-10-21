@@ -1,6 +1,6 @@
 import { createContext, FC, useState } from 'react';
-import TyperCreateGameModal from './typer-create-game-modal';
-import { TyperLobbyQuitModal } from './typer-lobby-quit';
+import TyperCreateGameModal from '../modal/typer-create-game-modal';
+import { TyperLobbyQuitModal } from '../modal/typer-lobby-quit';
 
 export const MODAL_TYPE = {
   LOBBY_LEADER_LEFT: 'LOBBY_LEADER_LEFT',

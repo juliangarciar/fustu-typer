@@ -5,19 +5,28 @@ import {
   Td,
   Tr
 } from '@chakra-ui/react';
-import { FC, useContext } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import { GameControllerQuery, JoinGameDto } from '../api/axios-client';
-import { TyperLoading } from '../common/components/typer-loading';
-import { GameStateContext } from '../common/typer-gamestate-context';
-import { ModalContext, MODAL_TYPE } from '../modal/typer-modal-context';
-import { TyperMenuLayout } from './typer-menu-layout';
+import { TyperLoading } from '../common-components/typer-loading';
+import { GameStateContext, GAME_STATE } from '../common-hooks/typer-gamestate-context';
+import { ModalContext, MODAL_TYPE } from '../common-hooks/typer-modal-context';
+import { TyperMenuLayout } from '../common-components/typer-menu-layout';
 
 export const TyperMenu: FC = () => {
-  const { data: openGamesData, status } = GameControllerQuery.useGetOpenGamesQuery();
+  const { data: openGamesData, status, refetch: refetchCurrentGames } = GameControllerQuery.useGetOpenGamesQuery();
   const { logout } = useContext(GameStateContext);
   const { openModal } = useContext(ModalContext);
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      refetchCurrentGames();
+    }, 500);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   const handleCreateGame = async () => {
     openModal(MODAL_TYPE.CREATE_GAME);
@@ -46,7 +55,7 @@ export const TyperMenu: FC = () => {
         buttonAction: handleCreateGame,
       }}
     >
-      <Box maxH="100%" mx="2.5%" bg="blue.200" overflowY="auto">
+      <Box bg="blue.200" overflowY="auto">
         <Table>
           <Tbody>
             {openGamesData.map((openGame) => {

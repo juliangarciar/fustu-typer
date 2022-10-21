@@ -3,9 +3,9 @@ import axios from 'axios';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { setAxiosFactory, setBaseUrl } from './api/axios-client';
-import { TyperGameStateProvider } from './common/typer-gamestate-context';
+import { TyperGameStateProvider } from './common-hooks/typer-gamestate-context';
 import './index.css';
-import { ModalContextProvider } from './modal/typer-modal-context';
+import { ModalContextProvider } from './common-hooks/typer-modal-context';
 import { TyperMain } from './typer-main';
 
 const theme = extendTheme({

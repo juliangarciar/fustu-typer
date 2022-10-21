@@ -1,6 +1,6 @@
 import { Center, Text } from '@chakra-ui/react';
 import { FC } from 'react';
-import { useAutoTransitionState } from '../common/typer-transition-state';
+import { useAutoTransitionState } from '../common-hooks/typer-transition-state';
 
 const COLUMN_STYLES = {
   0: { left: '5%' },

@@ -13,9 +13,12 @@ export interface TyperPlayerCardProps {
   playerName: string;
   playerEmail: string;
   playerImg?: string;
+  playerBackground?: string;
   playerElo?: number;
   playerGames?: number;
   playerRankedGames: number;
+  playerCorrectWords?: number;
+  playerIncorrectWords?: number;
 }
 
 export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
@@ -25,7 +28,8 @@ export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
         maxH={'120px'}
         w={'full'}
         src={
-          'https://images.unsplash.com/photo-1612865547334-09cb8cb455da?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80'
+          props.playerBackground ? props.playerBackground 
+            : "https://images.unsplash.com/photo-1612865547334-09cb8cb455da?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80"
         }
         objectFit={'cover'}
       />
@@ -49,6 +53,16 @@ export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
           {props.playerRankedGames > 0 ? (
             <Text color={'gray.500'}>
               Ranked Games played: {props.playerRankedGames}
+            </Text>
+          ) : null}
+          {props.playerCorrectWords ? (
+            <Text color={'gray.500'}>
+              Correct words: {props.playerCorrectWords}
+            </Text>
+          ) : null}
+          {props.playerIncorrectWords ? (
+            <Text color={'gray.500'}>
+              Incorrect words: {props.playerIncorrectWords}
             </Text>
           ) : null}
         </Stack>

@@ -12,7 +12,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
-import { FC, useEffect } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import {
   CreateGameDto,
@@ -20,13 +20,15 @@ import {
   CreateGameDtoGameLength,
   GameControllerQuery,
 } from '../api/axios-client';
-import { MODAL_TYPE, RegisterModal } from './typer-modal-context';
+import { GameStateContext, GAME_STATE } from '../common-hooks/typer-gamestate-context';
+import { MODAL_TYPE, RegisterModal } from '../common-hooks/typer-modal-context';
 
 const TyperCreateGameModal: FC<{ registerModal: RegisterModal }> = ({
   registerModal,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const queryClient = useQueryClient();
+  const { setGameState } = useContext(GameStateContext);
 
   useEffect(() => {
     registerModal(MODAL_TYPE.CREATE_GAME, onOpen);
@@ -62,6 +64,7 @@ const TyperCreateGameModal: FC<{ registerModal: RegisterModal }> = ({
 
           actions.setSubmitting(false);
           onClose();
+          setGameState(GAME_STATE.GAME_LOBBY);
         }}
       >
         {(props) => (

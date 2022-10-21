@@ -9,7 +9,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { FC, useEffect } from 'react';
-import { MODAL_TYPE, RegisterModal } from './typer-modal-context';
+import { MODAL_TYPE, RegisterModal } from '../common-hooks/typer-modal-context';
 
 export const TyperLobbyQuitModal: FC<{ registerModal: RegisterModal }> = ({
   registerModal,
