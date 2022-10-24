@@ -2,32 +2,43 @@ import { Center, Text } from '@chakra-ui/react';
 import { FC } from 'react';
 import { useAutoTransitionState } from '../common-hooks/typer-transition-state';
 
+interface TypeWordProps {
+  key: React.Key;
+  currentWord: string;
+  column: number;
+  validUntil: number;
+  validFrom: number;
+  currentTs: number;
+}
+
 const COLUMN_STYLES = {
   0: { left: '5%' },
   1: { left: '50%', transform: 'translateX(-50%)' },
   2: { right: '5%' },
 };
 
-const STATE_STYLES = {
-  ENTERING: { top: '0%', opacity: 0 },
-  ENTERED: { top: '95%', opacity: 1 },
-  EXITING: { top: '95%', opacity: 0 },
-};
-
-interface TypeWordProps {
-  key: React.Key;
-  currentWord: string;
-  column: number;
-  duration: number;
-}
+const MAX_TOP = 95;
 
 export const TyperWord: FC<TypeWordProps> = ({
   currentWord,
   column,
-  duration,
+  validUntil,
+  validFrom,
+  currentTs,
 }) => {
-  const [transitionState] = useAutoTransitionState(duration);
-  const transitionAnimation = 'top ' + duration + 'ms linear, opacity 400ms';
+  const waitingTime = validFrom - currentTs;
+  const originalDuration = validUntil - validFrom;
+  const currentDuration = currentTs > validFrom ? validUntil - currentTs : originalDuration;
+  const initialTop = waitingTime < 0 ? (-waitingTime * MAX_TOP / originalDuration) : 0;
+  
+  const [transitionState] = useAutoTransitionState(currentDuration, waitingTime > 0 ? waitingTime : 0);
+  
+  const transitionAnimation = 'top ' + currentDuration + 'ms linear, opacity 100ms';
+  const STATE_STYLES = {
+    ENTERING: { top: initialTop + '%', opacity: 0 },
+    ENTERED: { top: MAX_TOP + '%', opacity: 1 },
+    EXITING: { top: MAX_TOP + '%', opacity: 0 },
+  };
   const style = {
     ...(STATE_STYLES[transitionState as keyof typeof STATE_STYLES] ?? {}),
     ...(COLUMN_STYLES[column as keyof typeof COLUMN_STYLES] ?? {}),
@@ -40,8 +51,8 @@ export const TyperWord: FC<TypeWordProps> = ({
       shadow="md"
       borderRadius="md"
       position="absolute"
-      maxWidth="50%"
-      height="5%"
+      maxW="50%"
+      h="5%"
       transition={transitionAnimation}
       bgColor="yellow.100"
     >

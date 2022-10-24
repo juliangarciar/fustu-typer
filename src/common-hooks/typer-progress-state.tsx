@@ -6,7 +6,10 @@ export const useProgressState = (duration: number, steps: number) => {
   
   useEffect(() => {
     if (stepsProgressed < steps) {
-      setTimeout(() => setSteps(steps => steps + 1), stepDuration);
+      let timeoutId = setTimeout(() => setSteps(steps => steps + 1), stepDuration);
+      return () => {
+        clearTimeout(timeoutId);
+      }
     }
   }, [stepsProgressed]);
 

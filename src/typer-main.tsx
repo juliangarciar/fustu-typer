@@ -15,7 +15,6 @@ export const TyperMain: FC = () => {
   const { gameState, setGameState } = useContext(GameStateContext);
 
   useEffect(() => {
-    console.log(currentGame, gameState);
     if (!currentGame || !currentGame.id) {
       if (gameState === GAME_STATE.GAME_STARTED) {
         setGameState(GAME_STATE.GAME_FINISHED);

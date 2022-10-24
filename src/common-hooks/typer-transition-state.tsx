@@ -13,15 +13,20 @@ export const useAutoTransitionState = (
   const [state, setState] = useState(AUTO_STATE.ENTERING);
 
   useEffect(() => {
-    let timerId: any;
     if (state === AUTO_STATE.ENTERING) {
-      timerId = setTimeout(() => setState(AUTO_STATE.ENTERED), initialDuration);
+      const timerId = setTimeout(() => setState(AUTO_STATE.ENTERED), initialDuration);
+      return () => {
+        clearTimeout(timerId);
+      }
     }
 
     if (state === AUTO_STATE.ENTERED) {
-      timerId = setTimeout(() => setState(AUTO_STATE.EXITING), stateDuration);
+      const timerId = setTimeout(() => setState(AUTO_STATE.EXITING), stateDuration);
+      return () => {
+        clearTimeout(timerId);
+      }
     }
-  });
+  }, [state]);
 
   return [state] as const;
 };

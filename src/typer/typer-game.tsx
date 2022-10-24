@@ -6,25 +6,36 @@ import { GameStateContext, GAME_STATE } from '../common-hooks/typer-gamestate-co
 import { TyperScore } from './typer-score';
 import { TyperWord } from './typer-word';
 
+const EXTRA_FINISH_TIME = 1000;
+const DEFAULT_GAME_DURATION = 20000;
+
 export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
-  const { data: currentGame, refetch } = GameControllerQuery.useGetGameStateQuery(gameId);
+  const { data: currentGame } = GameControllerQuery.useGetGameStateQuery(gameId);
   const { setGameState } = useContext(GameStateContext);
   const [ currentWord, setCurrentWord ] = useState('');
 
   useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      refetch();
-    }, 500);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (currentGame && currentGame.game.hasFinished === true) {
+    const gameLength = getGameLength();
+    const timeoutId = setTimeout(() => {
       setGameState(GAME_STATE.GAME_FINISHED);
-    }
+    }, gameLength);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [currentGame]);
+
+  const getGameLength = () => {
+    if (currentGame) {
+      const length = currentGame.wordsToBeSubmitted.length - 1;
+      const duration = currentGame.wordsToBeSubmitted.at(length)?.validUntil;
+      if (duration) {
+        return duration - getCurrentTs() + EXTRA_FINISH_TIME;
+      }
+    }
+    
+    return DEFAULT_GAME_DURATION;
+  };
 
   const handleKeyInput = async (e: React.KeyboardEvent) => {
     if (e.key == 'Enter') {
@@ -38,58 +49,41 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
     }
   };
 
+  const getCurrentTs = () => {
+    if (currentGame) {
+      return new Date().valueOf() - currentGame.game.startedTimestamp;
+    }
+    return 0;
+  };
+
   if (!currentGame) return <TyperLoading />;
-  
-  const currentTs = new Date().valueOf() - currentGame.game.startedTimestamp;
 
   return (
-    <VStack
-      height="100%"
-      width="100%"
-      spacing={2}
-      overflowY="hidden"
-      bg="blue.100"
-    >
-      <Box position="relative" height="10%">
+    <VStack h="100%" w="100%" spacing={2} overflowY="hidden" bg="blue.100">
+      <Box h="10%" position="relative" >
         <TyperScore
           correctWords={currentGame.correctSubmissions}
           incorrectWords={currentGame.wrongSubmissions}
         ></TyperScore>
       </Box>
-      <Box
-        borderRadius="lg"
-        shadow="md"
-        width="100%"
-        height="80%"
-        bg="blue.300"
-        m={0}
-        position="relative"
-      >
-        {currentGame.wordsToBeSubmitted
-          .filter((w) => w.validFrom < currentTs && w.validUntil > currentTs)
-          .map((w, idx) => (
-            <TyperWord
-              key={w.id}
-              currentWord={w.word}
-              column={w.column}
-              duration={w.validUntil - w.validFrom}
-            />
-          ))}
+      <Box w="100%" h="80%" borderRadius="lg" shadow="md" bg="blue.300" m={0} position="relative">
+        {
+          currentGame.wordsToBeSubmitted
+            .filter((w) => w.validUntil > (getCurrentTs() + 200))
+            .map((w) => (
+              <TyperWord
+                key={w.id}
+                currentWord={w.word}
+                column={w.column}
+                validUntil={w.validUntil}
+                validFrom={w.validFrom}
+                currentTs={getCurrentTs()}
+              />
+            ))
+        }
       </Box>
-      <Box
-        width="100%"
-        height="10%"
-        bg="white"
-        borderRadius="xl"
-        position="relative"
-      >
-        <Input
-          height="100%"
-          type="text"
-          placeholder="Input word..."
-          size="lg"
-          shadow="md"
-          autoFocus
+      <Box w="100%" h="10%" bg="white" borderRadius="xl" position="relative">
+        <Input h="100%" type="text" placeholder="Input word..." size="lg" shadow="md" autoFocus 
           value={currentWord}
           onChange={(e: React.FormEvent<HTMLInputElement>) => {
             setCurrentWord(e.currentTarget.value);

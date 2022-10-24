@@ -8,7 +8,7 @@ import { TyperPlayerCard } from "../common-components/typer-player-card";
 import { GameStateContext, GAME_STATE } from "../common-hooks/typer-gamestate-context";
 
 export const TyperGameEnded: FC = () => {
-  const { data: currentGame } = GameControllerQuery.useGetLastGameQuery();
+  const { data: lastGame } = GameControllerQuery.useGetLastGameQuery();
   const { data: currentUser } = UsersControllerQuery.useMeQuery();
   const { setGameState } = useContext(GameStateContext);
   const queryClient = useQueryClient();
@@ -18,7 +18,7 @@ export const TyperGameEnded: FC = () => {
     setGameState(GAME_STATE.GAME_MENU);
   };
 
-  if (!currentGame) return <TyperLoading />;
+  if (!lastGame) return <TyperLoading />;
   
   return (
     <TyperMenuLayout
@@ -31,10 +31,10 @@ export const TyperGameEnded: FC = () => {
     >
       <HStack h="100%" mx="2.5%" spacing="5%">
         {
-          currentGame.participants.map((participant, index) => {
+          lastGame.participants.map((participant, index) => {
             return (
               
-              <Box key={index} w="47.5%" h="80%" bg={currentGame?.winner.id === currentUser?.id ? "yellow.100" : "red.200"}>
+              <Box key={index} w="47.5%" h="80%" bg={lastGame?.winner.id === currentUser?.id ? "yellow.100" : "red.200"}>
                 <TyperPlayerCard
                   playerName={participant.name}
                   playerEmail={participant.email}
@@ -42,8 +42,8 @@ export const TyperGameEnded: FC = () => {
                   playerElo={participant.rating}
                   playerGames={participant.gamesPlayed}
                   playerRankedGames={participant.rankedGamesPlayed}
-                  playerCorrectWords={1}
-                  playerIncorrectWords={1}
+                  playerCorrectWords={0}
+                  playerIncorrectWords={0}
                 />
               </Box>
             );

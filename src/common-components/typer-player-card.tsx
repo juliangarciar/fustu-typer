@@ -55,16 +55,16 @@ export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
               Ranked Games played: {props.playerRankedGames}
             </Text>
           ) : null}
-          {props.playerCorrectWords ? (
+          {props.playerCorrectWords ?? (
             <Text color={'gray.500'}>
               Correct words: {props.playerCorrectWords}
             </Text>
-          ) : null}
-          {props.playerIncorrectWords ? (
+          )}
+          {props.playerIncorrectWords ?? (
             <Text color={'gray.500'}>
               Incorrect words: {props.playerIncorrectWords}
             </Text>
-          ) : null}
+          )}
         </Stack>
       </Box>
     </Box>
