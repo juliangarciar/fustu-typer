@@ -10,7 +10,7 @@ const EXTRA_FINISH_TIME = 1000;
 const DEFAULT_GAME_DURATION = 20000;
 
 export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
-  const { data: currentGame } = GameControllerQuery.useGetGameStateQuery(gameId);
+  const { data: currentGame, refetch } = GameControllerQuery.useGetGameStateQuery(gameId);
   const { setGameState } = useContext(GameStateContext);
   const [ currentWord, setCurrentWord ] = useState('');
 
@@ -45,6 +45,7 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
           word: currentWord 
         })
       );
+      refetch();
       setCurrentWord('');
     }
   };
