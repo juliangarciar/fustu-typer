@@ -20,25 +20,25 @@ export const TyperMenuLayout: FC<TyperMenuLayoutProps> = (props) => {
       <Center h="10%">
         <Heading fontWeight="semibold">{props.heading}</Heading>
       </Center>
-      <Box w="100%" h="80%">
+      <Box w="100%" h="77%">
         {props.children}
       </Box>
-      <Center h="10%" w="100%">
+      <Box h="13%" w="100%">
         {props.cancelButton ? (
-          <Button bg="cyan.500" _hover={{ bg: "cyan.600" }} color="white" w="40%" mx="5%" onClick={props.cancelButton?.buttonAction}>
+          <Button bg="cyan.500" _hover={{ bg: "cyan.600" }} color="white" w="40%" mx="5%" my="4%" onClick={props.cancelButton?.buttonAction}>
             {props.cancelButton.buttonName}
           </Button>
         ) : (
           <></>
         )}
         {props.acceptButton ? (
-          <Button bg="blue.400" _hover={{ bg: "blue.500" }} color="white" w="40%" mx="5%" onClick={props.acceptButton?.buttonAction}>
+          <Button bg="blue.400" _hover={{ bg: "blue.500" }} color="white" w="40%" mx="5%" my="4%" onClick={props.acceptButton?.buttonAction}>
             {props.acceptButton.buttonName}
           </Button>
         ) : (   
           <></>
         )}
-      </Center>
+      </Box>
     </VStack>
   );
 };

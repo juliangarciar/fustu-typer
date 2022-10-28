@@ -12,11 +12,13 @@ import { TyperLoading } from '../common-components/typer-loading';
 import { TyperMenuLayout } from '../common-components/typer-menu-layout';
 import { TyperPlayerCard } from '../common-components/typer-player-card';
 import { GameStateContext, GAME_STATE } from '../common-hooks/typer-gamestate-context';
+import { ModalContext, MODAL_TYPE } from '../common-hooks/typer-modal-context';
 
 export const TyperLobby: FC = () => {
   const { data: currentGame, refetch } = GameControllerQuery.useGetCurrentGameQuery();
   const { data: currentUser } = UsersControllerQuery.useMeQuery();
   const { gameState, setGameState } = useContext(GameStateContext);
+  const { openModal } = useContext(ModalContext);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -27,6 +29,13 @@ export const TyperLobby: FC = () => {
       clearInterval(intervalId);
     };
   }, []);
+
+  useEffect(() => {
+    if (!currentGame || !currentGame.id) {
+      openModal(MODAL_TYPE.LOBBY_LEADER_LEFT);
+      setGameState(GAME_STATE.GAME_MENU);
+    }
+  }, [currentGame])
 
   const handleStartGame = async (_gameId: number) => {
     await GameControllerQuery.Client.startGame(
@@ -43,7 +52,7 @@ export const TyperLobby: FC = () => {
     setGameState(GAME_STATE.GAME_MENU);
   };
 
-  if (!currentGame) return <TyperLoading />;
+  if (!currentGame?.id) return <TyperLoading />;
 
   const buttonAccept =
     currentGame?.lead.id === currentUser?.id &&
@@ -65,11 +74,11 @@ export const TyperLobby: FC = () => {
         }}
         acceptButton={buttonAccept}
       >
-        <HStack h="100%" spacing="5%" mx="5%" borderRadius="lg">
+        <HStack h="100%" spacing="10%" mx="5%" borderRadius="lg">
           {
             currentGame.participants.map((participant, index) => {
               return (
-                <Box key={index} w="45%" h="80%">
+                <Box key={participant.id} w="45%" h="80%">
                   <TyperPlayerCard
                     playerName={participant.name}
                     playerEmail={participant.email}

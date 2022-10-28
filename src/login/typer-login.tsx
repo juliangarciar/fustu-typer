@@ -65,6 +65,7 @@ export const TyperLogin: FC = () => {
       onClose={onClose}
       isCentered={true}
       size="sm"
+      blockScrollOnMount={false}
     >
       <ModalOverlay />
       <ModalContent>

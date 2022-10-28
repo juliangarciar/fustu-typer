@@ -43,8 +43,8 @@ export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
       </Flex>
 
       <Box p={6}>
-        <Stack spacing={0} align={'center'} mb={5}>
-          <Heading fontSize={'lg'} fontWeight={500} fontFamily={'body'}>
+        <Stack spacing={0} align={'center'} mb={5} fontSize="md">
+          <Heading as="h2" size="md" fontWeight={400} fontFamily={'body'}>
             {props.playerName}
           </Heading>
           <Text color={'gray.500'}>{props.playerEmail}</Text>
@@ -55,12 +55,12 @@ export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
               Ranked Games played: {props.playerRankedGames}
             </Text>
           ) : null}
-          {props.playerCorrectWords ?? (
+          {props.playerCorrectWords && (
             <Text color={'gray.500'}>
               Correct words: {props.playerCorrectWords}
             </Text>
           )}
-          {props.playerIncorrectWords ?? (
+          {props.playerIncorrectWords && (
             <Text color={'gray.500'}>
               Incorrect words: {props.playerIncorrectWords}
             </Text>

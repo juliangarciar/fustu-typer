@@ -58,17 +58,18 @@ export const TyperMenu: FC = () => {
           buttonAction: handleCreateGame,
         }}
       >
-        <Box className="game-list" overflowY="auto" h="100%" mx="5%" borderRadius="lg">
+        <Box className="game-list" overflowY="auto" h="100%" mx="5%" fontSize="md">
           <Table>
             <Tbody>
-              {openGamesData.map((openGame) => {
+              {openGamesData.map((openGame, index) => {
+                let isGray = index % 2 == 0 ? "gray.300" : "white";
                 return (
-                  <Tr key={openGame.id}>
+                  <Tr key={openGame.id} bgColor={isGray}>
                     <Td>{openGame.title}</Td>
                     <Td>{openGame.lead.name}</Td>
                     <Td>{openGame.participants.length}/2</Td>
                     <Td>
-                      <Button onClick={() => handleJoinGame(openGame.id)}>Join</Button>
+                      <Button bg="blue.400" _hover={{ bg: "blue.500" }} color="white" onClick={() => handleJoinGame(openGame.id)}>Join</Button>
                     </Td>
                   </Tr>
                 );

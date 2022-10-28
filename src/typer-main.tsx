@@ -1,6 +1,6 @@
 import { Box, Center } from '@chakra-ui/react';
 import { FC, useContext, useEffect } from 'react';
-import { GameControllerQuery } from './api/axios-client';
+import { GameControllerQuery, UsersControllerQuery } from './api/axios-client';
 import { TyperLoading } from './common-components/typer-loading';
 import { GameStateContext, GAME_STATE } from './common-hooks/typer-gamestate-context';
 import { TyperLogin } from './login/typer-login';
@@ -12,28 +12,27 @@ import { TyperGameLoading } from './menu/typer-game-loading';
 import './index.css';
 
 export const TyperMain: FC = () => {
+  const { data: currentUser } = UsersControllerQuery.useMeQuery();
   const { data: currentGame } = GameControllerQuery.useGetCurrentGameQuery();
   const { gameState, setGameState } = useContext(GameStateContext);
 
   useEffect(() => {
-    if (!currentGame || !currentGame.id) {
-      if (gameState === GAME_STATE.GAME_STARTED) {
-        setGameState(GAME_STATE.GAME_FINISHED);
-      } else if (gameState === GAME_STATE.INIT) {
-        setGameState(GAME_STATE.GAME_MENU);
+    if (currentUser && currentUser.id) {
+      if (!currentGame || !currentGame.id) {
+        if (gameState === GAME_STATE.GAME_STARTED) {
+          setGameState(GAME_STATE.GAME_FINISHED);
+        } else if (gameState === GAME_STATE.INIT) {
+          setGameState(GAME_STATE.GAME_MENU);
+        }
+      } else if (currentGame.hasStarted === false) {
+        setGameState(GAME_STATE.GAME_LOBBY);
+      } else if (0 < getLoadingTime()) {
+        setGameState(GAME_STATE.GAME_LOADING);
+      } else if (currentGame.hasFinished === false) {
+        setGameState(GAME_STATE.GAME_STARTED);
       }
-    } else if (currentGame.hasStarted === false) {
-      setGameState(GAME_STATE.GAME_LOBBY);
-    } else if (0 < getLoadingTime()) {
-      setGameState(GAME_STATE.GAME_LOADING);
-    } else if (currentGame.hasFinished === false) {
-      setGameState(GAME_STATE.GAME_STARTED);
-    }
-  }, [currentGame]);
-
-  useEffect(() => {
-    console.log(gameState);
-  }, [gameState]);
+    }    
+  }, [currentGame, currentUser]);
 
   const getLoadingTime = () => {
     if (!currentGame) {
