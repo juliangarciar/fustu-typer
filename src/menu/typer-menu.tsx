@@ -9,9 +9,11 @@ import { FC, useContext, useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import { GameControllerQuery, JoinGameDto } from '../api/axios-client';
 import { TyperLoading } from '../common-components/typer-loading';
-import { GameStateContext, GAME_STATE } from '../common-hooks/typer-gamestate-context';
+import { GameStateContext } from '../common-hooks/typer-gamestate-context';
 import { ModalContext, MODAL_TYPE } from '../common-hooks/typer-modal-context';
 import { TyperMenuLayout } from '../common-components/typer-menu-layout';
+import TyperContainer from '../common-components/typer-container';
+import './../index.css';
 
 export const TyperMenu: FC = () => {
   const { data: openGamesData, status, refetch: refetchCurrentGames } = GameControllerQuery.useGetOpenGamesQuery();
@@ -44,35 +46,37 @@ export const TyperMenu: FC = () => {
   if (status != 'success') return <TyperLoading />;
 
   return (
-    <TyperMenuLayout
-      heading={'Game list'}
-      cancelButton={{
-        buttonName: 'Logout',
-        buttonAction: logout,
-      }}
-      acceptButton={{
-        buttonName: 'Create game',
-        buttonAction: handleCreateGame,
-      }}
-    >
-      <Box bg="blue.200" overflowY="auto">
-        <Table>
-          <Tbody>
-            {openGamesData.map((openGame) => {
-              return (
-                <Tr key={openGame.id}>
-                  <Td>{openGame.title}</Td>
-                  <Td>{openGame.lead.name}</Td>
-                  <Td>{openGame.participants.length}/2</Td>
-                  <Td>
-                    <Button onClick={() => handleJoinGame(openGame.id)}>Join</Button>
-                  </Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </Box>
-    </TyperMenuLayout>
+    <TyperContainer>
+      <TyperMenuLayout
+        heading={'Game list'}
+        cancelButton={{
+          buttonName: 'Logout',
+          buttonAction: logout,
+        }}
+        acceptButton={{
+          buttonName: 'Create game',
+          buttonAction: handleCreateGame,
+        }}
+      >
+        <Box className="game-list" overflowY="auto" h="100%" mx="5%" borderRadius="lg">
+          <Table>
+            <Tbody>
+              {openGamesData.map((openGame) => {
+                return (
+                  <Tr key={openGame.id}>
+                    <Td>{openGame.title}</Td>
+                    <Td>{openGame.lead.name}</Td>
+                    <Td>{openGame.participants.length}/2</Td>
+                    <Td>
+                      <Button onClick={() => handleJoinGame(openGame.id)}>Join</Button>
+                    </Td>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </Box>
+      </TyperMenuLayout>
+    </TyperContainer>
   );
 };

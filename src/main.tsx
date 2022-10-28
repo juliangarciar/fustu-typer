@@ -1,4 +1,4 @@
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme, StyleFunctionProps } from '@chakra-ui/react';
 import axios from 'axios';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -7,8 +7,10 @@ import { TyperGameStateProvider } from './common-hooks/typer-gamestate-context';
 import './index.css';
 import { ModalContextProvider } from './common-hooks/typer-modal-context';
 import { TyperMain } from './typer-main';
+import { mode } from "@chakra-ui/theme-tools";
 
 const theme = extendTheme({
+  
   fonts: {
     heading: `Inter, sans-serif`,
     body: `Inter, 'Raleway', sans-serif`,
@@ -64,7 +66,7 @@ const theme = extendTheme({
     wide: '0.025em',
     wider: '0.05em',
     widest: '0.1em',
-  },
+  }
 });
 
 const queryClient = new QueryClient();

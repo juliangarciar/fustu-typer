@@ -1,6 +1,7 @@
 import { Box, Input, VStack } from '@chakra-ui/react';
 import { FC, useContext, useEffect, useState } from 'react';
 import { GameControllerQuery, SubmitWordDto } from '../api/axios-client';
+import TyperContainer from '../common-components/typer-container';
 import { TyperLoading } from '../common-components/typer-loading';
 import { GameStateContext, GAME_STATE } from '../common-hooks/typer-gamestate-context';
 import { TyperScore } from './typer-score';
@@ -60,40 +61,42 @@ export const TyperGame: FC<{ gameId: number }> = ({ gameId }) => {
   if (!currentGame) return <TyperLoading />;
 
   return (
-    <VStack h="100%" w="100%" spacing={2} overflowY="hidden" bg="blue.100">
-      <Box h="10%" position="relative" >
-        <TyperScore
-          correctWords={currentGame.correctSubmissions}
-          incorrectWords={currentGame.wrongSubmissions}
-        ></TyperScore>
-      </Box>
-      <Box w="100%" h="80%" borderRadius="lg" shadow="md" bg="blue.300" m={0} position="relative">
-        {
-          currentGame.wordsToBeSubmitted
-            .filter((w) => w.validUntil > (getCurrentTs() + 200))
-            .map((w) => (
-              <TyperWord
-                key={w.id}
-                currentWord={w.word}
-                column={w.column}
-                validUntil={w.validUntil}
-                validFrom={w.validFrom}
-                currentTs={getCurrentTs()}
-              />
-            ))
-        }
-      </Box>
-      <Box w="100%" h="10%" bg="white" borderRadius="xl" position="relative">
-        <Input h="100%" type="text" placeholder="Input word..." size="lg" shadow="md" autoFocus 
-          value={currentWord}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => {
-            setCurrentWord(e.currentTarget.value);
-          }}
-          onKeyDown={(e: React.KeyboardEvent) => {
-            handleKeyInput(e);
-          }}
-        />
-      </Box>
-    </VStack>
+    <TyperContainer>
+      <VStack h="100%" w="100%" spacing={2} overflowY="hidden" bg="blue.100">
+        <Box h="10%" position="relative" >
+          <TyperScore
+            correctWords={currentGame.correctSubmissions}
+            incorrectWords={currentGame.wrongSubmissions}
+          ></TyperScore>
+        </Box>
+        <Box w="100%" h="80%" borderRadius="lg" shadow="md" bg="blue.300" m={0} position="relative">
+          {
+            currentGame.wordsToBeSubmitted
+              .filter((w) => w.validUntil > (getCurrentTs() + 200))
+              .map((w) => (
+                <TyperWord
+                  key={w.id}
+                  currentWord={w.word}
+                  column={w.column}
+                  validUntil={w.validUntil}
+                  validFrom={w.validFrom}
+                  currentTs={getCurrentTs()}
+                />
+              ))
+          }
+        </Box>
+        <Box w="100%" h="10%" bg="white" borderRadius="xl" position="relative">
+          <Input h="100%" type="text" placeholder="Input word..." size="lg" shadow="md" autoFocus 
+            value={currentWord}
+            onChange={(e: React.FormEvent<HTMLInputElement>) => {
+              setCurrentWord(e.currentTarget.value);
+            }}
+            onKeyDown={(e: React.KeyboardEvent) => {
+              handleKeyInput(e);
+            }}
+          />
+        </Box>
+      </VStack>
+    </TyperContainer>
   );
 };

@@ -23,7 +23,7 @@ export interface TyperPlayerCardProps {
 
 export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
   return (
-    <Box boxShadow={'lg'} rounded={'md'} overflow={'hidden'} w="100%" h="100%">
+    <Box boxShadow={'lg'} rounded={'md'} overflow={'hidden'} w="100%" h="100%" bg="white">
       <Image
         maxH={'120px'}
         w={'full'}
@@ -44,7 +44,7 @@ export const TyperPlayerCard: FC<TyperPlayerCardProps> = (props) => {
 
       <Box p={6}>
         <Stack spacing={0} align={'center'} mb={5}>
-          <Heading fontSize={'2xl'} fontWeight={500} fontFamily={'body'}>
+          <Heading fontSize={'lg'} fontWeight={500} fontFamily={'body'}>
             {props.playerName}
           </Heading>
           <Text color={'gray.500'}>{props.playerEmail}</Text>

@@ -1,5 +1,5 @@
 import { Box, HStack } from '@chakra-ui/react';
-import { FC, useEffect } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import {
   GameControllerQuery,
@@ -7,13 +7,16 @@ import {
   StartGameDto,
   UsersControllerQuery
 } from '../api/axios-client';
+import TyperContainer from '../common-components/typer-container';
 import { TyperLoading } from '../common-components/typer-loading';
 import { TyperMenuLayout } from '../common-components/typer-menu-layout';
 import { TyperPlayerCard } from '../common-components/typer-player-card';
+import { GameStateContext, GAME_STATE } from '../common-hooks/typer-gamestate-context';
 
 export const TyperLobby: FC = () => {
   const { data: currentGame, refetch } = GameControllerQuery.useGetCurrentGameQuery();
   const { data: currentUser } = UsersControllerQuery.useMeQuery();
+  const { gameState, setGameState } = useContext(GameStateContext);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -37,6 +40,7 @@ export const TyperLobby: FC = () => {
       new LeaveGameDto({ gameId: _gameId }),
     );
     queryClient.invalidateQueries(GameControllerQuery.getCurrentGameQueryKey());
+    setGameState(GAME_STATE.GAME_MENU);
   };
 
   if (!currentGame) return <TyperLoading />;
@@ -52,32 +56,34 @@ export const TyperLobby: FC = () => {
       : undefined;
 
   return (
-    <TyperMenuLayout
-      heading={'Game lobby'}
-      cancelButton={{
-        buttonName: 'Back to menu',
-        buttonAction: () => handleBackToMenu(currentGame.id),
-      }}
-      acceptButton={buttonAccept}
-    >
-      <HStack h="100%" mx="2.5%" spacing="5%">
-        {
-          currentGame.participants.map((participant, index) => {
-            return (
-              <Box key={index} w="47.5%" h="80%">
-                <TyperPlayerCard
-                  playerName={participant.name}
-                  playerEmail={participant.email}
-                  playerImg={participant.avatar}
-                  playerElo={participant.rating}
-                  playerGames={participant.gamesPlayed}
-                  playerRankedGames={participant.rankedGamesPlayed}
-                />
-              </Box>
-            );
-          })
-        }
-      </HStack>
-    </TyperMenuLayout>
+    <TyperContainer>
+      <TyperMenuLayout
+        heading={'Game lobby'}
+        cancelButton={{
+          buttonName: 'Back to menu',
+          buttonAction: () => handleBackToMenu(currentGame.id),
+        }}
+        acceptButton={buttonAccept}
+      >
+        <HStack h="100%" spacing="5%" mx="5%" borderRadius="lg">
+          {
+            currentGame.participants.map((participant, index) => {
+              return (
+                <Box key={index} w="45%" h="80%">
+                  <TyperPlayerCard
+                    playerName={participant.name}
+                    playerEmail={participant.email}
+                    playerImg={participant.avatar}
+                    playerElo={participant.rating}
+                    playerGames={participant.gamesPlayed}
+                    playerRankedGames={participant.rankedGamesPlayed}
+                  />
+                </Box>
+              );
+            })
+          }
+        </HStack>
+      </TyperMenuLayout>
+    </TyperContainer>
   );
 };

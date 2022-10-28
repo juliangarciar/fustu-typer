@@ -9,6 +9,7 @@ import { TyperMenu } from './menu/typer-menu';
 import { TyperGame } from './typer/typer-game';
 import { TyperGameEnded } from './menu/typer-game-ended';
 import { TyperGameLoading } from './menu/typer-game-loading';
+import './index.css';
 
 export const TyperMain: FC = () => {
   const { data: currentGame } = GameControllerQuery.useGetCurrentGameQuery();
@@ -60,10 +61,8 @@ export const TyperMain: FC = () => {
   return (
     <>
       <TyperLogin />
-      <Center w="100vw" h="100vh" minW="800px" minH="600px" m="0" p="0" bg="gray.100" overflow="hidden">
-        <Box w="60%" h="80%" minW="800px" m="auto" bg="white" borderRadius="lg" shadow="lg">
-          {renderElement}
-        </Box>
+      <Center className="main-container">
+        {renderElement}
       </Center>
     </>
   );
