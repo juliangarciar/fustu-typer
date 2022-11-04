@@ -8,3468 +8,3303 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
-import axios, {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  CancelToken,
-} from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 
 export class AppControllerClient {
-  private instance: AxiosInstance;
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    private instance: AxiosInstance;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(baseUrl?: string, instance?: AxiosInstance) {
-    this.instance = instance ? instance : axios.create();
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : '';
-  }
+        this.instance = instance ? instance : axios.create();
 
-  debug(cancelToken?: CancelToken | undefined): Promise<void> {
-    let url_ = this.baseUrl + '/debug';
-    url_ = url_.replace(/[?&]$/, '');
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
 
-    let options_: AxiosRequestConfig = {
-      method: 'POST',
-      url: url_,
-      headers: {},
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
-        }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processDebug(_response);
-      });
-  }
-
-  protected processDebug(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
-        }
-      }
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      return Promise.resolve<void>(null as any);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    debug(  cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/debug";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "POST",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDebug(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
-}
-export class AppControllerQuery {
-  get baseUrl() {
-    return getBaseUrl() ?? '' + '';
-  }
 
-  static get Client() {
-    const client = createClient(AppControllerClient);
-    return client;
-  }
+    protected processDebug(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 201) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
 
-  static get Url() {
-    return new AppControllerQuery();
-  }
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
+export class AppControllerQuery{
+
+    get baseUrl() {
+      return getBaseUrl() ?? '' + '';
+    }
+
+    static get Client() {
+      const client = createClient(AppControllerClient);
+      return client;
+    }
+
+    static get Url() {
+        return new AppControllerQuery();
+    }
+  }
 
 export class GameControllerClient {
-  private instance: AxiosInstance;
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    private instance: AxiosInstance;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(baseUrl?: string, instance?: AxiosInstance) {
-    this.instance = instance ? instance : axios.create();
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : '';
-  }
+        this.instance = instance ? instance : axios.create();
 
-  createGame(
-    body: CreateGameDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<GameDto> {
-    let url_ = this.baseUrl + '/game';
-    url_ = url_.replace(/[?&]$/, '');
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
 
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'POST',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
-        }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processCreateGame(_response);
-      });
-  }
-
-  protected processCreateGame(response: AxiosResponse): Promise<GameDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
-        }
-      }
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = GameDto.fromJS(resultData201);
-      return Promise.resolve<GameDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    createGame(body: CreateGameDto , cancelToken?: CancelToken | undefined): Promise<GameDto> {
+        let url_ = this.baseUrl + "/game";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCreateGame(_response);
+        });
     }
-    return Promise.resolve<GameDto>(null as any);
-  }
 
-  getAllGames(cancelToken?: CancelToken | undefined): Promise<GameDto[]> {
-    let url_ = this.baseUrl + '/game';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processCreateGame(response: AxiosResponse): Promise<GameDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetAllGames(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = GameDto.fromJS(resultData201);
+            return Promise.resolve<GameDto>(result201);
 
-  protected processGetAllGames(response: AxiosResponse): Promise<GameDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<GameDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      if (Array.isArray(resultData201)) {
-        result201 = [] as any;
-        for (let item of resultData201) result201!.push(GameDto.fromJS(item));
-      } else {
-        result201 = <any>null;
-      }
-      return Promise.resolve<GameDto[]>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    getAllGames(  cancelToken?: CancelToken | undefined): Promise<GameDto[]> {
+        let url_ = this.baseUrl + "/game";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetAllGames(_response);
+        });
     }
-    return Promise.resolve<GameDto[]>(null as any);
-  }
 
-  updateGame(
-    body: UpdateGameDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<GameDto> {
-    let url_ = this.baseUrl + '/game';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'PUT',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGetAllGames(response: AxiosResponse): Promise<GameDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processUpdateGame(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            if (Array.isArray(resultData201)) {
+                result201 = [] as any;
+                for (let item of resultData201)
+                    result201!.push(GameDto.fromJS(item));
+            }
+            else {
+                result201 = <any>null;
+            }
+            return Promise.resolve<GameDto[]>(result201);
 
-  protected processUpdateGame(response: AxiosResponse): Promise<GameDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<GameDto[]>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = GameDto.fromJS(resultData201);
-      return Promise.resolve<GameDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    updateGame(body: UpdateGameDto , cancelToken?: CancelToken | undefined): Promise<GameDto> {
+        let url_ = this.baseUrl + "/game";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateGame(_response);
+        });
     }
-    return Promise.resolve<GameDto>(null as any);
-  }
 
-  getMyGames(cancelToken?: CancelToken | undefined): Promise<GameDto[]> {
-    let url_ = this.baseUrl + '/game/my';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processUpdateGame(response: AxiosResponse): Promise<GameDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetMyGames(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = GameDto.fromJS(resultData201);
+            return Promise.resolve<GameDto>(result201);
 
-  protected processGetMyGames(response: AxiosResponse): Promise<GameDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<GameDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      if (Array.isArray(resultData201)) {
-        result201 = [] as any;
-        for (let item of resultData201) result201!.push(GameDto.fromJS(item));
-      } else {
-        result201 = <any>null;
-      }
-      return Promise.resolve<GameDto[]>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    getMyGames(  cancelToken?: CancelToken | undefined): Promise<GameDto[]> {
+        let url_ = this.baseUrl + "/game/my";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetMyGames(_response);
+        });
     }
-    return Promise.resolve<GameDto[]>(null as any);
-  }
 
-  getUnfinishedGames(
-    cancelToken?: CancelToken | undefined,
-  ): Promise<GameDto[]> {
-    let url_ = this.baseUrl + '/game/unfinished';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGetMyGames(response: AxiosResponse): Promise<GameDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetUnfinishedGames(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            if (Array.isArray(resultData201)) {
+                result201 = [] as any;
+                for (let item of resultData201)
+                    result201!.push(GameDto.fromJS(item));
+            }
+            else {
+                result201 = <any>null;
+            }
+            return Promise.resolve<GameDto[]>(result201);
 
-  protected processGetUnfinishedGames(
-    response: AxiosResponse,
-  ): Promise<GameDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<GameDto[]>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      if (Array.isArray(resultData201)) {
-        result201 = [] as any;
-        for (let item of resultData201) result201!.push(GameDto.fromJS(item));
-      } else {
-        result201 = <any>null;
-      }
-      return Promise.resolve<GameDto[]>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    getUnfinishedGames(  cancelToken?: CancelToken | undefined): Promise<GameDto[]> {
+        let url_ = this.baseUrl + "/game/unfinished";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetUnfinishedGames(_response);
+        });
     }
-    return Promise.resolve<GameDto[]>(null as any);
-  }
 
-  getOpenGames(cancelToken?: CancelToken | undefined): Promise<GameDto[]> {
-    let url_ = this.baseUrl + '/game/open';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGetUnfinishedGames(response: AxiosResponse): Promise<GameDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetOpenGames(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            if (Array.isArray(resultData201)) {
+                result201 = [] as any;
+                for (let item of resultData201)
+                    result201!.push(GameDto.fromJS(item));
+            }
+            else {
+                result201 = <any>null;
+            }
+            return Promise.resolve<GameDto[]>(result201);
 
-  protected processGetOpenGames(response: AxiosResponse): Promise<GameDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<GameDto[]>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      if (Array.isArray(resultData201)) {
-        result201 = [] as any;
-        for (let item of resultData201) result201!.push(GameDto.fromJS(item));
-      } else {
-        result201 = <any>null;
-      }
-      return Promise.resolve<GameDto[]>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    getOpenGames(  cancelToken?: CancelToken | undefined): Promise<GameDto[]> {
+        let url_ = this.baseUrl + "/game/open";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetOpenGames(_response);
+        });
     }
-    return Promise.resolve<GameDto[]>(null as any);
-  }
 
-  joinGame(
-    body: JoinGameDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<GameDto> {
-    let url_ = this.baseUrl + '/game/join';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'POST',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGetOpenGames(response: AxiosResponse): Promise<GameDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processJoinGame(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            if (Array.isArray(resultData201)) {
+                result201 = [] as any;
+                for (let item of resultData201)
+                    result201!.push(GameDto.fromJS(item));
+            }
+            else {
+                result201 = <any>null;
+            }
+            return Promise.resolve<GameDto[]>(result201);
 
-  protected processJoinGame(response: AxiosResponse): Promise<GameDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<GameDto[]>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = GameDto.fromJS(resultData201);
-      return Promise.resolve<GameDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    joinGame(body: JoinGameDto , cancelToken?: CancelToken | undefined): Promise<GameDto> {
+        let url_ = this.baseUrl + "/game/join";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processJoinGame(_response);
+        });
     }
-    return Promise.resolve<GameDto>(null as any);
-  }
 
-  leaveGame(
-    body: LeaveGameDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<LeaveGameResultDto> {
-    let url_ = this.baseUrl + '/game/leave';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'POST',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processJoinGame(response: AxiosResponse): Promise<GameDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processLeaveGame(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = GameDto.fromJS(resultData201);
+            return Promise.resolve<GameDto>(result201);
 
-  protected processLeaveGame(
-    response: AxiosResponse,
-  ): Promise<LeaveGameResultDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<GameDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = LeaveGameResultDto.fromJS(resultData201);
-      return Promise.resolve<LeaveGameResultDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    leaveGame(body: LeaveGameDto , cancelToken?: CancelToken | undefined): Promise<LeaveGameResultDto> {
+        let url_ = this.baseUrl + "/game/leave";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processLeaveGame(_response);
+        });
     }
-    return Promise.resolve<LeaveGameResultDto>(null as any);
-  }
 
-  getCurrentGame(cancelToken?: CancelToken | undefined): Promise<GameDto> {
-    let url_ = this.baseUrl + '/game/current';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processLeaveGame(response: AxiosResponse): Promise<LeaveGameResultDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetCurrentGame(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = LeaveGameResultDto.fromJS(resultData201);
+            return Promise.resolve<LeaveGameResultDto>(result201);
 
-  protected processGetCurrentGame(response: AxiosResponse): Promise<GameDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<LeaveGameResultDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = GameDto.fromJS(resultData201);
-      return Promise.resolve<GameDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    getCurrentGame(  cancelToken?: CancelToken | undefined): Promise<GameDto> {
+        let url_ = this.baseUrl + "/game/current";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetCurrentGame(_response);
+        });
     }
-    return Promise.resolve<GameDto>(null as any);
-  }
 
-  getLastGame(cancelToken?: CancelToken | undefined): Promise<GameDto> {
-    let url_ = this.baseUrl + '/game/last';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGetCurrentGame(response: AxiosResponse): Promise<GameDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetLastGame(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = GameDto.fromJS(resultData201);
+            return Promise.resolve<GameDto>(result201);
 
-  protected processGetLastGame(response: AxiosResponse): Promise<GameDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<GameDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = GameDto.fromJS(resultData201);
-      return Promise.resolve<GameDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    getLastGame(  cancelToken?: CancelToken | undefined): Promise<PostGameDto> {
+        let url_ = this.baseUrl + "/game/last";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetLastGame(_response);
+        });
     }
-    return Promise.resolve<GameDto>(null as any);
-  }
 
-  startGame(
-    body: StartGameDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<GameDto> {
-    let url_ = this.baseUrl + '/game/start';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'POST',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGetLastGame(response: AxiosResponse): Promise<PostGameDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processStartGame(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = PostGameDto.fromJS(resultData201);
+            return Promise.resolve<PostGameDto>(result201);
 
-  protected processStartGame(response: AxiosResponse): Promise<GameDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<PostGameDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = GameDto.fromJS(resultData201);
-      return Promise.resolve<GameDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    startGame(body: StartGameDto , cancelToken?: CancelToken | undefined): Promise<GameDto> {
+        let url_ = this.baseUrl + "/game/start";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processStartGame(_response);
+        });
     }
-    return Promise.resolve<GameDto>(null as any);
-  }
 
-  getGameState(
-    id: number,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<GameStateDto> {
-    let url_ = this.baseUrl + '/game/state/{id}';
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processStartGame(response: AxiosResponse): Promise<GameDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetGameState(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = GameDto.fromJS(resultData201);
+            return Promise.resolve<GameDto>(result201);
 
-  protected processGetGameState(
-    response: AxiosResponse,
-  ): Promise<GameStateDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<GameDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = GameStateDto.fromJS(resultData201);
-      return Promise.resolve<GameStateDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    getGameState(id: number , cancelToken?: CancelToken | undefined): Promise<GameStateDto> {
+        let url_ = this.baseUrl + "/game/state/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetGameState(_response);
+        });
     }
-    return Promise.resolve<GameStateDto>(null as any);
-  }
 
-  submitWord(
-    body: SubmitWordDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<SubmitWordResponseDto> {
-    let url_ = this.baseUrl + '/game/submit';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'POST',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGetGameState(response: AxiosResponse): Promise<GameStateDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processSubmitWord(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = GameStateDto.fromJS(resultData201);
+            return Promise.resolve<GameStateDto>(result201);
 
-  protected processSubmitWord(
-    response: AxiosResponse,
-  ): Promise<SubmitWordResponseDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<GameStateDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = SubmitWordResponseDto.fromJS(resultData201);
-      return Promise.resolve<SubmitWordResponseDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    submitWord(body: SubmitWordDto , cancelToken?: CancelToken | undefined): Promise<SubmitWordResponseDto> {
+        let url_ = this.baseUrl + "/game/submit";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSubmitWord(_response);
+        });
     }
-    return Promise.resolve<SubmitWordResponseDto>(null as any);
-  }
 
-  getDifficulties(cancelToken?: CancelToken | undefined): Promise<string[]> {
-    let url_ = this.baseUrl + '/game/difficulties';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processSubmitWord(response: AxiosResponse): Promise<SubmitWordResponseDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetDifficulties(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = SubmitWordResponseDto.fromJS(resultData201);
+            return Promise.resolve<SubmitWordResponseDto>(result201);
 
-  protected processGetDifficulties(response: AxiosResponse): Promise<string[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<SubmitWordResponseDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      if (Array.isArray(resultData201)) {
-        result201 = [] as any;
-        for (let item of resultData201) result201!.push(item);
-      } else {
-        result201 = <any>null;
-      }
-      return Promise.resolve<string[]>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    getDifficulties(  cancelToken?: CancelToken | undefined): Promise<string[]> {
+        let url_ = this.baseUrl + "/game/difficulties";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetDifficulties(_response);
+        });
     }
-    return Promise.resolve<string[]>(null as any);
-  }
 
-  getGameLengths(cancelToken?: CancelToken | undefined): Promise<string[]> {
-    let url_ = this.baseUrl + '/game/gameLengths';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGetDifficulties(response: AxiosResponse): Promise<string[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetGameLengths(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            if (Array.isArray(resultData201)) {
+                result201 = [] as any;
+                for (let item of resultData201)
+                    result201!.push(item);
+            }
+            else {
+                result201 = <any>null;
+            }
+            return Promise.resolve<string[]>(result201);
 
-  protected processGetGameLengths(response: AxiosResponse): Promise<string[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<string[]>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      if (Array.isArray(resultData201)) {
-        result201 = [] as any;
-        for (let item of resultData201) result201!.push(item);
-      } else {
-        result201 = <any>null;
-      }
-      return Promise.resolve<string[]>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    getGameLengths(  cancelToken?: CancelToken | undefined): Promise<string[]> {
+        let url_ = this.baseUrl + "/game/gameLengths";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetGameLengths(_response);
+        });
     }
-    return Promise.resolve<string[]>(null as any);
-  }
 
-  getGame(id: number, cancelToken?: CancelToken | undefined): Promise<GameDto> {
-    let url_ = this.baseUrl + '/game/{id}';
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGetGameLengths(response: AxiosResponse): Promise<string[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetGame(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            if (Array.isArray(resultData201)) {
+                result201 = [] as any;
+                for (let item of resultData201)
+                    result201!.push(item);
+            }
+            else {
+                result201 = <any>null;
+            }
+            return Promise.resolve<string[]>(result201);
 
-  protected processGetGame(response: AxiosResponse): Promise<GameDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<string[]>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = GameDto.fromJS(resultData201);
-      return Promise.resolve<GameDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    getGame(id: number , cancelToken?: CancelToken | undefined): Promise<GameDto> {
+        let url_ = this.baseUrl + "/game/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetGame(_response);
+        });
     }
-    return Promise.resolve<GameDto>(null as any);
-  }
+
+    protected processGetGame(response: AxiosResponse): Promise<GameDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = GameDto.fromJS(resultData201);
+            return Promise.resolve<GameDto>(result201);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<GameDto>(null as any);
+    }
 }
 type GetGameStateGameControllerQueryParameters = {
-  id: number;
+      id: number;
 };
 
 type GetGameGameControllerQueryParameters = {
-  id: number;
+      id: number;
 };
 
-export class GameControllerQuery {
-  get baseUrl() {
-    return getBaseUrl() ?? '' + '';
-  }
+export class GameControllerQuery{
 
-  static get Client() {
-    const client = createClient(GameControllerClient);
-    return client;
-  }
+    get baseUrl() {
+      return getBaseUrl() ?? '' + '';
+    }
 
-  static get Url() {
-    return new GameControllerQuery();
-  }
+    static get Client() {
+      const client = createClient(GameControllerClient);
+      return client;
+    }
 
-  getAllGamesUrl(): string {
-    let url_ = this.baseUrl + '/game';
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
+    static get Url() {
+        return new GameControllerQuery();
+    }
+  
 
-  static getAllGamesDefaultOptions?: UseQueryOptions<
-    GameDto[],
-    unknown,
-    GameDto[]
-  > = {};
-  public static getAllGamesQueryKey(): QueryKey;
-  public static getAllGamesQueryKey(...params: any[]): QueryKey {
-    return removeUndefinedFromArrayTail([
-      'GameControllerClient',
-      'getAllGames',
-    ]);
-  }
+    getAllGamesUrl(): string {
+      let url_ = this.baseUrl + "/game";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
 
-  private static getAllGames() {
-    return GameControllerQuery.Client.getAllGames();
-  }
+    static getAllGamesDefaultOptions?: UseQueryOptions<GameDto[], unknown, GameDto[]> = {};
+    public static getAllGamesQueryKey(): QueryKey;
+    public static getAllGamesQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getAllGames',
+            ]);
+    }
 
-  static useGetAllGamesQuery<TSelectData = GameDto[], TError = unknown>(
-    options?: UseQueryOptions<GameDto[], TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetAllGamesQuery<TSelectData = GameDto[], TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<GameDto[], TError, TSelectData> | undefined =
-      undefined;
+    private static getAllGames() {
+        return GameControllerQuery.Client.getAllGames(
+            );
+    }
 
-    options = params[0] as any;
+    static useGetAllGamesQuery<TSelectData = GameDto[], TError = unknown>(options?: UseQueryOptions<GameDto[], TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetAllGamesQuery<TSelectData = GameDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+        let options: UseQueryOptions<GameDto[], TError, TSelectData> | undefined = undefined;
+        
 
-    return useQuery<GameDto[], TError, TSelectData>({
-      queryFn: GameControllerQuery.getAllGames,
-      queryKey: GameControllerQuery.getAllGamesQueryKey(),
-      ...(GameControllerQuery.getAllGamesDefaultOptions as unknown as UseQueryOptions<
-        GameDto[],
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetAllGamesData(
-    queryClient: QueryClient,
-    updater: (data: GameDto[] | undefined) => GameDto[],
-  ) {
-    queryClient.setQueryData(
-      GameControllerQuery.getAllGamesQueryKey(),
-      updater,
-    );
-  }
+        options = params[0] as any;
+    
 
-  static setGetAllGamesDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: GameDto[] | undefined) => GameDto[],
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
 
-  getMyGamesUrl(): string {
-    let url_ = this.baseUrl + '/game/my';
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
+        return useQuery<GameDto[], TError, TSelectData>({
+            queryFn: GameControllerQuery.getAllGames,
+            queryKey: GameControllerQuery.getAllGamesQueryKey(),
+            ...GameControllerQuery.getAllGamesDefaultOptions as unknown as UseQueryOptions<GameDto[], TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetAllGamesData(queryClient: QueryClient, updater: (data: GameDto[] | undefined) => GameDto[], ) {
+        queryClient.setQueryData(GameControllerQuery.getAllGamesQueryKey(),
+            updater
+        );
+    }
 
-  static getMyGamesDefaultOptions?: UseQueryOptions<
-    GameDto[],
-    unknown,
-    GameDto[]
-  > = {};
-  public static getMyGamesQueryKey(): QueryKey;
-  public static getMyGamesQueryKey(...params: any[]): QueryKey {
-    return removeUndefinedFromArrayTail(['GameControllerClient', 'getMyGames']);
-  }
+    static setGetAllGamesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: GameDto[] | undefined) => GameDto[]) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+      
 
-  private static getMyGames() {
-    return GameControllerQuery.Client.getMyGames();
-  }
+    getMyGamesUrl(): string {
+      let url_ = this.baseUrl + "/game/my";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
 
-  static useGetMyGamesQuery<TSelectData = GameDto[], TError = unknown>(
-    options?: UseQueryOptions<GameDto[], TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetMyGamesQuery<TSelectData = GameDto[], TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<GameDto[], TError, TSelectData> | undefined =
-      undefined;
+    static getMyGamesDefaultOptions?: UseQueryOptions<GameDto[], unknown, GameDto[]> = {};
+    public static getMyGamesQueryKey(): QueryKey;
+    public static getMyGamesQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getMyGames',
+            ]);
+    }
 
-    options = params[0] as any;
+    private static getMyGames() {
+        return GameControllerQuery.Client.getMyGames(
+            );
+    }
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+    static useGetMyGamesQuery<TSelectData = GameDto[], TError = unknown>(options?: UseQueryOptions<GameDto[], TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetMyGamesQuery<TSelectData = GameDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
-    return useQuery<GameDto[], TError, TSelectData>({
-      queryFn: GameControllerQuery.getMyGames,
-      queryKey: GameControllerQuery.getMyGamesQueryKey(),
-      ...(GameControllerQuery.getMyGamesDefaultOptions as unknown as UseQueryOptions<
-        GameDto[],
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetMyGamesData(
-    queryClient: QueryClient,
-    updater: (data: GameDto[] | undefined) => GameDto[],
-  ) {
-    queryClient.setQueryData(GameControllerQuery.getMyGamesQueryKey(), updater);
-  }
+        let options: UseQueryOptions<GameDto[], TError, TSelectData> | undefined = undefined;
+        
 
-  static setGetMyGamesDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: GameDto[] | undefined) => GameDto[],
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
+        options = params[0] as any;
+    
 
-  getUnfinishedGamesUrl(): string {
-    let url_ = this.baseUrl + '/game/unfinished';
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
 
-  static getUnfinishedGamesDefaultOptions?: UseQueryOptions<
-    GameDto[],
-    unknown,
-    GameDto[]
-  > = {};
-  public static getUnfinishedGamesQueryKey(): QueryKey;
-  public static getUnfinishedGamesQueryKey(...params: any[]): QueryKey {
-    return removeUndefinedFromArrayTail([
-      'GameControllerClient',
-      'getUnfinishedGames',
-    ]);
-  }
+        return useQuery<GameDto[], TError, TSelectData>({
+            queryFn: GameControllerQuery.getMyGames,
+            queryKey: GameControllerQuery.getMyGamesQueryKey(),
+            ...GameControllerQuery.getMyGamesDefaultOptions as unknown as UseQueryOptions<GameDto[], TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetMyGamesData(queryClient: QueryClient, updater: (data: GameDto[] | undefined) => GameDto[], ) {
+        queryClient.setQueryData(GameControllerQuery.getMyGamesQueryKey(),
+            updater
+        );
+    }
 
-  private static getUnfinishedGames() {
-    return GameControllerQuery.Client.getUnfinishedGames();
-  }
+    static setGetMyGamesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: GameDto[] | undefined) => GameDto[]) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    
 
-  static useGetUnfinishedGamesQuery<TSelectData = GameDto[], TError = unknown>(
-    options?: UseQueryOptions<GameDto[], TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetUnfinishedGamesQuery<TSelectData = GameDto[], TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<GameDto[], TError, TSelectData> | undefined =
-      undefined;
+    getUnfinishedGamesUrl(): string {
+      let url_ = this.baseUrl + "/game/unfinished";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
 
-    options = params[0] as any;
+    static getUnfinishedGamesDefaultOptions?: UseQueryOptions<GameDto[], unknown, GameDto[]> = {};
+    public static getUnfinishedGamesQueryKey(): QueryKey;
+    public static getUnfinishedGamesQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getUnfinishedGames',
+            ]);
+    }
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+    private static getUnfinishedGames() {
+        return GameControllerQuery.Client.getUnfinishedGames(
+            );
+    }
 
-    return useQuery<GameDto[], TError, TSelectData>({
-      queryFn: GameControllerQuery.getUnfinishedGames,
-      queryKey: GameControllerQuery.getUnfinishedGamesQueryKey(),
-      ...(GameControllerQuery.getUnfinishedGamesDefaultOptions as unknown as UseQueryOptions<
-        GameDto[],
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetUnfinishedGamesData(
-    queryClient: QueryClient,
-    updater: (data: GameDto[] | undefined) => GameDto[],
-  ) {
-    queryClient.setQueryData(
-      GameControllerQuery.getUnfinishedGamesQueryKey(),
-      updater,
-    );
-  }
+    static useGetUnfinishedGamesQuery<TSelectData = GameDto[], TError = unknown>(options?: UseQueryOptions<GameDto[], TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetUnfinishedGamesQuery<TSelectData = GameDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
-  static setGetUnfinishedGamesDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: GameDto[] | undefined) => GameDto[],
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
+        let options: UseQueryOptions<GameDto[], TError, TSelectData> | undefined = undefined;
+        
 
-  getOpenGamesUrl(): string {
-    let url_ = this.baseUrl + '/game/open';
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
+        options = params[0] as any;
+    
 
-  static getOpenGamesDefaultOptions?: UseQueryOptions<
-    GameDto[],
-    unknown,
-    GameDto[]
-  > = {};
-  public static getOpenGamesQueryKey(): QueryKey;
-  public static getOpenGamesQueryKey(...params: any[]): QueryKey {
-    return removeUndefinedFromArrayTail([
-      'GameControllerClient',
-      'getOpenGames',
-    ]);
-  }
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
 
-  private static getOpenGames() {
-    return GameControllerQuery.Client.getOpenGames();
-  }
+        return useQuery<GameDto[], TError, TSelectData>({
+            queryFn: GameControllerQuery.getUnfinishedGames,
+            queryKey: GameControllerQuery.getUnfinishedGamesQueryKey(),
+            ...GameControllerQuery.getUnfinishedGamesDefaultOptions as unknown as UseQueryOptions<GameDto[], TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetUnfinishedGamesData(queryClient: QueryClient, updater: (data: GameDto[] | undefined) => GameDto[], ) {
+        queryClient.setQueryData(GameControllerQuery.getUnfinishedGamesQueryKey(),
+            updater
+        );
+    }
 
-  static useGetOpenGamesQuery<TSelectData = GameDto[], TError = unknown>(
-    options?: UseQueryOptions<GameDto[], TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetOpenGamesQuery<TSelectData = GameDto[], TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<GameDto[], TError, TSelectData> | undefined =
-      undefined;
+    static setGetUnfinishedGamesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: GameDto[] | undefined) => GameDto[]) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    
 
-    options = params[0] as any;
+    getOpenGamesUrl(): string {
+      let url_ = this.baseUrl + "/game/open";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+    static getOpenGamesDefaultOptions?: UseQueryOptions<GameDto[], unknown, GameDto[]> = {};
+    public static getOpenGamesQueryKey(): QueryKey;
+    public static getOpenGamesQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getOpenGames',
+            ]);
+    }
 
-    return useQuery<GameDto[], TError, TSelectData>({
-      queryFn: GameControllerQuery.getOpenGames,
-      queryKey: GameControllerQuery.getOpenGamesQueryKey(),
-      ...(GameControllerQuery.getOpenGamesDefaultOptions as unknown as UseQueryOptions<
-        GameDto[],
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetOpenGamesData(
-    queryClient: QueryClient,
-    updater: (data: GameDto[] | undefined) => GameDto[],
-  ) {
-    queryClient.setQueryData(
-      GameControllerQuery.getOpenGamesQueryKey(),
-      updater,
-    );
-  }
+    private static getOpenGames() {
+        return GameControllerQuery.Client.getOpenGames(
+            );
+    }
 
-  static setGetOpenGamesDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: GameDto[] | undefined) => GameDto[],
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
+    static useGetOpenGamesQuery<TSelectData = GameDto[], TError = unknown>(options?: UseQueryOptions<GameDto[], TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetOpenGamesQuery<TSelectData = GameDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
-  getCurrentGameUrl(): string {
-    let url_ = this.baseUrl + '/game/current';
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
+        let options: UseQueryOptions<GameDto[], TError, TSelectData> | undefined = undefined;
+        
 
-  static getCurrentGameDefaultOptions?: UseQueryOptions<
-    GameDto,
-    unknown,
-    GameDto
-  > = {};
-  public static getCurrentGameQueryKey(): QueryKey;
-  public static getCurrentGameQueryKey(...params: any[]): QueryKey {
-    return removeUndefinedFromArrayTail([
-      'GameControllerClient',
-      'getCurrentGame',
-    ]);
-  }
+        options = params[0] as any;
+    
 
-  private static getCurrentGame() {
-    return GameControllerQuery.Client.getCurrentGame();
-  }
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
 
-  static useGetCurrentGameQuery<TSelectData = GameDto, TError = unknown>(
-    options?: UseQueryOptions<GameDto, TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetCurrentGameQuery<TSelectData = GameDto, TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<GameDto, TError, TSelectData> | undefined =
-      undefined;
+        return useQuery<GameDto[], TError, TSelectData>({
+            queryFn: GameControllerQuery.getOpenGames,
+            queryKey: GameControllerQuery.getOpenGamesQueryKey(),
+            ...GameControllerQuery.getOpenGamesDefaultOptions as unknown as UseQueryOptions<GameDto[], TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetOpenGamesData(queryClient: QueryClient, updater: (data: GameDto[] | undefined) => GameDto[], ) {
+        queryClient.setQueryData(GameControllerQuery.getOpenGamesQueryKey(),
+            updater
+        );
+    }
 
-    options = params[0] as any;
+    static setGetOpenGamesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: GameDto[] | undefined) => GameDto[]) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+        
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+    getCurrentGameUrl(): string {
+      let url_ = this.baseUrl + "/game/current";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
 
-    return useQuery<GameDto, TError, TSelectData>({
-      queryFn: GameControllerQuery.getCurrentGame,
-      queryKey: GameControllerQuery.getCurrentGameQueryKey(),
-      ...(GameControllerQuery.getCurrentGameDefaultOptions as unknown as UseQueryOptions<
-        GameDto,
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetCurrentGameData(
-    queryClient: QueryClient,
-    updater: (data: GameDto | undefined) => GameDto,
-  ) {
-    queryClient.setQueryData(
-      GameControllerQuery.getCurrentGameQueryKey(),
-      updater,
-    );
-  }
+    static getCurrentGameDefaultOptions?: UseQueryOptions<GameDto, unknown, GameDto> = {};
+    public static getCurrentGameQueryKey(): QueryKey;
+    public static getCurrentGameQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getCurrentGame',
+            ]);
+    }
 
-  static setGetCurrentGameDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: GameDto | undefined) => GameDto,
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
+    private static getCurrentGame() {
+        return GameControllerQuery.Client.getCurrentGame(
+            );
+    }
 
-  getLastGameUrl(): string {
-    let url_ = this.baseUrl + '/game/last';
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
+    static useGetCurrentGameQuery<TSelectData = GameDto, TError = unknown>(options?: UseQueryOptions<GameDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetCurrentGameQuery<TSelectData = GameDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
-  static getLastGameDefaultOptions?: UseQueryOptions<
-    GameDto,
-    unknown,
-    GameDto
-  > = {};
-  public static getLastGameQueryKey(): QueryKey;
-  public static getLastGameQueryKey(...params: any[]): QueryKey {
-    return removeUndefinedFromArrayTail([
-      'GameControllerClient',
-      'getLastGame',
-    ]);
-  }
+        let options: UseQueryOptions<GameDto, TError, TSelectData> | undefined = undefined;
+        
 
-  private static getLastGame() {
-    return GameControllerQuery.Client.getLastGame();
-  }
+        options = params[0] as any;
+    
 
-  static useGetLastGameQuery<TSelectData = GameDto, TError = unknown>(
-    options?: UseQueryOptions<GameDto, TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetLastGameQuery<TSelectData = GameDto, TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<GameDto, TError, TSelectData> | undefined =
-      undefined;
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
 
-    options = params[0] as any;
+        return useQuery<GameDto, TError, TSelectData>({
+            queryFn: GameControllerQuery.getCurrentGame,
+            queryKey: GameControllerQuery.getCurrentGameQueryKey(),
+            ...GameControllerQuery.getCurrentGameDefaultOptions as unknown as UseQueryOptions<GameDto, TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetCurrentGameData(queryClient: QueryClient, updater: (data: GameDto | undefined) => GameDto, ) {
+        queryClient.setQueryData(GameControllerQuery.getCurrentGameQueryKey(),
+            updater
+        );
+    }
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+    static setGetCurrentGameDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: GameDto | undefined) => GameDto) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    
 
-    return useQuery<GameDto, TError, TSelectData>({
-      queryFn: GameControllerQuery.getLastGame,
-      queryKey: GameControllerQuery.getLastGameQueryKey(),
-      ...(GameControllerQuery.getLastGameDefaultOptions as unknown as UseQueryOptions<
-        GameDto,
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetLastGameData(
-    queryClient: QueryClient,
-    updater: (data: GameDto | undefined) => GameDto,
-  ) {
-    queryClient.setQueryData(
-      GameControllerQuery.getLastGameQueryKey(),
-      updater,
-    );
-  }
+    getLastGameUrl(): string {
+      let url_ = this.baseUrl + "/game/last";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
 
-  static setGetLastGameDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: GameDto | undefined) => GameDto,
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
+    static getLastGameDefaultOptions?: UseQueryOptions<PostGameDto, unknown, PostGameDto> = {};
+    public static getLastGameQueryKey(): QueryKey;
+    public static getLastGameQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getLastGame',
+            ]);
+    }
 
-  getGameStateUrl(id: number): string {
-    let url_ = this.baseUrl + '/game/state/{id}';
+    private static getLastGame() {
+        return GameControllerQuery.Client.getLastGame(
+            );
+    }
+
+    static useGetLastGameQuery<TSelectData = PostGameDto, TError = unknown>(options?: UseQueryOptions<PostGameDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetLastGameQuery<TSelectData = PostGameDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+
+        let options: UseQueryOptions<PostGameDto, TError, TSelectData> | undefined = undefined;
+        
+
+        options = params[0] as any;
+    
+
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
+
+        return useQuery<PostGameDto, TError, TSelectData>({
+            queryFn: GameControllerQuery.getLastGame,
+            queryKey: GameControllerQuery.getLastGameQueryKey(),
+            ...GameControllerQuery.getLastGameDefaultOptions as unknown as UseQueryOptions<PostGameDto, TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetLastGameData(queryClient: QueryClient, updater: (data: PostGameDto | undefined) => PostGameDto, ) {
+        queryClient.setQueryData(GameControllerQuery.getLastGameQueryKey(),
+            updater
+        );
+    }
+
+    static setGetLastGameDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: PostGameDto | undefined) => PostGameDto) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+      
+
+    getGameStateUrl(id: number): string {
+      let url_ = this.baseUrl + "/game/state/{id}";
     if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
-
-  static getGameStateDefaultOptions?: UseQueryOptions<
-    GameStateDto,
-    unknown,
-    GameStateDto
-  > = {};
-  public static getGameStateQueryKey(id: number): QueryKey;
-  public static getGameStateQueryKey(...params: any[]): QueryKey {
-    if (params.length === 1 && isParameterObject(params[0])) {
-      const { id } = params[0] as GetGameStateGameControllerQueryParameters;
-
-      return removeUndefinedFromArrayTail([
-        'GameControllerClient',
-        'getGameState',
-        id as any,
-      ]);
-    } else {
-      return removeUndefinedFromArrayTail([
-        'GameControllerClient',
-        'getGameState',
-        ...params,
-      ]);
-    }
-  }
-
-  private static getGameState(context: QueryFunctionContext) {
-    return GameControllerQuery.Client.getGameState(
-      context.queryKey[2] as number,
-    );
-  }
-
-  static useGetGameStateQuery<TSelectData = GameStateDto, TError = unknown>(
-    dto: GetGameStateGameControllerQueryParameters,
-    options?: UseQueryOptions<GameStateDto, TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetGameStateQuery<TSelectData = GameStateDto, TError = unknown>(
-    id: number,
-    options?: UseQueryOptions<GameStateDto, TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetGameStateQuery<TSelectData = GameStateDto, TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options:
-      | UseQueryOptions<GameStateDto, TError, TSelectData>
-      | undefined = undefined;
-    let id: any = undefined;
-
-    if (params.length > 0) {
-      if (isParameterObject(params[0])) {
-        ({ id } = params[0] as GetGameStateGameControllerQueryParameters);
-        options = params[1];
-      } else {
-        [id, options] = params;
-      }
+        throw new Error("The parameter 'id' must be defined.");
+    url_ = url_.replace("{id}", encodeURIComponent("" + id));
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
     }
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+    static getGameStateDefaultOptions?: UseQueryOptions<GameStateDto, unknown, GameStateDto> = {};
+    public static getGameStateQueryKey(id: number): QueryKey;
+    public static getGameStateQueryKey(...params: any[]): QueryKey {
+        if (params.length === 1 && isParameterObject(params[0])) {
+            const { id,  } = params[0] as GetGameStateGameControllerQueryParameters;
 
-    return useQuery<GameStateDto, TError, TSelectData>({
-      queryFn: GameControllerQuery.getGameState,
-      queryKey: GameControllerQuery.getGameStateQueryKey(id),
-      ...(GameControllerQuery.getGameStateDefaultOptions as unknown as UseQueryOptions<
-        GameStateDto,
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetGameStateData(
-    queryClient: QueryClient,
-    updater: (data: GameStateDto | undefined) => GameStateDto,
-    id: number,
-  ) {
-    queryClient.setQueryData(
-      GameControllerQuery.getGameStateQueryKey(id),
-      updater,
-    );
-  }
+            return removeUndefinedFromArrayTail([
+                'GameControllerClient',
+                'getGameState',
+                id as any,
 
-  static setGetGameStateDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: GameStateDto | undefined) => GameStateDto,
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
+            ]);
+        } else {
+            return removeUndefinedFromArrayTail([
+                'GameControllerClient',
+                'getGameState',
+                ...params
+            ]);
+        }
+    }
 
-  getDifficultiesUrl(): string {
-    let url_ = this.baseUrl + '/game/difficulties';
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
+    private static getGameState(context: QueryFunctionContext) {
+        return GameControllerQuery.Client.getGameState(
+                context.queryKey[2] as number
+            );
+    }
 
-  static getDifficultiesDefaultOptions?: UseQueryOptions<
-    string[],
-    unknown,
-    string[]
-  > = {};
-  public static getDifficultiesQueryKey(): QueryKey;
-  public static getDifficultiesQueryKey(...params: any[]): QueryKey {
-    return removeUndefinedFromArrayTail([
-      'GameControllerClient',
-      'getDifficulties',
-    ]);
-  }
+    static useGetGameStateQuery<TSelectData = GameStateDto, TError = unknown>(dto: GetGameStateGameControllerQueryParameters, options?: UseQueryOptions<GameStateDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetGameStateQuery<TSelectData = GameStateDto, TError = unknown>(id: number, options?: UseQueryOptions<GameStateDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetGameStateQuery<TSelectData = GameStateDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
-  private static getDifficulties() {
-    return GameControllerQuery.Client.getDifficulties();
-  }
+        let options: UseQueryOptions<GameStateDto, TError, TSelectData> | undefined = undefined;
+        let id: any = undefined;
+        
+        if (params.length > 0) {
+            if (isParameterObject(params[0])) {
+                ({ id,  } = params[0] as GetGameStateGameControllerQueryParameters);
+                options = params[1];
+            } else {
+                [id,  options] = params;
+            }
+        }
+    
 
-  static useGetDifficultiesQuery<TSelectData = string[], TError = unknown>(
-    options?: UseQueryOptions<string[], TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetDifficultiesQuery<TSelectData = string[], TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<string[], TError, TSelectData> | undefined =
-      undefined;
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
 
-    options = params[0] as any;
+        return useQuery<GameStateDto, TError, TSelectData>({
+            queryFn: GameControllerQuery.getGameState,
+            queryKey: GameControllerQuery.getGameStateQueryKey(id),
+            ...GameControllerQuery.getGameStateDefaultOptions as unknown as UseQueryOptions<GameStateDto, TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetGameStateData(queryClient: QueryClient, updater: (data: GameStateDto | undefined) => GameStateDto, id: number) {
+        queryClient.setQueryData(GameControllerQuery.getGameStateQueryKey(id),
+            updater
+        );
+    }
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+    static setGetGameStateDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: GameStateDto | undefined) => GameStateDto) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+      
 
-    return useQuery<string[], TError, TSelectData>({
-      queryFn: GameControllerQuery.getDifficulties,
-      queryKey: GameControllerQuery.getDifficultiesQueryKey(),
-      ...(GameControllerQuery.getDifficultiesDefaultOptions as unknown as UseQueryOptions<
-        string[],
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetDifficultiesData(
-    queryClient: QueryClient,
-    updater: (data: string[] | undefined) => string[],
-  ) {
-    queryClient.setQueryData(
-      GameControllerQuery.getDifficultiesQueryKey(),
-      updater,
-    );
-  }
+    getDifficultiesUrl(): string {
+      let url_ = this.baseUrl + "/game/difficulties";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
 
-  static setGetDifficultiesDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: string[] | undefined) => string[],
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
+    static getDifficultiesDefaultOptions?: UseQueryOptions<string[], unknown, string[]> = {};
+    public static getDifficultiesQueryKey(): QueryKey;
+    public static getDifficultiesQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getDifficulties',
+            ]);
+    }
 
-  getGameLengthsUrl(): string {
-    let url_ = this.baseUrl + '/game/gameLengths';
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
+    private static getDifficulties() {
+        return GameControllerQuery.Client.getDifficulties(
+            );
+    }
 
-  static getGameLengthsDefaultOptions?: UseQueryOptions<
-    string[],
-    unknown,
-    string[]
-  > = {};
-  public static getGameLengthsQueryKey(): QueryKey;
-  public static getGameLengthsQueryKey(...params: any[]): QueryKey {
-    return removeUndefinedFromArrayTail([
-      'GameControllerClient',
-      'getGameLengths',
-    ]);
-  }
+    static useGetDifficultiesQuery<TSelectData = string[], TError = unknown>(options?: UseQueryOptions<string[], TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetDifficultiesQuery<TSelectData = string[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
-  private static getGameLengths() {
-    return GameControllerQuery.Client.getGameLengths();
-  }
+        let options: UseQueryOptions<string[], TError, TSelectData> | undefined = undefined;
+        
 
-  static useGetGameLengthsQuery<TSelectData = string[], TError = unknown>(
-    options?: UseQueryOptions<string[], TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetGameLengthsQuery<TSelectData = string[], TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<string[], TError, TSelectData> | undefined =
-      undefined;
+        options = params[0] as any;
+    
 
-    options = params[0] as any;
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+        return useQuery<string[], TError, TSelectData>({
+            queryFn: GameControllerQuery.getDifficulties,
+            queryKey: GameControllerQuery.getDifficultiesQueryKey(),
+            ...GameControllerQuery.getDifficultiesDefaultOptions as unknown as UseQueryOptions<string[], TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetDifficultiesData(queryClient: QueryClient, updater: (data: string[] | undefined) => string[], ) {
+        queryClient.setQueryData(GameControllerQuery.getDifficultiesQueryKey(),
+            updater
+        );
+    }
 
-    return useQuery<string[], TError, TSelectData>({
-      queryFn: GameControllerQuery.getGameLengths,
-      queryKey: GameControllerQuery.getGameLengthsQueryKey(),
-      ...(GameControllerQuery.getGameLengthsDefaultOptions as unknown as UseQueryOptions<
-        string[],
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetGameLengthsData(
-    queryClient: QueryClient,
-    updater: (data: string[] | undefined) => string[],
-  ) {
-    queryClient.setQueryData(
-      GameControllerQuery.getGameLengthsQueryKey(),
-      updater,
-    );
-  }
+    static setGetDifficultiesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: string[] | undefined) => string[]) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    
 
-  static setGetGameLengthsDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: string[] | undefined) => string[],
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
+    getGameLengthsUrl(): string {
+      let url_ = this.baseUrl + "/game/gameLengths";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
 
-  getGameUrl(id: number): string {
-    let url_ = this.baseUrl + '/game/{id}';
+    static getGameLengthsDefaultOptions?: UseQueryOptions<string[], unknown, string[]> = {};
+    public static getGameLengthsQueryKey(): QueryKey;
+    public static getGameLengthsQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'GameControllerClient',
+            'getGameLengths',
+            ]);
+    }
+
+    private static getGameLengths() {
+        return GameControllerQuery.Client.getGameLengths(
+            );
+    }
+
+    static useGetGameLengthsQuery<TSelectData = string[], TError = unknown>(options?: UseQueryOptions<string[], TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetGameLengthsQuery<TSelectData = string[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+
+        let options: UseQueryOptions<string[], TError, TSelectData> | undefined = undefined;
+        
+
+        options = params[0] as any;
+    
+
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
+
+        return useQuery<string[], TError, TSelectData>({
+            queryFn: GameControllerQuery.getGameLengths,
+            queryKey: GameControllerQuery.getGameLengthsQueryKey(),
+            ...GameControllerQuery.getGameLengthsDefaultOptions as unknown as UseQueryOptions<string[], TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetGameLengthsData(queryClient: QueryClient, updater: (data: string[] | undefined) => string[], ) {
+        queryClient.setQueryData(GameControllerQuery.getGameLengthsQueryKey(),
+            updater
+        );
+    }
+
+    static setGetGameLengthsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: string[] | undefined) => string[]) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    
+
+    getGameUrl(id: number): string {
+      let url_ = this.baseUrl + "/game/{id}";
     if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
-
-  static getGameDefaultOptions?: UseQueryOptions<GameDto, unknown, GameDto> =
-    {};
-  public static getGameQueryKey(id: number): QueryKey;
-  public static getGameQueryKey(...params: any[]): QueryKey {
-    if (params.length === 1 && isParameterObject(params[0])) {
-      const { id } = params[0] as GetGameGameControllerQueryParameters;
-
-      return removeUndefinedFromArrayTail([
-        'GameControllerClient',
-        'getGame',
-        id as any,
-      ]);
-    } else {
-      return removeUndefinedFromArrayTail([
-        'GameControllerClient',
-        'getGame',
-        ...params,
-      ]);
-    }
-  }
-
-  private static getGame(context: QueryFunctionContext) {
-    return GameControllerQuery.Client.getGame(context.queryKey[2] as number);
-  }
-
-  static useGetGameQuery<TSelectData = GameDto, TError = unknown>(
-    dto: GetGameGameControllerQueryParameters,
-    options?: UseQueryOptions<GameDto, TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetGameQuery<TSelectData = GameDto, TError = unknown>(
-    id: number,
-    options?: UseQueryOptions<GameDto, TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetGameQuery<TSelectData = GameDto, TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<GameDto, TError, TSelectData> | undefined =
-      undefined;
-    let id: any = undefined;
-
-    if (params.length > 0) {
-      if (isParameterObject(params[0])) {
-        ({ id } = params[0] as GetGameGameControllerQueryParameters);
-        options = params[1];
-      } else {
-        [id, options] = params;
-      }
+        throw new Error("The parameter 'id' must be defined.");
+    url_ = url_.replace("{id}", encodeURIComponent("" + id));
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
     }
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+    static getGameDefaultOptions?: UseQueryOptions<GameDto, unknown, GameDto> = {};
+    public static getGameQueryKey(id: number): QueryKey;
+    public static getGameQueryKey(...params: any[]): QueryKey {
+        if (params.length === 1 && isParameterObject(params[0])) {
+            const { id,  } = params[0] as GetGameGameControllerQueryParameters;
 
-    return useQuery<GameDto, TError, TSelectData>({
-      queryFn: GameControllerQuery.getGame,
-      queryKey: GameControllerQuery.getGameQueryKey(id),
-      ...(GameControllerQuery.getGameDefaultOptions as unknown as UseQueryOptions<
-        GameDto,
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetGameData(
-    queryClient: QueryClient,
-    updater: (data: GameDto | undefined) => GameDto,
-    id: number,
-  ) {
-    queryClient.setQueryData(GameControllerQuery.getGameQueryKey(id), updater);
-  }
+            return removeUndefinedFromArrayTail([
+                'GameControllerClient',
+                'getGame',
+                id as any,
 
-  static setGetGameDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: GameDto | undefined) => GameDto,
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
-}
+            ]);
+        } else {
+            return removeUndefinedFromArrayTail([
+                'GameControllerClient',
+                'getGame',
+                ...params
+            ]);
+        }
+    }
+
+    private static getGame(context: QueryFunctionContext) {
+        return GameControllerQuery.Client.getGame(
+                context.queryKey[2] as number
+            );
+    }
+
+    static useGetGameQuery<TSelectData = GameDto, TError = unknown>(dto: GetGameGameControllerQueryParameters, options?: UseQueryOptions<GameDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetGameQuery<TSelectData = GameDto, TError = unknown>(id: number, options?: UseQueryOptions<GameDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetGameQuery<TSelectData = GameDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+
+        let options: UseQueryOptions<GameDto, TError, TSelectData> | undefined = undefined;
+        let id: any = undefined;
+        
+        if (params.length > 0) {
+            if (isParameterObject(params[0])) {
+                ({ id,  } = params[0] as GetGameGameControllerQueryParameters);
+                options = params[1];
+            } else {
+                [id,  options] = params;
+            }
+        }
+    
+
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
+
+        return useQuery<GameDto, TError, TSelectData>({
+            queryFn: GameControllerQuery.getGame,
+            queryKey: GameControllerQuery.getGameQueryKey(id),
+            ...GameControllerQuery.getGameDefaultOptions as unknown as UseQueryOptions<GameDto, TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetGameData(queryClient: QueryClient, updater: (data: GameDto | undefined) => GameDto, id: number) {
+        queryClient.setQueryData(GameControllerQuery.getGameQueryKey(id),
+            updater
+        );
+    }
+
+    static setGetGameDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: GameDto | undefined) => GameDto) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    }
 
 export class UsersControllerClient {
-  private instance: AxiosInstance;
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    private instance: AxiosInstance;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(baseUrl?: string, instance?: AxiosInstance) {
-    this.instance = instance ? instance : axios.create();
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : '';
-  }
+        this.instance = instance ? instance : axios.create();
 
-  me(cancelToken?: CancelToken | undefined): Promise<UserDto> {
-    let url_ = this.baseUrl + '/users/me';
-    url_ = url_.replace(/[?&]$/, '');
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
 
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
-        }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processMe(_response);
-      });
-  }
-
-  protected processMe(response: AxiosResponse): Promise<UserDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
-        }
-      }
     }
-    {
-      const _responseText = response.data;
-      let resultdefault: any = null;
-      let resultDatadefault = _responseText;
-      resultdefault = UserDto.fromJS(resultDatadefault);
-      return Promise.resolve<UserDto>(resultdefault);
+
+    me(  cancelToken?: CancelToken | undefined): Promise<UserDto> {
+        let url_ = this.baseUrl + "/users/me";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processMe(_response);
+        });
     }
-  }
 
-  getAllUsers(cancelToken?: CancelToken | undefined): Promise<UserDto[]> {
-    let url_ = this.baseUrl + '/users';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: AxiosRequestConfig = {
-      method: 'GET',
-      url: url_,
-      headers: {
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processMe(response: AxiosResponse): Promise<UserDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetAllUsers(_response);
-      });
-  }
+        {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = UserDto.fromJS(resultDatadefault);
+            return Promise.resolve<UserDto>(resultdefault);
 
-  protected processGetAllUsers(response: AxiosResponse): Promise<UserDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
         }
-      }
     }
-    {
-      const _responseText = response.data;
-      let resultdefault: any = null;
-      let resultDatadefault = _responseText;
-      if (Array.isArray(resultDatadefault)) {
-        resultdefault = [] as any;
-        for (let item of resultDatadefault)
-          resultdefault!.push(UserDto.fromJS(item));
-      } else {
-        resultdefault = <any>null;
-      }
-      return Promise.resolve<UserDto[]>(resultdefault);
+
+    getAllUsers(  cancelToken?: CancelToken | undefined): Promise<UserDto[]> {
+        let url_ = this.baseUrl + "/users";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetAllUsers(_response);
+        });
     }
-  }
+
+    protected processGetAllUsers(response: AxiosResponse): Promise<UserDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            if (Array.isArray(resultDatadefault)) {
+                resultdefault = [] as any;
+                for (let item of resultDatadefault)
+                    resultdefault!.push(UserDto.fromJS(item));
+            }
+            else {
+                resultdefault = <any>null;
+            }
+            return Promise.resolve<UserDto[]>(resultdefault);
+
+        }
+    }
 }
-export class UsersControllerQuery {
-  get baseUrl() {
-    return getBaseUrl() ?? '' + '';
-  }
+export class UsersControllerQuery{
 
-  static get Client() {
-    const client = createClient(UsersControllerClient);
-    return client;
-  }
+    get baseUrl() {
+      return getBaseUrl() ?? '' + '';
+    }
 
-  static get Url() {
-    return new UsersControllerQuery();
-  }
+    static get Client() {
+      const client = createClient(UsersControllerClient);
+      return client;
+    }
 
-  meUrl(): string {
-    let url_ = this.baseUrl + '/users/me';
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
+    static get Url() {
+        return new UsersControllerQuery();
+    }
 
-  static meDefaultOptions?: UseQueryOptions<UserDto, unknown, UserDto> = {};
-  public static meQueryKey(): QueryKey;
-  public static meQueryKey(...params: any[]): QueryKey {
-    return removeUndefinedFromArrayTail(['UsersControllerClient', 'me']);
-  }
+    meUrl(): string {
+      let url_ = this.baseUrl + "/users/me";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
 
-  private static me() {
-    return UsersControllerQuery.Client.me();
-  }
+    static meDefaultOptions?: UseQueryOptions<UserDto, unknown, UserDto> = {};
+    public static meQueryKey(): QueryKey;
+    public static meQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'UsersControllerClient',
+            'me',
+            ]);
+    }
 
-  static useMeQuery<TSelectData = UserDto, TError = unknown>(
-    options?: UseQueryOptions<UserDto, TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useMeQuery<TSelectData = UserDto, TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<UserDto, TError, TSelectData> | undefined =
-      undefined;
+    private static me() {
+        return UsersControllerQuery.Client.me(
+            );
+    }
 
-    options = params[0] as any;
+    static useMeQuery<TSelectData = UserDto, TError = unknown>(options?: UseQueryOptions<UserDto, TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useMeQuery<TSelectData = UserDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+        let options: UseQueryOptions<UserDto, TError, TSelectData> | undefined = undefined;
+        
 
-    return useQuery<UserDto, TError, TSelectData>({
-      queryFn: UsersControllerQuery.me,
-      queryKey: UsersControllerQuery.meQueryKey(),
-      ...(UsersControllerQuery.meDefaultOptions as unknown as UseQueryOptions<
-        UserDto,
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setMeData(
-    queryClient: QueryClient,
-    updater: (data: UserDto | undefined) => UserDto,
-  ) {
-    queryClient.setQueryData(UsersControllerQuery.meQueryKey(), updater);
-  }
+        options = params[0] as any;
+    
 
-  static setMeDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: UserDto | undefined) => UserDto,
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
 
-  getAllUsersUrl(): string {
-    let url_ = this.baseUrl + '/users';
-    url_ = url_.replace(/[?&]$/, '');
-    return url_;
-  }
+        return useQuery<UserDto, TError, TSelectData>({
+            queryFn: UsersControllerQuery.me,
+            queryKey: UsersControllerQuery.meQueryKey(),
+            ...UsersControllerQuery.meDefaultOptions as unknown as UseQueryOptions<UserDto, TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setMeData(queryClient: QueryClient, updater: (data: UserDto | undefined) => UserDto, ) {
+        queryClient.setQueryData(UsersControllerQuery.meQueryKey(),
+            updater
+        );
+    }
 
-  static getAllUsersDefaultOptions?: UseQueryOptions<
-    UserDto[],
-    unknown,
-    UserDto[]
-  > = {};
-  public static getAllUsersQueryKey(): QueryKey;
-  public static getAllUsersQueryKey(...params: any[]): QueryKey {
-    return removeUndefinedFromArrayTail([
-      'UsersControllerClient',
-      'getAllUsers',
-    ]);
-  }
+    static setMeDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: UserDto | undefined) => UserDto) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    
 
-  private static getAllUsers() {
-    return UsersControllerQuery.Client.getAllUsers();
-  }
+    getAllUsersUrl(): string {
+      let url_ = this.baseUrl + "/users";
+    url_ = url_.replace(/[?&]$/, "");
+      return url_;
+    }
 
-  static useGetAllUsersQuery<TSelectData = UserDto[], TError = unknown>(
-    options?: UseQueryOptions<UserDto[], TError, TSelectData>,
-  ): UseQueryResult<TSelectData, TError>;
-  static useGetAllUsersQuery<TSelectData = UserDto[], TError = unknown>(
-    ...params: any[]
-  ): UseQueryResult<TSelectData, TError> {
-    let options: UseQueryOptions<UserDto[], TError, TSelectData> | undefined =
-      undefined;
+    static getAllUsersDefaultOptions?: UseQueryOptions<UserDto[], unknown, UserDto[]> = {};
+    public static getAllUsersQueryKey(): QueryKey;
+    public static getAllUsersQueryKey(...params: any[]): QueryKey {
+        return removeUndefinedFromArrayTail([
+            'UsersControllerClient',
+            'getAllUsers',
+            ]);
+    }
 
-    options = params[0] as any;
+    private static getAllUsers() {
+        return UsersControllerQuery.Client.getAllUsers(
+            );
+    }
 
-    const metaContext = useContext(QueryMetaContext);
-    options = addMetaToOptions(options, metaContext);
+    static useGetAllUsersQuery<TSelectData = UserDto[], TError = unknown>(options?: UseQueryOptions<UserDto[], TError, TSelectData>): UseQueryResult<TSelectData, TError>;
+    static useGetAllUsersQuery<TSelectData = UserDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
 
-    return useQuery<UserDto[], TError, TSelectData>({
-      queryFn: UsersControllerQuery.getAllUsers,
-      queryKey: UsersControllerQuery.getAllUsersQueryKey(),
-      ...(UsersControllerQuery.getAllUsersDefaultOptions as unknown as UseQueryOptions<
-        UserDto[],
-        TError,
-        TSelectData
-      >),
-      ...options,
-    });
-  }
-  static setGetAllUsersData(
-    queryClient: QueryClient,
-    updater: (data: UserDto[] | undefined) => UserDto[],
-  ) {
-    queryClient.setQueryData(
-      UsersControllerQuery.getAllUsersQueryKey(),
-      updater,
-    );
-  }
+        let options: UseQueryOptions<UserDto[], TError, TSelectData> | undefined = undefined;
+        
 
-  static setGetAllUsersDataByQueryId(
-    queryClient: QueryClient,
-    queryKey: QueryKey,
-    updater: (data: UserDto[] | undefined) => UserDto[],
-  ) {
-    queryClient.setQueryData(queryKey, updater);
-  }
-}
+        options = params[0] as any;
+    
+
+        const metaContext = useContext(QueryMetaContext);
+        options = addMetaToOptions(options, metaContext);
+
+        return useQuery<UserDto[], TError, TSelectData>({
+            queryFn: UsersControllerQuery.getAllUsers,
+            queryKey: UsersControllerQuery.getAllUsersQueryKey(),
+            ...UsersControllerQuery.getAllUsersDefaultOptions as unknown as UseQueryOptions<UserDto[], TError, TSelectData>,
+            ...options,
+        });
+    }
+    static setGetAllUsersData(queryClient: QueryClient, updater: (data: UserDto[] | undefined) => UserDto[], ) {
+        queryClient.setQueryData(UsersControllerQuery.getAllUsersQueryKey(),
+            updater
+        );
+    }
+
+    static setGetAllUsersDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: UserDto[] | undefined) => UserDto[]) {
+        queryClient.setQueryData(queryKey, updater);
+    }
+    }
 
 export class AuthControllerClient {
-  private instance: AxiosInstance;
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    private instance: AxiosInstance;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(baseUrl?: string, instance?: AxiosInstance) {
-    this.instance = instance ? instance : axios.create();
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : '';
-  }
+        this.instance = instance ? instance : axios.create();
 
-  register(
-    body: RegisterDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<UserDto> {
-    let url_ = this.baseUrl + '/auth/register';
-    url_ = url_.replace(/[?&]$/, '');
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
 
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'POST',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
-        }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processRegister(_response);
-      });
-  }
-
-  protected processRegister(response: AxiosResponse): Promise<UserDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
-        }
-      }
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = UserDto.fromJS(resultData201);
-      return Promise.resolve<UserDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    register(body: RegisterDto , cancelToken?: CancelToken | undefined): Promise<UserDto> {
+        let url_ = this.baseUrl + "/auth/register";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processRegister(_response);
+        });
     }
-    return Promise.resolve<UserDto>(null as any);
-  }
 
-  login(
-    body: LoginDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<LoginResultDto> {
-    let url_ = this.baseUrl + '/auth/login';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'POST',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processRegister(response: AxiosResponse): Promise<UserDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processLogin(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = UserDto.fromJS(resultData201);
+            return Promise.resolve<UserDto>(result201);
 
-  protected processLogin(response: AxiosResponse): Promise<LoginResultDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<UserDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = LoginResultDto.fromJS(resultData201);
-      return Promise.resolve<LoginResultDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    login(body: LoginDto , cancelToken?: CancelToken | undefined): Promise<LoginResultDto> {
+        let url_ = this.baseUrl + "/auth/login";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processLogin(_response);
+        });
     }
-    return Promise.resolve<LoginResultDto>(null as any);
-  }
 
-  googleLogin(
-    body: GoogleTokenDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<LoginResultDto> {
-    let url_ = this.baseUrl + '/auth/google/login';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'POST',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processLogin(response: AxiosResponse): Promise<LoginResultDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGoogleLogin(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = LoginResultDto.fromJS(resultData201);
+            return Promise.resolve<LoginResultDto>(result201);
 
-  protected processGoogleLogin(
-    response: AxiosResponse,
-  ): Promise<LoginResultDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<LoginResultDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = LoginResultDto.fromJS(resultData201);
-      return Promise.resolve<LoginResultDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    googleLogin(body: GoogleTokenDto , cancelToken?: CancelToken | undefined): Promise<LoginResultDto> {
+        let url_ = this.baseUrl + "/auth/google/login";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGoogleLogin(_response);
+        });
     }
-    return Promise.resolve<LoginResultDto>(null as any);
-  }
 
-  refreshToken(
-    body: RefreshTokenDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<LoginResultDto> {
-    let url_ = this.baseUrl + '/auth/refresh';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'POST',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGoogleLogin(response: AxiosResponse): Promise<LoginResultDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processRefreshToken(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = LoginResultDto.fromJS(resultData201);
+            return Promise.resolve<LoginResultDto>(result201);
 
-  protected processRefreshToken(
-    response: AxiosResponse,
-  ): Promise<LoginResultDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<LoginResultDto>(null as any);
     }
-    if (status === 201) {
-      const _responseText = response.data;
-      let result201: any = null;
-      let resultData201 = _responseText;
-      result201 = LoginResultDto.fromJS(resultData201);
-      return Promise.resolve<LoginResultDto>(result201);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    refreshToken(body: RefreshTokenDto , cancelToken?: CancelToken | undefined): Promise<LoginResultDto> {
+        let url_ = this.baseUrl + "/auth/refresh";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processRefreshToken(_response);
+        });
     }
-    return Promise.resolve<LoginResultDto>(null as any);
-  }
 
-  logout(
-    body: RefreshTokenDto,
-    cancelToken?: CancelToken | undefined,
-  ): Promise<void> {
-    let url_ = this.baseUrl + '/auth/logout';
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: 'DELETE',
-      url: url_,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processRefreshToken(response: AxiosResponse): Promise<LoginResultDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processLogout(_response);
-      });
-  }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = LoginResultDto.fromJS(resultData201);
+            return Promise.resolve<LoginResultDto>(result201);
 
-  protected processLogout(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === 'object') {
-      for (let k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<LoginResultDto>(null as any);
     }
-    if (status === 200) {
-      const _responseText = response.data;
-      return Promise.resolve<void>(null as any);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        'An unexpected server error occurred.',
-        status,
-        _responseText,
-        _headers,
-      );
+
+    logout(body: RefreshTokenDto , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/auth/logout";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "DELETE",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processLogout(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
+
+    protected processLogout(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
-export class AuthControllerQuery {
-  get baseUrl() {
-    return getBaseUrl() ?? '' + '';
-  }
+export class AuthControllerQuery{
 
-  static get Client() {
-    const client = createClient(AuthControllerClient);
-    return client;
-  }
+    get baseUrl() {
+      return getBaseUrl() ?? '' + '';
+    }
 
-  static get Url() {
-    return new AuthControllerQuery();
-  }
-}
+    static get Client() {
+      const client = createClient(AuthControllerClient);
+      return client;
+    }
+
+    static get Url() {
+        return new AuthControllerQuery();
+    }
+          }
 
 export class CreateGameDto implements ICreateGameDto {
-  title!: string;
-  difficutly!: CreateGameDtoDifficutly;
-  gameLength!: CreateGameDtoGameLength;
+    title!: string;
+    difficutly!: CreateGameDtoDifficutly;
+    gameLength!: CreateGameDtoGameLength;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: ICreateGameDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ICreateGameDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.title = _data['title'];
-      this.difficutly = _data['difficutly'];
-      this.gameLength = _data['gameLength'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.title = _data["title"];
+            this.difficutly = _data["difficutly"];
+            this.gameLength = _data["gameLength"];
+        }
     }
-  }
 
-  static fromJS(data: any): CreateGameDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new CreateGameDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): CreateGameDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateGameDto();
+        result.init(data);
+        return result;
     }
-    data['title'] = this.title;
-    data['difficutly'] = this.difficutly;
-    data['gameLength'] = this.gameLength;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["title"] = this.title;
+        data["difficutly"] = this.difficutly;
+        data["gameLength"] = this.gameLength;
+        return data;
+    }
 }
 
 export interface ICreateGameDto {
-  title: string;
-  difficutly: CreateGameDtoDifficutly;
-  gameLength: CreateGameDtoGameLength;
+    title: string;
+    difficutly: CreateGameDtoDifficutly;
+    gameLength: CreateGameDtoGameLength;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class UserDto implements IUserDto {
-  id!: number;
-  name!: string;
-  avatar!: string | undefined;
-  email!: string;
-  rating!: number;
-  gamesPlayed!: number;
-  rankedGamesPlayed!: number;
-  rankedGamesWon!: number;
+    id!: number;
+    name!: string;
+    avatar!: string | undefined;
+    email!: string;
+    rating!: number;
+    gamesPlayed!: number;
+    rankedGamesPlayed!: number;
+    rankedGamesWon!: number;
+    correctSubmissions!: number;
+    wrongSubmissions!: number;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: IUserDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.id = _data['id'];
-      this.name = _data['name'];
-      this.avatar = _data['avatar'];
-      this.email = _data['email'];
-      this.rating = _data['rating'];
-      this.gamesPlayed = _data['gamesPlayed'];
-      this.rankedGamesPlayed = _data['rankedGamesPlayed'];
-      this.rankedGamesWon = _data['rankedGamesWon'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.avatar = _data["avatar"];
+            this.email = _data["email"];
+            this.rating = _data["rating"];
+            this.gamesPlayed = _data["gamesPlayed"];
+            this.rankedGamesPlayed = _data["rankedGamesPlayed"];
+            this.rankedGamesWon = _data["rankedGamesWon"];
+            this.correctSubmissions = _data["correctSubmissions"];
+            this.wrongSubmissions = _data["wrongSubmissions"];
+        }
     }
-  }
 
-  static fromJS(data: any): UserDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new UserDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): UserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserDto();
+        result.init(data);
+        return result;
     }
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['avatar'] = this.avatar;
-    data['email'] = this.email;
-    data['rating'] = this.rating;
-    data['gamesPlayed'] = this.gamesPlayed;
-    data['rankedGamesPlayed'] = this.rankedGamesPlayed;
-    data['rankedGamesWon'] = this.rankedGamesWon;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["avatar"] = this.avatar;
+        data["email"] = this.email;
+        data["rating"] = this.rating;
+        data["gamesPlayed"] = this.gamesPlayed;
+        data["rankedGamesPlayed"] = this.rankedGamesPlayed;
+        data["rankedGamesWon"] = this.rankedGamesWon;
+        data["correctSubmissions"] = this.correctSubmissions;
+        data["wrongSubmissions"] = this.wrongSubmissions;
+        return data;
+    }
 }
 
 export interface IUserDto {
-  id: number;
-  name: string;
-  avatar: string | undefined;
-  email: string;
-  rating: number;
-  gamesPlayed: number;
-  rankedGamesPlayed: number;
-  rankedGamesWon: number;
+    id: number;
+    name: string;
+    avatar: string | undefined;
+    email: string;
+    rating: number;
+    gamesPlayed: number;
+    rankedGamesPlayed: number;
+    rankedGamesWon: number;
+    correctSubmissions: number;
+    wrongSubmissions: number;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class GameDto implements IGameDto {
-  id!: number;
-  title!: string;
-  difficulty!: GameDtoDifficulty;
-  gameLength!: GameDtoGameLength;
-  averageRating!: number;
-  hasFinished!: boolean;
-  hasStarted!: boolean;
-  startedTimestamp!: number;
-  winner!: UserDto;
-  lead!: UserDto;
-  participants!: UserDto[];
+    id!: number;
+    title!: string;
+    difficulty!: GameDtoDifficulty;
+    gameLength!: GameDtoGameLength;
+    averageRating!: number;
+    hasFinished!: boolean;
+    hasStarted!: boolean;
+    startedTimestamp!: number;
+    winner!: UserDto;
+    lead!: UserDto;
+    participants!: UserDto[];
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: IGameDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IGameDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.winner = new UserDto();
+            this.lead = new UserDto();
+            this.participants = [];
+        }
     }
-    if (!data) {
-      this.winner = new UserDto();
-      this.lead = new UserDto();
-      this.participants = [];
-    }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.id = _data['id'];
-      this.title = _data['title'];
-      this.difficulty = _data['difficulty'];
-      this.gameLength = _data['gameLength'];
-      this.averageRating = _data['averageRating'];
-      this.hasFinished = _data['hasFinished'];
-      this.hasStarted = _data['hasStarted'];
-      this.startedTimestamp = _data['startedTimestamp'];
-      this.winner = _data['winner']
-        ? UserDto.fromJS(_data['winner'])
-        : new UserDto();
-      this.lead = _data['lead'] ? UserDto.fromJS(_data['lead']) : new UserDto();
-      if (Array.isArray(_data['participants'])) {
-        this.participants = [] as any;
-        for (let item of _data['participants'])
-          this.participants!.push(UserDto.fromJS(item));
-      }
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.difficulty = _data["difficulty"];
+            this.gameLength = _data["gameLength"];
+            this.averageRating = _data["averageRating"];
+            this.hasFinished = _data["hasFinished"];
+            this.hasStarted = _data["hasStarted"];
+            this.startedTimestamp = _data["startedTimestamp"];
+            this.winner = _data["winner"] ? UserDto.fromJS(_data["winner"]) : new UserDto();
+            this.lead = _data["lead"] ? UserDto.fromJS(_data["lead"]) : new UserDto();
+            if (Array.isArray(_data["participants"])) {
+                this.participants = [] as any;
+                for (let item of _data["participants"])
+                    this.participants!.push(UserDto.fromJS(item));
+            }
+        }
     }
-  }
 
-  static fromJS(data: any): GameDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new GameDto();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): GameDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GameDto();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["difficulty"] = this.difficulty;
+        data["gameLength"] = this.gameLength;
+        data["averageRating"] = this.averageRating;
+        data["hasFinished"] = this.hasFinished;
+        data["hasStarted"] = this.hasStarted;
+        data["startedTimestamp"] = this.startedTimestamp;
+        data["winner"] = this.winner ? this.winner.toJSON() : <any>undefined;
+        data["lead"] = this.lead ? this.lead.toJSON() : <any>undefined;
+        if (Array.isArray(this.participants)) {
+            data["participants"] = [];
+            for (let item of this.participants)
+                data["participants"].push(item.toJSON());
+        }
+        return data;
     }
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['difficulty'] = this.difficulty;
-    data['gameLength'] = this.gameLength;
-    data['averageRating'] = this.averageRating;
-    data['hasFinished'] = this.hasFinished;
-    data['hasStarted'] = this.hasStarted;
-    data['startedTimestamp'] = this.startedTimestamp;
-    data['winner'] = this.winner ? this.winner.toJSON() : <any>undefined;
-    data['lead'] = this.lead ? this.lead.toJSON() : <any>undefined;
-    if (Array.isArray(this.participants)) {
-      data['participants'] = [];
-      for (let item of this.participants)
-        data['participants'].push(item.toJSON());
-    }
-    return data;
-  }
 }
 
 export interface IGameDto {
-  id: number;
-  title: string;
-  difficulty: GameDtoDifficulty;
-  gameLength: GameDtoGameLength;
-  averageRating: number;
-  hasFinished: boolean;
-  hasStarted: boolean;
-  startedTimestamp: number;
-  winner: UserDto;
-  lead: UserDto;
-  participants: UserDto[];
+    id: number;
+    title: string;
+    difficulty: GameDtoDifficulty;
+    gameLength: GameDtoGameLength;
+    averageRating: number;
+    hasFinished: boolean;
+    hasStarted: boolean;
+    startedTimestamp: number;
+    winner: UserDto;
+    lead: UserDto;
+    participants: UserDto[];
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class JoinGameDto implements IJoinGameDto {
-  gameId!: number;
+    gameId!: number;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: IJoinGameDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IJoinGameDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.gameId = _data['gameId'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.gameId = _data["gameId"];
+        }
     }
-  }
 
-  static fromJS(data: any): JoinGameDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new JoinGameDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): JoinGameDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new JoinGameDto();
+        result.init(data);
+        return result;
     }
-    data['gameId'] = this.gameId;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["gameId"] = this.gameId;
+        return data;
+    }
 }
 
 export interface IJoinGameDto {
-  gameId: number;
+    gameId: number;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class LeaveGameDto implements ILeaveGameDto {
-  gameId!: number;
+    gameId!: number;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: ILeaveGameDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ILeaveGameDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.gameId = _data['gameId'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.gameId = _data["gameId"];
+        }
     }
-  }
 
-  static fromJS(data: any): LeaveGameDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new LeaveGameDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): LeaveGameDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeaveGameDto();
+        result.init(data);
+        return result;
     }
-    data['gameId'] = this.gameId;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["gameId"] = this.gameId;
+        return data;
+    }
 }
 
 export interface ILeaveGameDto {
-  gameId: number;
+    gameId: number;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class LeaveGameResultDto implements ILeaveGameResultDto {
-  success!: boolean;
+    success!: boolean;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: ILeaveGameResultDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ILeaveGameResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.success = _data['success'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.success = _data["success"];
+        }
     }
-  }
 
-  static fromJS(data: any): LeaveGameResultDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new LeaveGameResultDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): LeaveGameResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeaveGameResultDto();
+        result.init(data);
+        return result;
     }
-    data['success'] = this.success;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["success"] = this.success;
+        return data;
+    }
 }
 
 export interface ILeaveGameResultDto {
-  success: boolean;
+    success: boolean;
 
-  [key: string]: any;
+    [key: string]: any;
+}
+
+export class PostGameUserDto implements IPostGameUserDto {
+    userInfo!: UserDto;
+    correctSubmissions!: number;
+    wrongSubmissions!: number;
+
+    [key: string]: any;
+
+    constructor(data?: IPostGameUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.userInfo = new UserDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.userInfo = _data["userInfo"] ? UserDto.fromJS(_data["userInfo"]) : new UserDto();
+            this.correctSubmissions = _data["correctSubmissions"];
+            this.wrongSubmissions = _data["wrongSubmissions"];
+        }
+    }
+
+    static fromJS(data: any): PostGameUserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PostGameUserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["userInfo"] = this.userInfo ? this.userInfo.toJSON() : <any>undefined;
+        data["correctSubmissions"] = this.correctSubmissions;
+        data["wrongSubmissions"] = this.wrongSubmissions;
+        return data;
+    }
+}
+
+export interface IPostGameUserDto {
+    userInfo: UserDto;
+    correctSubmissions: number;
+    wrongSubmissions: number;
+
+    [key: string]: any;
+}
+
+export class PostGameDto implements IPostGameDto {
+    id!: number;
+    title!: string;
+    difficulty!: PostGameDtoDifficulty;
+    gameLength!: PostGameDtoGameLength;
+    averageRating!: number;
+    hasFinished!: boolean;
+    hasStarted!: boolean;
+    startedTimestamp!: number;
+    winner!: UserDto;
+    lead!: UserDto;
+    participants!: UserDto[];
+    postGameUsers!: PostGameUserDto[];
+
+    [key: string]: any;
+
+    constructor(data?: IPostGameDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.winner = new UserDto();
+            this.lead = new UserDto();
+            this.participants = [];
+            this.postGameUsers = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.difficulty = _data["difficulty"];
+            this.gameLength = _data["gameLength"];
+            this.averageRating = _data["averageRating"];
+            this.hasFinished = _data["hasFinished"];
+            this.hasStarted = _data["hasStarted"];
+            this.startedTimestamp = _data["startedTimestamp"];
+            this.winner = _data["winner"] ? UserDto.fromJS(_data["winner"]) : new UserDto();
+            this.lead = _data["lead"] ? UserDto.fromJS(_data["lead"]) : new UserDto();
+            if (Array.isArray(_data["participants"])) {
+                this.participants = [] as any;
+                for (let item of _data["participants"])
+                    this.participants!.push(UserDto.fromJS(item));
+            }
+            if (Array.isArray(_data["postGameUsers"])) {
+                this.postGameUsers = [] as any;
+                for (let item of _data["postGameUsers"])
+                    this.postGameUsers!.push(PostGameUserDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PostGameDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PostGameDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["difficulty"] = this.difficulty;
+        data["gameLength"] = this.gameLength;
+        data["averageRating"] = this.averageRating;
+        data["hasFinished"] = this.hasFinished;
+        data["hasStarted"] = this.hasStarted;
+        data["startedTimestamp"] = this.startedTimestamp;
+        data["winner"] = this.winner ? this.winner.toJSON() : <any>undefined;
+        data["lead"] = this.lead ? this.lead.toJSON() : <any>undefined;
+        if (Array.isArray(this.participants)) {
+            data["participants"] = [];
+            for (let item of this.participants)
+                data["participants"].push(item.toJSON());
+        }
+        if (Array.isArray(this.postGameUsers)) {
+            data["postGameUsers"] = [];
+            for (let item of this.postGameUsers)
+                data["postGameUsers"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IPostGameDto {
+    id: number;
+    title: string;
+    difficulty: PostGameDtoDifficulty;
+    gameLength: PostGameDtoGameLength;
+    averageRating: number;
+    hasFinished: boolean;
+    hasStarted: boolean;
+    startedTimestamp: number;
+    winner: UserDto;
+    lead: UserDto;
+    participants: UserDto[];
+    postGameUsers: PostGameUserDto[];
+
+    [key: string]: any;
 }
 
 export class StartGameDto implements IStartGameDto {
-  gameId!: number;
+    gameId!: number;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: IStartGameDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IStartGameDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.gameId = _data['gameId'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.gameId = _data["gameId"];
+        }
     }
-  }
 
-  static fromJS(data: any): StartGameDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new StartGameDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): StartGameDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new StartGameDto();
+        result.init(data);
+        return result;
     }
-    data['gameId'] = this.gameId;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["gameId"] = this.gameId;
+        return data;
+    }
 }
 
 export interface IStartGameDto {
-  gameId: number;
+    gameId: number;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class WordDto implements IWordDto {
-  id!: number;
-  word!: string;
-  /** The amount of ms that need to pass from the starting timestamp until the word can be submitted. */
-  validFrom!: number;
-  /** The amount of ms that need to pass from the starting timestamp until the word can not be submitted anymore. */
-  validUntil!: number;
-  column!: number;
+    id!: number;
+    word!: string;
+    /** The amount of ms that need to pass from the starting timestamp until the word can be submitted. */
+    validFrom!: number;
+    /** The amount of ms that need to pass from the starting timestamp until the word can not be submitted anymore. */
+    validUntil!: number;
+    column!: number;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: IWordDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IWordDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.id = _data['id'];
-      this.word = _data['word'];
-      this.validFrom = _data['validFrom'];
-      this.validUntil = _data['validUntil'];
-      this.column = _data['column'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.id = _data["id"];
+            this.word = _data["word"];
+            this.validFrom = _data["validFrom"];
+            this.validUntil = _data["validUntil"];
+            this.column = _data["column"];
+        }
     }
-  }
 
-  static fromJS(data: any): WordDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new WordDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): WordDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WordDto();
+        result.init(data);
+        return result;
     }
-    data['id'] = this.id;
-    data['word'] = this.word;
-    data['validFrom'] = this.validFrom;
-    data['validUntil'] = this.validUntil;
-    data['column'] = this.column;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["id"] = this.id;
+        data["word"] = this.word;
+        data["validFrom"] = this.validFrom;
+        data["validUntil"] = this.validUntil;
+        data["column"] = this.column;
+        return data;
+    }
 }
 
 export interface IWordDto {
-  id: number;
-  word: string;
-  /** The amount of ms that need to pass from the starting timestamp until the word can be submitted. */
-  validFrom: number;
-  /** The amount of ms that need to pass from the starting timestamp until the word can not be submitted anymore. */
-  validUntil: number;
-  column: number;
+    id: number;
+    word: string;
+    /** The amount of ms that need to pass from the starting timestamp until the word can be submitted. */
+    validFrom: number;
+    /** The amount of ms that need to pass from the starting timestamp until the word can not be submitted anymore. */
+    validUntil: number;
+    column: number;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class GameStateDto implements IGameStateDto {
-  wordsToBeSubmitted!: WordDto[];
-  correctSubmissions!: number;
-  points!: number;
-  wrongSubmissions!: number;
-  eloGain!: number | undefined;
-  game!: GameDto;
+    wordsToBeSubmitted!: WordDto[];
+    correctSubmissions!: number;
+    points!: number;
+    wrongSubmissions!: number;
+    eloGain!: number | undefined;
+    game!: GameDto;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: IGameStateDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IGameStateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.wordsToBeSubmitted = [];
+            this.game = new GameDto();
+        }
     }
-    if (!data) {
-      this.wordsToBeSubmitted = [];
-      this.game = new GameDto();
-    }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      if (Array.isArray(_data['wordsToBeSubmitted'])) {
-        this.wordsToBeSubmitted = [] as any;
-        for (let item of _data['wordsToBeSubmitted'])
-          this.wordsToBeSubmitted!.push(WordDto.fromJS(item));
-      }
-      this.correctSubmissions = _data['correctSubmissions'];
-      this.points = _data['points'];
-      this.wrongSubmissions = _data['wrongSubmissions'];
-      this.eloGain = _data['eloGain'];
-      this.game = _data['game'] ? GameDto.fromJS(_data['game']) : new GameDto();
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            if (Array.isArray(_data["wordsToBeSubmitted"])) {
+                this.wordsToBeSubmitted = [] as any;
+                for (let item of _data["wordsToBeSubmitted"])
+                    this.wordsToBeSubmitted!.push(WordDto.fromJS(item));
+            }
+            this.correctSubmissions = _data["correctSubmissions"];
+            this.points = _data["points"];
+            this.wrongSubmissions = _data["wrongSubmissions"];
+            this.eloGain = _data["eloGain"];
+            this.game = _data["game"] ? GameDto.fromJS(_data["game"]) : new GameDto();
+        }
     }
-  }
 
-  static fromJS(data: any): GameStateDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new GameStateDto();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): GameStateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GameStateDto();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        if (Array.isArray(this.wordsToBeSubmitted)) {
+            data["wordsToBeSubmitted"] = [];
+            for (let item of this.wordsToBeSubmitted)
+                data["wordsToBeSubmitted"].push(item.toJSON());
+        }
+        data["correctSubmissions"] = this.correctSubmissions;
+        data["points"] = this.points;
+        data["wrongSubmissions"] = this.wrongSubmissions;
+        data["eloGain"] = this.eloGain;
+        data["game"] = this.game ? this.game.toJSON() : <any>undefined;
+        return data;
     }
-    if (Array.isArray(this.wordsToBeSubmitted)) {
-      data['wordsToBeSubmitted'] = [];
-      for (let item of this.wordsToBeSubmitted)
-        data['wordsToBeSubmitted'].push(item.toJSON());
-    }
-    data['correctSubmissions'] = this.correctSubmissions;
-    data['points'] = this.points;
-    data['wrongSubmissions'] = this.wrongSubmissions;
-    data['eloGain'] = this.eloGain;
-    data['game'] = this.game ? this.game.toJSON() : <any>undefined;
-    return data;
-  }
 }
 
 export interface IGameStateDto {
-  wordsToBeSubmitted: WordDto[];
-  correctSubmissions: number;
-  points: number;
-  wrongSubmissions: number;
-  eloGain: number | undefined;
-  game: GameDto;
+    wordsToBeSubmitted: WordDto[];
+    correctSubmissions: number;
+    points: number;
+    wrongSubmissions: number;
+    eloGain: number | undefined;
+    game: GameDto;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class SubmitWordDto implements ISubmitWordDto {
-  gameId!: number;
-  word!: string;
+    gameId!: number;
+    word!: string;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: ISubmitWordDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ISubmitWordDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.gameId = _data['gameId'];
-      this.word = _data['word'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.gameId = _data["gameId"];
+            this.word = _data["word"];
+        }
     }
-  }
 
-  static fromJS(data: any): SubmitWordDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new SubmitWordDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): SubmitWordDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitWordDto();
+        result.init(data);
+        return result;
     }
-    data['gameId'] = this.gameId;
-    data['word'] = this.word;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["gameId"] = this.gameId;
+        data["word"] = this.word;
+        return data;
+    }
 }
 
 export interface ISubmitWordDto {
-  gameId: number;
-  word: string;
+    gameId: number;
+    word: string;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class SubmitWordResponseDto implements ISubmitWordResponseDto {
-  success!: boolean;
-  remainingWords!: number;
-  gameFinished!: boolean;
+    success!: boolean;
+    remainingWords!: number;
+    gameFinished!: boolean;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: ISubmitWordResponseDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ISubmitWordResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.success = _data['success'];
-      this.remainingWords = _data['remainingWords'];
-      this.gameFinished = _data['gameFinished'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.success = _data["success"];
+            this.remainingWords = _data["remainingWords"];
+            this.gameFinished = _data["gameFinished"];
+        }
     }
-  }
 
-  static fromJS(data: any): SubmitWordResponseDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new SubmitWordResponseDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): SubmitWordResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitWordResponseDto();
+        result.init(data);
+        return result;
     }
-    data['success'] = this.success;
-    data['remainingWords'] = this.remainingWords;
-    data['gameFinished'] = this.gameFinished;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["success"] = this.success;
+        data["remainingWords"] = this.remainingWords;
+        data["gameFinished"] = this.gameFinished;
+        return data;
+    }
 }
 
 export interface ISubmitWordResponseDto {
-  success: boolean;
-  remainingWords: number;
-  gameFinished: boolean;
+    success: boolean;
+    remainingWords: number;
+    gameFinished: boolean;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class UpdateGameDto implements IUpdateGameDto {
-  gameId!: number;
-  title!: string | undefined;
-  difficutly!: UpdateGameDtoDifficutly | undefined;
-  gameLength!: UpdateGameDtoGameLength | undefined;
+    gameId!: number;
+    title!: string | undefined;
+    difficutly!: UpdateGameDtoDifficutly | undefined;
+    gameLength!: UpdateGameDtoGameLength | undefined;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: IUpdateGameDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IUpdateGameDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.gameId = _data['gameId'];
-      this.title = _data['title'];
-      this.difficutly = _data['difficutly'];
-      this.gameLength = _data['gameLength'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.gameId = _data["gameId"];
+            this.title = _data["title"];
+            this.difficutly = _data["difficutly"];
+            this.gameLength = _data["gameLength"];
+        }
     }
-  }
 
-  static fromJS(data: any): UpdateGameDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new UpdateGameDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): UpdateGameDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateGameDto();
+        result.init(data);
+        return result;
     }
-    data['gameId'] = this.gameId;
-    data['title'] = this.title;
-    data['difficutly'] = this.difficutly;
-    data['gameLength'] = this.gameLength;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["gameId"] = this.gameId;
+        data["title"] = this.title;
+        data["difficutly"] = this.difficutly;
+        data["gameLength"] = this.gameLength;
+        return data;
+    }
 }
 
 export interface IUpdateGameDto {
-  gameId: number;
-  title: string | undefined;
-  difficutly: UpdateGameDtoDifficutly | undefined;
-  gameLength: UpdateGameDtoGameLength | undefined;
+    gameId: number;
+    title: string | undefined;
+    difficutly: UpdateGameDtoDifficutly | undefined;
+    gameLength: UpdateGameDtoGameLength | undefined;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class RegisterDto implements IRegisterDto {
-  email!: string;
-  password!: string;
-  name!: string;
+    email!: string;
+    password!: string;
+    name!: string;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: IRegisterDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IRegisterDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.email = _data['email'];
-      this.password = _data['password'];
-      this.name = _data['name'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.email = _data["email"];
+            this.password = _data["password"];
+            this.name = _data["name"];
+        }
     }
-  }
 
-  static fromJS(data: any): RegisterDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new RegisterDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): RegisterDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RegisterDto();
+        result.init(data);
+        return result;
     }
-    data['email'] = this.email;
-    data['password'] = this.password;
-    data['name'] = this.name;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["email"] = this.email;
+        data["password"] = this.password;
+        data["name"] = this.name;
+        return data;
+    }
 }
 
 export interface IRegisterDto {
-  email: string;
-  password: string;
-  name: string;
+    email: string;
+    password: string;
+    name: string;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class LoginDto implements ILoginDto {
-  email!: string;
-  password!: string;
+    email!: string;
+    password!: string;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: ILoginDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ILoginDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.email = _data['email'];
-      this.password = _data['password'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.email = _data["email"];
+            this.password = _data["password"];
+        }
     }
-  }
 
-  static fromJS(data: any): LoginDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new LoginDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): LoginDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LoginDto();
+        result.init(data);
+        return result;
     }
-    data['email'] = this.email;
-    data['password'] = this.password;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["email"] = this.email;
+        data["password"] = this.password;
+        return data;
+    }
 }
 
 export interface ILoginDto {
-  email: string;
-  password: string;
+    email: string;
+    password: string;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class LoginResultDto implements ILoginResultDto {
-  accessToken!: string;
-  refreshToken!: string;
+    accessToken!: string;
+    refreshToken!: string;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: ILoginResultDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ILoginResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.accessToken = _data['accessToken'];
-      this.refreshToken = _data['refreshToken'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.accessToken = _data["accessToken"];
+            this.refreshToken = _data["refreshToken"];
+        }
     }
-  }
 
-  static fromJS(data: any): LoginResultDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new LoginResultDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): LoginResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LoginResultDto();
+        result.init(data);
+        return result;
     }
-    data['accessToken'] = this.accessToken;
-    data['refreshToken'] = this.refreshToken;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["accessToken"] = this.accessToken;
+        data["refreshToken"] = this.refreshToken;
+        return data;
+    }
 }
 
 export interface ILoginResultDto {
-  accessToken: string;
-  refreshToken: string;
+    accessToken: string;
+    refreshToken: string;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class GoogleTokenDto implements IGoogleTokenDto {
-  /** Credential field returned by the Google SSO. */
-  token!: string;
+    /** Credential field returned by the Google SSO. */
+    token!: string;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: IGoogleTokenDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IGoogleTokenDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.token = _data['token'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.token = _data["token"];
+        }
     }
-  }
 
-  static fromJS(data: any): GoogleTokenDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new GoogleTokenDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): GoogleTokenDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GoogleTokenDto();
+        result.init(data);
+        return result;
     }
-    data['token'] = this.token;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["token"] = this.token;
+        return data;
+    }
 }
 
 export interface IGoogleTokenDto {
-  /** Credential field returned by the Google SSO. */
-  token: string;
+    /** Credential field returned by the Google SSO. */
+    token: string;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export class RefreshTokenDto implements IRefreshTokenDto {
-  refreshToken!: string;
+    refreshToken!: string;
 
-  [key: string]: any;
+    [key: string]: any;
 
-  constructor(data?: IRefreshTokenDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IRefreshTokenDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      for (var property in _data) {
-        if (_data.hasOwnProperty(property)) this[property] = _data[property];
-      }
-      this.refreshToken = _data['refreshToken'];
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property))
+                    this[property] = _data[property];
+            }
+            this.refreshToken = _data["refreshToken"];
+        }
     }
-  }
 
-  static fromJS(data: any): RefreshTokenDto {
-    data = typeof data === 'object' ? data : {};
-    let result = new RefreshTokenDto();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    for (var property in this) {
-      if (this.hasOwnProperty(property)) data[property] = this[property];
+    static fromJS(data: any): RefreshTokenDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RefreshTokenDto();
+        result.init(data);
+        return result;
     }
-    data['refreshToken'] = this.refreshToken;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property))
+                data[property] = this[property];
+        }
+        data["refreshToken"] = this.refreshToken;
+        return data;
+    }
 }
 
 export interface IRefreshTokenDto {
-  refreshToken: string;
+    refreshToken: string;
 
-  [key: string]: any;
+    [key: string]: any;
 }
 
 export enum CreateGameDtoDifficutly {
-  Easy = 'easy',
-  Medium = 'medium',
-  Hard = 'hard',
-  Insane = 'insane',
+    Easy = "easy",
+    Medium = "medium",
+    Hard = "hard",
+    Insane = "insane",
 }
 
 export enum CreateGameDtoGameLength {
-  Short = 'short',
-  Normal = 'normal',
-  Long = 'long',
-  Very_long = 'very_long',
-  Forever = 'forever',
+    Short = "short",
+    Normal = "normal",
+    Long = "long",
+    Very_long = "very_long",
+    Forever = "forever",
 }
 
 export enum GameDtoDifficulty {
-  Easy = 'easy',
-  Medium = 'medium',
-  Hard = 'hard',
-  Insane = 'insane',
+    Easy = "easy",
+    Medium = "medium",
+    Hard = "hard",
+    Insane = "insane",
 }
 
 export enum GameDtoGameLength {
-  Short = 'short',
-  Normal = 'normal',
-  Long = 'long',
-  Very_long = 'very_long',
-  Forever = 'forever',
+    Short = "short",
+    Normal = "normal",
+    Long = "long",
+    Very_long = "very_long",
+    Forever = "forever",
+}
+
+export enum PostGameDtoDifficulty {
+    Easy = "easy",
+    Medium = "medium",
+    Hard = "hard",
+    Insane = "insane",
+}
+
+export enum PostGameDtoGameLength {
+    Short = "short",
+    Normal = "normal",
+    Long = "long",
+    Very_long = "very_long",
+    Forever = "forever",
 }
 
 export enum UpdateGameDtoDifficutly {
-  Easy = 'easy',
-  Medium = 'medium',
-  Hard = 'hard',
-  Insane = 'insane',
+    Easy = "easy",
+    Medium = "medium",
+    Hard = "hard",
+    Insane = "insane",
 }
 
 export enum UpdateGameDtoGameLength {
-  Short = 'short',
-  Normal = 'normal',
-  Long = 'long',
-  Very_long = 'very_long',
-  Forever = 'forever',
+    Short = "short",
+    Normal = "normal",
+    Long = "long",
+    Very_long = "very_long",
+    Forever = "forever",
 }
 
 export class ApiException extends Error {
-  message: string;
-  status: number;
-  response: string;
-  headers: { [key: string]: any };
-  result: any;
+    message: string;
+    status: number;
+    response: string;
+    headers: { [key: string]: any; };
+    result: any;
 
-  constructor(
-    message: string,
-    status: number,
-    response: string,
-    headers: { [key: string]: any },
-    result: any,
-  ) {
-    super();
+    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
+        super();
 
-    this.message = message;
-    this.status = status;
-    this.response = response;
-    this.headers = headers;
-    this.result = result;
-  }
+        this.message = message;
+        this.status = status;
+        this.response = response;
+        this.headers = headers;
+        this.result = result;
+    }
 
-  protected isApiException = true;
+    protected isApiException = true;
 
-  static isApiException(obj: any): obj is ApiException {
-    return obj.isApiException === true;
-  }
+    static isApiException(obj: any): obj is ApiException {
+        return obj.isApiException === true;
+    }
 }
 
-function throwException(
-  message: string,
-  status: number,
-  response: string,
-  headers: { [key: string]: any },
-  result?: any,
-): any {
-  if (result !== null && result !== undefined) throw result;
-  else throw new ApiException(message, status, response, headers, null);
+function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
+    if (result !== null && result !== undefined)
+        throw result;
+    else
+        throw new ApiException(message, status, response, headers, null);
 }
 
 function isAxiosError(obj: any | undefined): obj is AxiosError {
-  return obj && obj.isAxiosError === true;
+    return obj && obj.isAxiosError === true;
 }
 
-import {
-  useQuery,
-  UseQueryResult,
-  QueryFunctionContext,
-  UseQueryOptions,
-  QueryClient,
-  QueryKey,
-} from 'react-query';
+import { useQuery, UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey } from 'react-query';
 import { QueryMetaContext, QueryMetaContextValue } from 'react-query-swagger';
 import { useContext } from 'react';
 
 function removeUndefinedFromArrayTail<T>(arr: T[]): T[] {
-  let lastDefinedValueIndex = arr.length - 1;
-  while (lastDefinedValueIndex >= 0) {
-    if (arr[lastDefinedValueIndex] === undefined) {
-      lastDefinedValueIndex--;
-    } else {
-      break;
+    let lastDefinedValueIndex = arr.length - 1;
+    while (lastDefinedValueIndex >= 0) {
+        if (arr[lastDefinedValueIndex] === undefined) {
+            lastDefinedValueIndex--;
+        } else {
+            break;
+        }
     }
-  }
-  return lastDefinedValueIndex === arr.length - 1
-    ? arr
-    : arr.slice(0, lastDefinedValueIndex + 1);
+    return lastDefinedValueIndex === arr.length - 1 ? arr : arr.slice(0, lastDefinedValueIndex + 1);
 }
 
 /*
@@ -3478,18 +3313,16 @@ function removeUndefinedFromArrayTail<T>(arr: T[]): T[] {
   Returns false if parameter is number/string/boolean/Date or Array
 */
 function isParameterObject(param: unknown) {
-  if (param === null || param === undefined) return false;
-  if (param instanceof Array) return false;
-  const isObject = typeof param === 'object';
-  if (!isObject) return false;
-  if (param instanceof Date) return false;
-  return true;
+    if (param === null || param === undefined) return false;
+    if (param instanceof Array) return false;
+    const isObject = typeof param === 'object';
+    if (!isObject) return false;
+    if (param instanceof Date) return false;
+    return true;
 }
 
-type ClientFactoryFunction = <T>(type: new (...params: any[]) => T) => T;
-let _clientFactoryFunction: ClientFactoryFunction = <T>(
-  type: new (...params: any[]) => T,
-) => {
+type ClientFactoryFunction = <T>(type: (new (...params: any[]) => T)) => T;
+let _clientFactoryFunction: ClientFactoryFunction = <T>(type: (new (...params: any[]) => T)) => {
   const params = [_baseUrl, _axiosFactory()];
   return new type(...params);
 };
@@ -3510,7 +3343,7 @@ export function getClientFactory() {
 /*
   Function that will be called from `useQuery...` methods to get a client of certain type
 */
-function createClient<T>(type: new () => T) {
+function createClient<T>(type: (new () => T)) {
   return _clientFactoryFunction(type);
 }
 
@@ -3543,12 +3376,9 @@ export function setAxiosFactory(factory: () => AxiosInstance) {
   _axiosFactory = factory;
 }
 
-function addMetaToOptions<TResultType, TError, TSelectData>(
-  options: UseQueryOptions<TResultType, TError, TSelectData> | undefined,
-  metaContext: QueryMetaContextValue,
-) {
+function addMetaToOptions<TResultType, TError, TSelectData>(options: UseQueryOptions<TResultType, TError, TSelectData> | undefined, metaContext: QueryMetaContextValue) {
   if (metaContext.metaFn) {
-    options = options ?? {};
+    options = options ?? { };
     options.meta = {
       ...metaContext.metaFn(),
       ...options.meta,
